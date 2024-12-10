@@ -32,3 +32,16 @@ function getOrdinalSuffix(day: number): string {
     return formattedDate.replace(date.getDate().toString(), dayWithSuffix);
   }
   
+  // Función auxiliar para convertir fechas al formato MM/DD/YYYY
+export const formatDate = (isoDate) => {
+  const date = new Date(isoDate);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${month}/${day}/${year}`;
+};
+
+export function extractPhoneWithoutPrefix(phone) {
+  // Divide la cadena del teléfono por espacios y toma la segunda parte
+  return phone.split(' ').slice(1).join(' ');
+}

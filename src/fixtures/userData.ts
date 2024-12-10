@@ -1,94 +1,215 @@
+enum CabinType {
+  LIGHT = 'Light',
+  COMFORT = 'Comfort',
+  EXTRA = 'Extra',
+}
+
+enum CabinClass {
+  ECONOMY = 'Economy',
+  PREMIUM = 'Premium',
+}
+
 // userData.ts
 export const userDataADT = [
   {
-    nombre: 'Juan',
-    apellido: 'Pérez',
-    fecha_nacimiento: '1990-05-15',
-    idioma: 'Afghanistan',
+    name: 'Juan',
+    surname: 'Perez',
+    dateOfBirth: '1990-05-15',
+    language: 'Afghanistan',
+    nationality : 'Algeria',
     phone: '+93 791234567', // Prefijo de Afganistán
     email: 'sofiainkoova@gmail.com',
+    gender: 'Female',
+    cabinData: {
+      outboundClassFlight: CabinClass.ECONOMY,
+      outboundTypeFlight: CabinType.LIGHT,
+      returnClassFlight: CabinClass.ECONOMY,
+      returnTypeFlight: CabinType.LIGHT,
+    }
   },
   {
-    nombre: 'Juana',
-    apellido: 'González',
-    fecha_nacimiento: '1985-08-22',
-    idioma: 'Algeria',
+    name: 'Prueba',
+    surname: 'Hola',
+    dateOfBirth: '1990-05-15',
+    language: 'Afghanistan',
+    nationality : 'Spain',
+    phone: '+93 791234567', // Prefijo de Afganistán
+    email: 'sofiainkoova@gmail.com',
+    gender: 'Female',
+    cabinData: {
+      outboundClassFlight: CabinClass.ECONOMY,
+      outboundTypeFlight: CabinType.LIGHT,
+      returnClassFlight: CabinClass.ECONOMY,
+      returnTypeFlight: CabinType.LIGHT,
+    }
+  },
+  {
+    name: 'Juan',
+    surname: 'Pérez',
+    dateOfBirth: '1990-05-15',
+    language: 'Afghanistan',
+    phone: '+93 791234567', // Prefijo de Afganistán
+    email: 'sofiainkoova@gmail.com',
+    gender: 'Female',
+    cabinData: {
+      outboundClassFlight: CabinClass.ECONOMY,
+      outboundTypeFlight: CabinType.LIGHT,
+      returnClassFlight: CabinClass.ECONOMY,
+      returnTypeFlight: CabinType.LIGHT,
+    }
+  },
+  {
+    name: 'Juana',
+    surname: 'González',
+    dateOfBirth: '1985-08-22',
+    language: 'Algeria',
     phone: '+213 65234567', // Prefijo de Argelia
     email: 'sofiainkoova@gmail.com',
+    gender: 'Female',
+    cabinData: {
+      outboundClassFlight: CabinClass.ECONOMY,
+      outboundTypeFlight: CabinType.LIGHT,
+      returnClassFlight: CabinClass.ECONOMY,
+      returnTypeFlight: CabinType.LIGHT,
+    }
   },
   {
-    nombre: 'Carlos',
-    apellido: 'López',
-    fecha_nacimiento: '1992-01-10',
-    idioma: 'Spain',
+    name: 'Carlos',
+    surname: 'López',
+    dateOfBirth: '1992-01-10',
+    language: 'Spain',
     phone: '+34 912345678', // Prefijo de España
     email: 'sofiainkoova@gmail.com',
+    gender: 'Male',
+    cabinData: {
+      outboundClassFlight: CabinClass.ECONOMY,
+      outboundTypeFlight: CabinType.LIGHT,
+      returnClassFlight: CabinClass.ECONOMY,
+      returnTypeFlight: CabinType.LIGHT,
+    }
   },
   {
-    nombre: 'Ana',
-    apellido: 'Martínez',
-    fecha_nacimiento: '1988-04-17',
-    idioma: 'Spain',
+    name: 'Ana',
+    surname: 'Martínez',
+    dateOfBirth: '1988-04-17',
+    language: 'Spain',
     phone: '+34 678901234', // Prefijo de España
     email: 'sofiainkoova@gmail.com',
+    gender: 'Female',
+    cabinData: {
+      outboundClassFlight: CabinClass.ECONOMY,
+      outboundTypeFlight: CabinType.LIGHT,
+      returnClassFlight: CabinClass.ECONOMY,
+      returnTypeFlight: CabinType.LIGHT,
+    }
   },
   {
-    nombre: 'Luis',
-    apellido: 'Hernández',
-    fecha_nacimiento: '1995-09-30',
-    idioma: 'Andorra',
+    name: 'Luis',
+    surname: 'Hernández',
+    dateOfBirth: '1995-09-30',
+    language: 'Andorra',
     phone: '+376 355555', // Prefijo de Andorra
     email: 'sofiainkoova@gmail.com',
+    gender: 'Male',
+    cabinData: {
+      outboundClassFlight: CabinClass.ECONOMY,
+      outboundTypeFlight: CabinType.LIGHT,
+      returnClassFlight: CabinClass.ECONOMY,
+      returnTypeFlight: CabinType.LIGHT,
+    }
   },
   {
-    nombre: 'Elena',
-    apellido: 'Torres',
-    fecha_nacimiento: '1993-06-12',
-    idioma: 'Belarus',
+    name: 'Elena',
+    surname: 'Torres',
+    dateOfBirth: '1993-06-12',
+    language: 'Belarus',
     phone: '+375 292345678', // Prefijo de Bielorrusia
     email: 'sofiainkoova@gmail.com',
+    gender: 'Female',
+    cabinData: {
+      outboundClassFlight: CabinClass.ECONOMY,
+      outboundTypeFlight: CabinType.LIGHT,
+      returnClassFlight: CabinClass.ECONOMY,
+      returnTypeFlight: CabinType.LIGHT,
+    }
   },
   {
-    nombre: 'Pablo',
-    apellido: 'Ramírez',
-    fecha_nacimiento: '1989-02-28',
-    idioma: 'French Guiana',
+    name: 'Pablo',
+    surname: 'Ramírez',
+    dateOfBirth: '1989-02-28',
+    language: 'French Guiana',
     phone: '+594 69420678', // Prefijo de Guayana Francesa
     email: 'sofiainkoova@gmail.com',
+    gender: 'Male',
+    cabinData: {
+      outboundClassFlight: CabinClass.ECONOMY,
+      outboundTypeFlight: CabinType.LIGHT,
+      returnClassFlight: CabinClass.ECONOMY,
+      returnTypeFlight: CabinType.LIGHT,
+    }
   },
   {
-    nombre: 'Sofía M.',
-    apellido: 'Morales',
-    fecha_nacimiento: '1996-07-25',
-    idioma: 'Belarus',
+    name: 'Sofía M.',
+    surname: 'Morales',
+    dateOfBirth: '1996-07-25',
+    language: 'Belarus',
     phone: '+375 447890123', // Prefijo de Bielorrusia
     email: 'sofiainkoova@gmail.com',
+    gender: 'Female',
+    cabinData: {
+      outboundClassFlight: CabinClass.ECONOMY,
+      outboundTypeFlight: CabinType.LIGHT,
+      returnClassFlight: CabinClass.ECONOMY,
+      returnTypeFlight: CabinType.LIGHT,
+    }
   },
   {
-    nombre: 'Javier',
-    apellido: 'Cruz',
-    fecha_nacimiento: '1994-11-15',
-    idioma: 'Spain',
+    name: 'Javier',
+    surname: 'Cruz',
+    dateOfBirth: '1994-11-15',
+    language: 'Spain',
     phone: '+34 620123456', // Prefijo de España
     email: 'sofiainkoova@gmail.com',
+    gender: 'Male',
+    cabinData: {
+      outboundClassFlight: CabinClass.ECONOMY,
+      outboundTypeFlight: CabinType.LIGHT,
+      returnClassFlight: CabinClass.ECONOMY,
+      returnTypeFlight: CabinType.LIGHT,
+    }
   },
   {
-    nombre: 'Clara',
-    apellido: 'Navarro',
-    fecha_nacimiento: '1987-03-09',
-    idioma: 'Spain',
+    name: 'Clara',
+    surname: 'Navarro',
+    dateOfBirth: '1987-03-09',
+    language: 'Spain',
     phone: '+34 917654321', // Prefijo de España
     email: 'sofiainkoova@gmail.com',
+    gender: 'Female',
+    cabinData: {
+      outboundClassFlight: CabinClass.ECONOMY,
+      outboundTypeFlight: CabinType.LIGHT,
+      returnClassFlight: CabinClass.ECONOMY,
+      returnTypeFlight: CabinType.LIGHT,
+    }
   },
   {
-    nombre: 'Raúl',
-    apellido: 'Vega',
-    fecha_nacimiento: '1991-12-05',
-    idioma: 'Spain',
+    name: 'Raúl',
+    surname: 'Vega',
+    dateOfBirth: '1991-12-05',
+    language: 'Spain',
     phone: '+34 611234567', // Prefijo de España
     email: 'sofiainkoova@gmail.com',
+    gender: 'Male',
+    cabinData: {
+      outboundClassFlight: CabinClass.ECONOMY,
+      outboundTypeFlight: CabinType.LIGHT,
+      returnClassFlight: CabinClass.ECONOMY,
+      returnTypeFlight: CabinType.LIGHT,
+    }
   },
 ];
+
 
 export const userDataINL = [
   {
@@ -157,7 +278,7 @@ export const userDataINL = [
 export const userDataCHD = [
   {
     nombre: 'Lucas',
-    apellido: 'Fernández',
+    apellido: 'Fernandez',
     fecha_nacimiento: '2015-03-22', // Tiene 9 años
     idioma: 'España',
   },
@@ -225,7 +346,30 @@ export const promocodeData = {
   
   
 export const ticketData = {
-  ADT: '2', 
-  CHD: '1', 
-  INL: '1', 
+  ADT: 2, 
+  CHD: 1, 
+  INL: 1, 
 }; 
+
+export const Lenguage = {
+  CA: true,
+  ES: true,
+  EN: true
+}
+export const Money = {
+  USD: true, 
+  EUR: true
+}
+
+export const paymentCards = [
+  {
+    cardNumber: '2222 4000 7000 0005',
+    expiryDate: '03/30',
+    cvc: '737'
+  },
+  {
+    cardNumber: '5577 0000 5577 0004',
+    expiryDate: '03/30',
+    cvc: '737'
+  }
+];

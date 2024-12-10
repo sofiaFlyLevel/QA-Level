@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { userData } from '../fixtures/userData';
+import {userDataADT, userDataCHD, ticketData, paymentCards} from '../fixtures/userData';
 import { entornoData, apiData } from '../fixtures/environmentData';
 import { ruteData } from '../fixtures/ruteData';
 import { getApiResponse, transformApiResponse } from '../utils/apiHelper';
-import { formatDateWithOrdinal } from '../page-objects/basePage';
+import { formatDateWithOrdinal, formatDate, extractPhoneWithoutPrefix } from '../page-objects/basePage';
 
 // Define variables que se compartirán entre los tests
 let Origin = ruteData.origin;
@@ -18,7 +18,9 @@ test.describe('chooseTicket', () => {
     page = await context.newPage();
 
     // Abre la página solo una vez al inicio
-    await page.goto(entornoData.pre.url);
+    await page.goto(entornoData.dev.url);
+
+    await page.getByRole('button', { name: 'Accept all cookies' }).click();
   });
 
   // Cierra el contexto y la página al finalizar todos los tests
@@ -31,6 +33,12 @@ test.describe('chooseTicket', () => {
     await page.locator('div.iata', { hasText: Origin }).nth(0).click();
     await page.locator('div.iata').filter({ hasText: Destination }).nth(1).click();
 
+  });
+
+  test('toggleCityButton', async () =>{
+    await page.locator('.swap-btn-icon.flight-swap-icon.icon-swap-black').click();
+    await page.locator('.swap-btn-icon.flight-swap-icon.icon-swap-black').click();
+    
   });
 
   //mirar que sea el mes que estamos
@@ -107,13 +115,179 @@ test.describe('chooseTicket', () => {
   test('choosePassage', async () => {
     // Puedes agregar interacciones adicionales aquí
     console.log('Elegir pasaje ejecutado');
-    await page.locator('div').filter({ hasText: /^Adults12\+ years1$/ }).locator('span').nth(2).click();
-    await page.locator('div').filter({ hasText: /^Children2 - 11 years0$/ }).locator('span').nth(2).click();
-    await page.locator('div').filter({ hasText: /^Infants7 days - 23 months0$/ }).locator('span').nth(2).click();
+    // Ajustando el número de adultos, niños y bebés según las variables
+
+    for (let i = 1; i < ticketData.ADT; i++) {
+     // Click the "plus" button for children
+      await page.click('.pax-item[data-field="adult"] .js-plus');
+    }
+
+    for (let j = 0; j < ticketData.CHD; j++) {
+      // Click the "plus" button for children
+      await page.click('.pax-item[data-field="child"] .js-plus');
+    }
+
+    for (let k = 0; k < ticketData.INL; k++) {
+     // Click the "plus" button for children
+    await page.click('.pax-item[data-field="infant"] .js-plus');
+    }
+
 
     await page.locator('#searcher_submit_button').click();
 
   });
 
+  test('chosseVFlight', async () => {
+
+  await page.waitForTimeout(5000); // Espera 5 segundos
+
+  //ida 
+  const outboundFlightClass = userDataADT[0].cabinData?.outboundClassFlight;
+  const outboundFlightType = userDataADT[0].cabinData?.outboundTypeFlight;
+
+  await page.click(`div.price-cabin:has-text("${outboundFlightClass}")`);
+
+  // Usar la variable `outboundFlightType` dentro del filtro
+  await page.locator('div').filter({ hasText: new RegExp(`^Continue with ${outboundFlightType}`) }).nth(1).click();
+
+  // vuelta
+  const returnFlightClass = userDataADT[0].cabinData?.returnClassFlight;
+  const returnFlightType = userDataADT[0].cabinData?.returnTypeFlight;
+
+  await page.click(`div.price-cabin:has-text("${returnFlightClass}")`);
+
+  // await page.getByRole('button', { name: `${returnFlightClass} Icon ${returnFlightClass} $` }).click();
+
+// Luego selecciona la opción de tipo de vuelo de retorno (Light, Comfort, Extra)
+await page.locator('div').filter({ hasText: new RegExp(`^Continue with ${returnFlightType}`) }).nth(1).click();
+
+// await page.locator('div').filter({ hasText: `^Continue with ${returnFlightType}` }).nth(1).click();
+
+  // await page.locator('.icon-chevron-up').click();
+  await page.getByRole('button', { name: 'Continue' }).click();
+
+  // await page.waitForTimeout(5000); // Espera 5 segundos
+
+
+  }); 
+
+  test('fillPassengerData', async () => {
+
+    // Suponiendo que ticketData.ADT es la cantidad de adultos
+    for (let i = 0; i < ticketData.ADT; i++) {
+      // Cambiar el '0' por 'i' para cada adulto
+      await page.locator(`#Adult-${i}`).click();
+      await page.waitForTimeout(5000); //lo tenemos asi por el combox que falta que se distinga para cada usuario 
+
+      // Completar los datos del adulto correspondiente
+      await page.locator(`[name="adults[${i}].name"]`).fill(userDataADT[i].name);
+      await page.locator(`[name="adults[${i}].surname"]`).fill(userDataADT[i].surname);
+      await page.locator(`[name="adults[${i}].dateOfBirth"]`).fill(formatDate(userDataADT[i].dateOfBirth));
+
+      // Seleccionar la nacionalidad (suponiendo que esto es lo que debe hacerse para cada adulto)
+      await page.getByRole('combobox').click();
+      await page.getByRole('combobox').fill(userDataADT[i].nationality.substring(0, 3));
+
+      await page.getByLabel(userDataADT[i].nationality).click();
+
+      // Seleccionar el género para el adulto correspondiente
+      await page.getByRole('radio', { name: userDataADT[i].gender }).check();
+    }
+
+
+  // await page.locator('#Adult-0').click();
+
+  //   await page.locator('[name="adults[0].name"]').fill(userDataADT[0].name);
+  //   await page.locator('[name="adults[0].surname"]').fill(userDataADT[0].surname);
+  //   await page.locator('[name="adults[0].dateOfBirth"]').fill(formatDate(userDataADT[0].dateOfBirth));
+  //   await page.getByRole('combobox').click();
+  //   await page.getByLabel('Algeria').click();
+  //   await page.getByRole('radio', { name: userDataADT[0].genere}).check();
+
+
+  // await page.locator('#Adult-1').click();
+
+  // await page.locator('.d-flex > .icon-chevron-right').first().click();
+
+  await page.waitForTimeout(5000); // Espera 5 segundos
+
+
+  await page.getByRole('textbox', { name: 'Write name' }).click();
+  await page.getByRole('textbox', { name: 'Write name' }).fill(userDataADT[1].nombre);
+  await page.getByRole('textbox', { name: 'Write surname' }).click();
+  await page.getByRole('textbox', { name: 'Write surname' }).fill(userDataADT[1].apellido);
+  await page.getByRole('textbox', { name: 'MM/DD/YYYY' }).click();
+  await page.getByRole('textbox', { name: 'MM/DD/YYYY' }).fill(formatDate(userDataADT[1].fecha_nacimiento));
+  await page.getByRole('combobox', { name: 'Select a country' }).click();
+  await page.getByRole('combobox', { name: 'Select a country' }).fill('Spa');
+  await page.getByLabel('Spain').click();
+  await page.getByRole('radio', { name: 'Male', exact: true }).check();
+  await page.locator('#Child-0 > .px-4 > .card-title > div > .icon-chevron-right').click();
+
+  await page.waitForTimeout(5000); // Espera 5 segundos
+
+    await page.getByRole('textbox', { name: 'Write name' }).click();
+    await page.getByRole('textbox', { name: 'Write name' }).fill(userDataCHD[0].nombre);
+    await page.getByRole('textbox', { name: 'Write surname' }).click();
+    await page.getByRole('textbox', { name: 'Write surname' }).fill(userDataCHD[0].apellido);
+    await page.getByRole('textbox', { name: 'MM/DD/YYYY' }).dblclick();
+    await page.getByRole('textbox', { name: 'MM/DD/YYYY' }).fill(formatDate(userDataCHD[0].fecha_nacimiento));
+    await page.getByRole('combobox', { name: 'Select a country' }).click();
+    await page.getByRole('combobox', { name: 'Select a country' }).fill('b');
+    await page.getByLabel('Aruba').click();
+    await page.locator('#Child-0 span').filter({ hasText: 'Do you require personal' }).locator('span').click();
+    await page.getByRole('checkbox', { name: 'Hearing difficulty' }).check();
+    await page.getByRole('checkbox', { name: 'Visual difficulty' }).check();
+    await page.getByRole('checkbox', { name: 'Intellectual disability' }).check();
+  
+  
+    // await page.locator('#Infant-0 > .px-4 > .card-title > div > .icon-chevron-right').click();
+    // await page.waitForTimeout(5000); // Espera 5 segundos
+  
+    // await page.getByRole('textbox', { name: 'Write name' }).click();
+    // await page.getByRole('textbox', { name: 'Write name' }).fill('kama');
+    // await page.getByRole('textbox', { name: 'Write surname' }).click();
+    // await page.getByRole('textbox', { name: 'Write surname' }).fill('homa');
+    // await page.getByRole('textbox', { name: 'MM/DD/YYYY' }).dblclick();
+    // await page.getByRole('textbox', { name: 'MM/DD/YYYY' }).fill('08/01/2023_');
+    // await page.getByRole('combobox', { name: 'Select a country' }).click();
+    // await page.getByRole('combobox', { name: 'Select a country' }).fill('f');
+    // await page.getByLabel('Burkina Faso').click();
+  
+    await page.locator('#contact > .px-4 > .card-title > .d-flex > .icon-chevron-right').click();
+  
+    await page.getByPlaceholder('123456789').click();
+    await page.getByPlaceholder('123456789').fill(extractPhoneWithoutPrefix(userDataADT[0].phone));
+    await page.getByPlaceholder('abcde@example.com').click();
+    await page.getByPlaceholder('abcde@example.com').fill(userDataADT[0].email);
+    await page.getByRole('button', { name: 'Complete your purchase' }).click();
+    await page.waitForTimeout(5000); // Espera 5 segundos
+  
+    // Verifica y espera a que el iframe esté presente
+    await page.waitForSelector('iframe[title="Iframe for expiry date"]');
+  
+    // Localiza el iframe y su contenido
+    const iframe = page.frame({ url: /securedFields/ }); // Buscar iframe por URL parcial
+    if (iframe) {
+        console.log("Iframe encontrado.");
+        await iframe.locator('input[data-fieldtype="encryptedCardNumber"]').fill(paymentCards[0].cardNumber);
+    } else {
+        console.log("Iframe no encontrado.");
+    }
+  
+    await page.locator('iframe[title="Iframe for expiry date"]').contentFrame().getByLabel('Expiry date').fill(paymentCards[0].expiryDate);
+    await page.locator('iframe[title="Iframe for security code"]').contentFrame().getByLabel('Security code').fill(paymentCards[0].cvc);
+  
+    await page.getByLabel('Name on card').click();
+    await page.getByLabel('Name on card').fill('sofia');
+      
+  
+    await page.getByRole('checkbox').check();
+  
+    await page.getByRole('button', { name: 'Pay $' }).click();
+  
+    await page.waitForTimeout(10000); // Espera 10 segundos
+  });
+  
 
 });
