@@ -18,7 +18,7 @@ test.describe('chooseTicket', () => {
     page = await context.newPage();
 
     // Abre la página solo una vez al inicio
-    await page.goto(entornoData.dev.url);
+    await page.goto(entornoData.pre.url);
 
     await page.getByRole('button', { name: 'Accept all cookies' }).click();
   });
