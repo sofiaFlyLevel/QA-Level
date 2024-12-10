@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import {userDataADT, userDataCHD, ticketData, paymentCards} from '../fixtures/userData';
+import {userDataADT, userDataCHD, ticketData, paymentCards, userDataINL} from '../fixtures/userData';
 import { entornoData, apiData } from '../fixtures/environmentData';
 import { ruteData } from '../fixtures/ruteData';
 import { getApiResponse, transformApiResponse } from '../utils/apiHelper';
@@ -107,7 +107,6 @@ test.describe('chooseTicket', () => {
       console.error('Error al obtener la respuesta de la API:', error.message);
     }
   
-    
   });
   
  
@@ -155,19 +154,9 @@ test.describe('chooseTicket', () => {
   const returnFlightType = userDataADT[0].cabinData?.returnTypeFlight;
 
   await page.click(`div.price-cabin:has-text("${returnFlightClass}")`);
-
-  // await page.getByRole('button', { name: `${returnFlightClass} Icon ${returnFlightClass} $` }).click();
-
-// Luego selecciona la opción de tipo de vuelo de retorno (Light, Comfort, Extra)
-await page.locator('div').filter({ hasText: new RegExp(`^Continue with ${returnFlightType}`) }).nth(1).click();
-
-// await page.locator('div').filter({ hasText: `^Continue with ${returnFlightType}` }).nth(1).click();
-
-  // await page.locator('.icon-chevron-up').click();
+  // Luego selecciona la opción de tipo de vuelo de retorno (Light, Comfort, Extra)
+  await page.locator('div').filter({ hasText: new RegExp(`^Continue with ${returnFlightType}`) }).nth(1).click();
   await page.getByRole('button', { name: 'Continue' }).click();
-
-  // await page.waitForTimeout(5000); // Espera 5 segundos
-
 
   }); 
 
@@ -192,102 +181,124 @@ await page.locator('div').filter({ hasText: new RegExp(`^Continue with ${returnF
 
       // Seleccionar el género para el adulto correspondiente
       await page.getByRole('radio', { name: userDataADT[i].gender }).check();
+
+      
+        // Comprobamos si hay asistencia
+      if (userDataADT[i].assistance.length > 0) {
+        // Hacer clic en el elemento para expandir las opciones de asistencia
+        await page.locator(`#Adult-${i} .assistant-label`).click();
+    
+        // Recorrer las opciones de asistencia y seleccionarlas
+        for (let j = 0; j < userDataADT[i].assistance.length; j++) {
+          const assistanceOption = userDataADT[i].assistance[j];
+    
+          // Buscar la opción de asistencia y marcarla si existe
+          const checkboxLocator = page.locator(`#Adult-${i} .form-check-input + span:has-text("${assistanceOption}")`);
+          if (await checkboxLocator.isVisible()) {
+            await checkboxLocator.click();  // Marcar la casilla
+          } else {
+            console.log(`No se encontró la opción de asistencia: ${assistanceOption} para el pasajero ${i}`);
+          }
+        }
+      }
+      
+      
     }
 
+    for (let i = 0; i < ticketData.CHD; i++) {
+      // Cambiar el '0' por 'i' para cada adulto
+      await page.locator(`#Child-${i}`).click();
+      await page.waitForTimeout(5000); //lo tenemos asi por el combox que falta que se distinga para cada usuario 
 
-  // await page.locator('#Adult-0').click();
+      // Completar los datos del adulto correspondiente
+      await page.locator(`[name="children[${i}].name"]`).fill(userDataCHD[i].name);
+      await page.locator(`[name="children[${i}].surname"]`).fill(userDataCHD[i].surname);
+      await page.locator(`[name="children[${i}].dateOfBirth"]`).fill(formatDate(userDataCHD[i].dateOfBirth));
 
-  //   await page.locator('[name="adults[0].name"]').fill(userDataADT[0].name);
-  //   await page.locator('[name="adults[0].surname"]').fill(userDataADT[0].surname);
-  //   await page.locator('[name="adults[0].dateOfBirth"]').fill(formatDate(userDataADT[0].dateOfBirth));
-  //   await page.getByRole('combobox').click();
-  //   await page.getByLabel('Algeria').click();
-  //   await page.getByRole('radio', { name: userDataADT[0].genere}).check();
+      // Seleccionar la nacionalidad (suponiendo que esto es lo que debe hacerse para cada adulto)
+      await page.getByRole('combobox').click();
+      await page.getByRole('combobox').fill(userDataCHD[i].nationality.substring(0, 3));
 
+      await page.getByLabel(userDataCHD[i].nationality).click();
 
-  // await page.locator('#Adult-1').click();
+       // Comprobamos si hay asistencia
+       if (userDataCHD[i].assistance.length > 0) {
+        // Hacer clic en el elemento para expandir las opciones de asistencia
+        await page.locator(`#Child-${i} .assistant-label`).click();
+    
+        // Recorrer las opciones de asistencia y seleccionarlas
+        for (let j = 0; j < userDataCHD[i].assistance.length; j++) {
+          const assistanceOption = userDataCHD[i].assistance[j];
+    
+          // Buscar la opción de asistencia y marcarla si existe
+          const checkboxLocator = page.locator(`#Child-${i} .form-check-input + span:has-text("${assistanceOption}")`);
+          if (await checkboxLocator.isVisible()) {
+            await checkboxLocator.click();  // Marcar la casilla
+          } else {
+            console.log(`No se encontró la opción de asistencia: ${assistanceOption} para el pasajero ${i}`);
+          }
+        }
+      }
+    }
 
-  // await page.locator('.d-flex > .icon-chevron-right').first().click();
+    for (let i = 0; i < ticketData.INL; i++) {
+      // Cambiar el '0' por 'i' para cada adulto
+      await page.locator(`#Infant-${i}`).click();
+      await page.waitForTimeout(5000); //lo tenemos asi por el combox que falta que se distinga para cada usuario 
 
-  await page.waitForTimeout(5000); // Espera 5 segundos
+      // Completar los datos del adulto correspondiente
+      await page.locator(`[name="infants[${i}].name"]`).fill(userDataINL[i].name);
+      await page.locator(`[name="infants[${i}].surname"]`).fill(userDataINL[i].surname);
+      await page.locator(`[name="infants[${i}].dateOfBirth"]`).fill(formatDate(userDataINL[i].dateOfBirth));
 
+      // Seleccionar la nacionalidad (suponiendo que esto es lo que debe hacerse para cada adulto)
+      await page.getByRole('combobox').click();
+      await page.getByRole('combobox').fill(userDataINL[i].nationality.substring(0, 3));
 
-  await page.getByRole('textbox', { name: 'Write name' }).click();
-  await page.getByRole('textbox', { name: 'Write name' }).fill(userDataADT[1].nombre);
-  await page.getByRole('textbox', { name: 'Write surname' }).click();
-  await page.getByRole('textbox', { name: 'Write surname' }).fill(userDataADT[1].apellido);
-  await page.getByRole('textbox', { name: 'MM/DD/YYYY' }).click();
-  await page.getByRole('textbox', { name: 'MM/DD/YYYY' }).fill(formatDate(userDataADT[1].fecha_nacimiento));
-  await page.getByRole('combobox', { name: 'Select a country' }).click();
-  await page.getByRole('combobox', { name: 'Select a country' }).fill('Spa');
-  await page.getByLabel('Spain').click();
-  await page.getByRole('radio', { name: 'Male', exact: true }).check();
-  await page.locator('#Child-0 > .px-4 > .card-title > div > .icon-chevron-right').click();
+      await page.getByLabel(userDataINL[i].nationality).click();
+    }
 
-  await page.waitForTimeout(5000); // Espera 5 segundos
-
-    await page.getByRole('textbox', { name: 'Write name' }).click();
-    await page.getByRole('textbox', { name: 'Write name' }).fill(userDataCHD[0].nombre);
-    await page.getByRole('textbox', { name: 'Write surname' }).click();
-    await page.getByRole('textbox', { name: 'Write surname' }).fill(userDataCHD[0].apellido);
-    await page.getByRole('textbox', { name: 'MM/DD/YYYY' }).dblclick();
-    await page.getByRole('textbox', { name: 'MM/DD/YYYY' }).fill(formatDate(userDataCHD[0].fecha_nacimiento));
-    await page.getByRole('combobox', { name: 'Select a country' }).click();
-    await page.getByRole('combobox', { name: 'Select a country' }).fill('b');
-    await page.getByLabel('Aruba').click();
-    await page.locator('#Child-0 span').filter({ hasText: 'Do you require personal' }).locator('span').click();
-    await page.getByRole('checkbox', { name: 'Hearing difficulty' }).check();
-    await page.getByRole('checkbox', { name: 'Visual difficulty' }).check();
-    await page.getByRole('checkbox', { name: 'Intellectual disability' }).check();
+    await page.waitForTimeout(5000); // Espera 5 segundos
   
+    await page.locator('#contact').click();
   
-    // await page.locator('#Infant-0 > .px-4 > .card-title > div > .icon-chevron-right').click();
-    // await page.waitForTimeout(5000); // Espera 5 segundos
-  
-    // await page.getByRole('textbox', { name: 'Write name' }).click();
-    // await page.getByRole('textbox', { name: 'Write name' }).fill('kama');
-    // await page.getByRole('textbox', { name: 'Write surname' }).click();
-    // await page.getByRole('textbox', { name: 'Write surname' }).fill('homa');
-    // await page.getByRole('textbox', { name: 'MM/DD/YYYY' }).dblclick();
-    // await page.getByRole('textbox', { name: 'MM/DD/YYYY' }).fill('08/01/2023_');
-    // await page.getByRole('combobox', { name: 'Select a country' }).click();
-    // await page.getByRole('combobox', { name: 'Select a country' }).fill('f');
-    // await page.getByLabel('Burkina Faso').click();
-  
-    await page.locator('#contact > .px-4 > .card-title > .d-flex > .icon-chevron-right').click();
-  
-    await page.getByPlaceholder('123456789').click();
-    await page.getByPlaceholder('123456789').fill(extractPhoneWithoutPrefix(userDataADT[0].phone));
-    await page.getByPlaceholder('abcde@example.com').click();
-    await page.getByPlaceholder('abcde@example.com').fill(userDataADT[0].email);
+    await page.locator('input[name="contactDetails.phone"]').fill(userDataADT[0].phone);
+    await page.locator('input[name="contactDetails.email"]').fill(userDataADT[0].email);
+
     await page.getByRole('button', { name: 'Complete your purchase' }).click();
     await page.waitForTimeout(5000); // Espera 5 segundos
   
-    // Verifica y espera a que el iframe esté presente
-    await page.waitForSelector('iframe[title="Iframe for expiry date"]');
-  
-    // Localiza el iframe y su contenido
-    const iframe = page.frame({ url: /securedFields/ }); // Buscar iframe por URL parcial
-    if (iframe) {
-        console.log("Iframe encontrado.");
-        await iframe.locator('input[data-fieldtype="encryptedCardNumber"]').fill(paymentCards[0].cardNumber);
-    } else {
-        console.log("Iframe no encontrado.");
-    }
-  
-    await page.locator('iframe[title="Iframe for expiry date"]').contentFrame().getByLabel('Expiry date').fill(paymentCards[0].expiryDate);
-    await page.locator('iframe[title="Iframe for security code"]').contentFrame().getByLabel('Security code').fill(paymentCards[0].cvc);
-  
-    await page.getByLabel('Name on card').click();
-    await page.getByLabel('Name on card').fill('sofia');
-      
-  
-    await page.getByRole('checkbox').check();
-  
-    await page.getByRole('button', { name: 'Pay $' }).click();
-  
-    await page.waitForTimeout(10000); // Espera 10 segundos
+   
   });
+
+  test('pay', async () =>{
+
+     // Verifica y espera a que el iframe esté presente
+     await page.waitForSelector('iframe[title="Iframe for expiry date"]');
+  
+     // Localiza el iframe y su contenido
+     const iframe = page.frame({ url: /securedFields/ }); // Buscar iframe por URL parcial
+     if (iframe) {
+         console.log("Iframe encontrado.");
+         await iframe.locator('input[data-fieldtype="encryptedCardNumber"]').fill(paymentCards[0].cardNumber);
+     } else {
+         console.log("Iframe no encontrado.");
+     }
+   
+     await page.locator('iframe[title="Iframe for expiry date"]').contentFrame().getByLabel('Expiry date').fill(paymentCards[0].expiryDate);
+     await page.locator('iframe[title="Iframe for security code"]').contentFrame().getByLabel('Security code').fill(paymentCards[0].cvc);
+   
+     await page.getByLabel('Name on card').click();
+     await page.getByLabel('Name on card').fill('sofia');
+       
+   
+     await page.getByRole('checkbox').check();
+   
+     await page.getByRole('button', { name: 'Pay $' }).click();
+   
+     await page.waitForTimeout(10000); // Espera 10 segundos
+  })
+
   
 
 });
