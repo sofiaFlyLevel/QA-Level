@@ -1,4 +1,4 @@
 export const ruteData = {
-    origin: "BCN", 
-    destination: "BOS"
+    origin: "FCO", 
+    destination: "JFK"
 }

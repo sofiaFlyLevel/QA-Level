@@ -9,15 +9,9 @@ export enum CabinClass {
   PREMIUM = 'Premium',
 }
 
-// export const ticketData = {
-//   ADT: 1, 
-//   CHD: 0, 
-//   INL: 0, 
-// }; 
-
 // usuarios Adult 
 export const userDataADT = [
-  {
+  { //[0]
     name: 'Juan',
     surname: 'Perez',
     dateOfBirth: '1990-05-15',
@@ -26,16 +20,9 @@ export const userDataADT = [
     phone: '+93 791234567', // Prefijo de Afganistán
     email: 'sofiainkoova@gmail.com',
     gender: 'Female',
-    assistance: [
-      // 'Hearing difficulty',
-      // 'Visual difficulty',
-      // 'Intellectual disability',
-      // 'Help with climbing and descending stairs. I can move around the plane without difficulty',
-      // 'I can climb and descend stairs, and move around the plane with some difficulty',
-      // 'I need assistance at all times'
-    ]
+    assistance: []
   },
-  {
+  { //[1]
     name: 'Prueba',
     surname: 'Hola',
     dateOfBirth: '1990-05-15',
@@ -44,13 +31,10 @@ export const userDataADT = [
     phone: '+93 791234567', // Prefijo de Afganistán
     email: 'sofiainkoova@gmail.com',
     gender: 'Female',
-    assistance: [
-      // 'Visual difficulty',
-      // 'Help with climbing and descending stairs. I can move around the plane without difficulty'
-    ]
+    assistance: []
   },
-  {
-    name: 'Juan',
+  { //[2]
+    name: 'Sofía',
     surname: 'Pérez',
     dateOfBirth: '1990-05-15',
     language: 'Afghanistan',
@@ -60,9 +44,9 @@ export const userDataADT = [
     gender: 'Female',
     assistance: [] // Sin opciones de asistencia
   },
-  {
+  { //[3]
     name: 'Juana',
-    surname: 'González',
+    surname: 'Gonzalez',
     dateOfBirth: '1985-08-22',
     language: 'Algeria',
     nationality: 'Algeria',
@@ -73,7 +57,7 @@ export const userDataADT = [
       'I need assistance at all times'
     ]
   },
-  {
+  { //[4]
     name: 'Carlos',
     surname: 'López',
     dateOfBirth: '1992-01-10',
@@ -87,7 +71,7 @@ export const userDataADT = [
       'I need assistance at all times'
     ]
   },
-  {
+  { //[5]
     name: 'Ana',
     surname: 'Martínez',
     dateOfBirth: '1988-04-17',
@@ -96,9 +80,16 @@ export const userDataADT = [
     phone: '+34 678901234', // Prefijo de España
     email: 'sofiainkoova@gmail.com',
     gender: 'Female',
-    assistance: [] // Sin opciones de asistencia
+    assistance: [
+      'Hearing difficulty',
+      'Visual difficulty',
+      'Intellectual disability',
+      'Help with climbing and descending stairs. I can move around the plane without difficulty',
+      'I can climb and descend stairs, and move around the plane with some difficulty',
+      'I need assistance at all times'
+    ] 
   },
-  {
+  { //[6]
     name: 'Luis',
     surname: 'Hernández',
     dateOfBirth: '1995-09-30',
@@ -111,7 +102,7 @@ export const userDataADT = [
       'Visual difficulty'
     ]
   },
-  {
+  { //[7]
     name: 'Elena',
     surname: 'Torres',
     dateOfBirth: '1993-06-12',
@@ -125,7 +116,7 @@ export const userDataADT = [
       'I need assistance at all times'
     ]
   },
-  {
+  { //[8]
     name: 'Pablo',
     surname: 'Ramírez',
     dateOfBirth: '1989-02-28',
@@ -139,7 +130,7 @@ export const userDataADT = [
       'Help with climbing and descending stairs. I can move around the plane without difficulty'
     ]
   },
-  {
+  { //[9]
     name: 'Sofía M.',
     surname: 'Morales',
     dateOfBirth: '1996-07-25',
@@ -152,7 +143,7 @@ export const userDataADT = [
       'Help with climbing and descending stairs. I can move around the plane without difficulty'
     ]
   },
-  {
+  { //[10]
     name: 'Javier',
     surname: 'Cruz',
     dateOfBirth: '1994-11-15',
@@ -161,9 +152,12 @@ export const userDataADT = [
     phone: '+34 620123456', // Prefijo de España
     email: 'sofiainkoova@gmail.com',
     gender: 'Male',
-    assistance: [] // Sin opciones de asistencia
+    assistance: [
+      'Visual difficulty',
+      'Help with climbing and descending stairs. I can move around the plane without difficulty'
+    ]
   },
-  {
+  { //[11]
     name: 'Clara',
     surname: 'Navarro',
     dateOfBirth: '1987-03-09',
@@ -177,7 +171,7 @@ export const userDataADT = [
       'I can climb and descend stairs, and move around the plane with some difficulty'
     ]
   },
-  {
+  { //[12]
     name: 'Raúl',
     surname: 'Vega',
     dateOfBirth: '1991-12-05',

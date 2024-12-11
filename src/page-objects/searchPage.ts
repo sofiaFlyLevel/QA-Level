@@ -54,12 +54,14 @@ export async function selectRoundTripDates(page, apiData, origin, destination,  
       const apiResponse = await getApiResponse(apiData.baseUrl, destination, origin, apiData.definition);
       const transformedReturnDates = transformApiResponse(apiResponse);
 
-      // Filtrar fechas de regreso para que sean posteriores a la fecha de salida
+      // Filtrar fechas de regreso para que sean posteriores a la fecha de salida y al menos 5 días después
       const filteredReturnDates = transformedReturnDates.filter(returnDate => {
-          const returnDateObj = new Date(returnDate.year, returnDate.month - 1, returnDate.value);
-          const departureDateObj = new Date(selectedDepartureDate.year, selectedDepartureDate.month - 1, selectedDepartureDate.value);
-          return returnDateObj > departureDateObj;
+        const returnDateObj = new Date(returnDate.year, returnDate.month - 1, returnDate.value);
+        const departureDateObj = new Date(selectedDepartureDate.year, selectedDepartureDate.month - 1, selectedDepartureDate.value);
+        const diffInDays = (returnDateObj - departureDateObj) / (1000 * 60 * 60 * 24); // Diferencia en días
+        return diffInDays > 5; // Al menos 5 días después
       });
+
 
       // Seleccionar la primera fecha válida de regreso (segundo calendario)
       if (filteredReturnDates.length > 0) {
