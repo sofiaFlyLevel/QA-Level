@@ -191,7 +191,7 @@ export const userDataADT = [
 
 // usuarios infantil
 export const userDataINL = [
-  {
+  { //[0]
     name: 'Sofia',
     surname: 'Gomez',
     dateOfBirth: '2023-11-28', // 7 days old
@@ -201,8 +201,8 @@ export const userDataINL = [
     email: 'sofiagomez@gmail.com',
     gender: 'Female'
   },
-  {
-    name: 'Mateo',
+  { //[1]
+    name: 'Mateó',
     surname: 'Rodríguez',
     dateOfBirth: '2022-12-05', // 12 months old
     language: 'Chile',
@@ -297,7 +297,7 @@ export const userDataINL = [
 
 //usuarios niños
 export const userDataCHD = [
-  {
+  { //[0]
     name: 'Lucas',
     surname: 'Fernandez',
     dateOfBirth: '2015-03-22', // 9 years old
@@ -311,8 +311,8 @@ export const userDataCHD = [
       // 'I can climb and descend stairs, and move around the plane with some difficulty'
     ]
   },
-  {
-    name: 'Valeria',
+  { //[1]
+    name: 'Valería M.',
     surname: 'García',
     dateOfBirth: '2018-07-15', // 6 years old
     language: 'Mexico',
@@ -322,7 +322,7 @@ export const userDataCHD = [
     gender: 'Female',
     assistance: [] // No assistance
   },
-  {
+  { //[2]
     name: 'Mateo',
     surname: 'Ramírez',
     dateOfBirth: '2013-11-05', // 11 years old
@@ -335,7 +335,20 @@ export const userDataCHD = [
       'Visual difficulty'
     ]
   },
-  {
+  {//[3]
+    name: 'Daniel',
+    surname: 'Cruz',
+    dateOfBirth: '2021-06-14', // 3 years old
+    language: 'Peru',
+    nationality: 'Peru',
+    phone: '+51 986543210', // Peru prefix
+    email: 'danielcruz@gmail.com',
+    gender: 'Male',
+    assistance: [
+      'Help with climbing and descending stairs. I can move around the plane without difficulty'
+    ]
+  },
+  { 
     name: 'Isabella',
     surname: 'Sánchez',
     dateOfBirth: '2016-02-18', // 8 years old
@@ -370,19 +383,7 @@ export const userDataCHD = [
       'I can climb and descend stairs, and move around the plane with some difficulty'
     ]
   },
-  {
-    name: 'Daniel',
-    surname: 'Cruz',
-    dateOfBirth: '2021-06-14', // 3 years old
-    language: 'Peru',
-    nationality: 'Peru',
-    phone: '+51 986543210', // Peru prefix
-    email: 'danielcruz@gmail.com',
-    gender: 'Male',
-    assistance: [
-      'Help with climbing and descending stairs. I can move around the plane without difficulty'
-    ]
-  },
+  
   {
     name: 'Mía',
     surname: 'Morales',
