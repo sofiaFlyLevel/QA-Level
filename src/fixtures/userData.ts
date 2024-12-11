@@ -1,19 +1,19 @@
-enum CabinType {
+export enum CabinType {
   LIGHT = 'Light',
   COMFORT = 'Comfort',
   EXTRA = 'Extra',
 }
 
-enum CabinClass {
+export enum CabinClass {
   ECONOMY = 'Economy',
   PREMIUM = 'Premium',
 }
 
-export const ticketData = {
-  ADT: 1, 
-  CHD: 0, 
-  INL: 0, 
-}; 
+// export const ticketData = {
+//   ADT: 1, 
+//   CHD: 0, 
+//   INL: 0, 
+// }; 
 
 // usuarios Adult 
 export const userDataADT = [
@@ -26,12 +26,6 @@ export const userDataADT = [
     phone: '+93 791234567', // Prefijo de Afganistán
     email: 'sofiainkoova@gmail.com',
     gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [
       // 'Hearing difficulty',
       // 'Visual difficulty',
@@ -50,15 +44,9 @@ export const userDataADT = [
     phone: '+93 791234567', // Prefijo de Afganistán
     email: 'sofiainkoova@gmail.com',
     gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [
-      'Visual difficulty',
-      'Help with climbing and descending stairs. I can move around the plane without difficulty'
+      // 'Visual difficulty',
+      // 'Help with climbing and descending stairs. I can move around the plane without difficulty'
     ]
   },
   {
@@ -70,12 +58,6 @@ export const userDataADT = [
     phone: '+93 791234567', // Prefijo de Afganistán
     email: 'sofiainkoova@gmail.com',
     gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [] // Sin opciones de asistencia
   },
   {
@@ -87,12 +69,6 @@ export const userDataADT = [
     phone: '+213 65234567', // Prefijo de Argelia
     email: 'sofiainkoova@gmail.com',
     gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [
       'I need assistance at all times'
     ]
@@ -106,12 +82,6 @@ export const userDataADT = [
     phone: '+34 912345678', // Prefijo de España
     email: 'sofiainkoova@gmail.com',
     gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [
       'Hearing difficulty',
       'I need assistance at all times'
@@ -126,12 +96,6 @@ export const userDataADT = [
     phone: '+34 678901234', // Prefijo de España
     email: 'sofiainkoova@gmail.com',
     gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [] // Sin opciones de asistencia
   },
   {
@@ -143,12 +107,6 @@ export const userDataADT = [
     phone: '+376 355555', // Prefijo de Andorra
     email: 'sofiainkoova@gmail.com',
     gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [
       'Visual difficulty'
     ]
@@ -162,12 +120,6 @@ export const userDataADT = [
     phone: '+375 292345678', // Prefijo de Bielorrusia
     email: 'sofiainkoova@gmail.com',
     gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [
       'I can climb and descend stairs, and move around the plane with some difficulty',
       'I need assistance at all times'
@@ -182,12 +134,6 @@ export const userDataADT = [
     phone: '+594 69420678', // Prefijo de Guayana Francesa
     email: 'sofiainkoova@gmail.com',
     gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [
       'Intellectual disability',
       'Help with climbing and descending stairs. I can move around the plane without difficulty'
@@ -202,12 +148,6 @@ export const userDataADT = [
     phone: '+375 447890123', // Prefijo de Bielorrusia
     email: 'sofiainkoova@gmail.com',
     gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [
       'Help with climbing and descending stairs. I can move around the plane without difficulty'
     ]
@@ -221,12 +161,6 @@ export const userDataADT = [
     phone: '+34 620123456', // Prefijo de España
     email: 'sofiainkoova@gmail.com',
     gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [] // Sin opciones de asistencia
   },
   {
@@ -238,12 +172,6 @@ export const userDataADT = [
     phone: '+34 917654321', // Prefijo de España
     email: 'sofiainkoova@gmail.com',
     gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [
       'Intellectual disability',
       'I can climb and descend stairs, and move around the plane with some difficulty'
@@ -258,12 +186,6 @@ export const userDataADT = [
     phone: '+34 611234567', // Prefijo de España
     email: 'sofiainkoova@gmail.com',
     gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [
       'Hearing difficulty',
       'Visual difficulty',
@@ -283,14 +205,7 @@ export const userDataINL = [
     nationality: 'Argentina',
     phone: '+54 9123456789', // Argentina prefix
     email: 'sofiagomez@gmail.com',
-    gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
-    assistance: [] // No assistance
+    gender: 'Female'
   },
   {
     name: 'Mateo',
@@ -300,16 +215,8 @@ export const userDataINL = [
     nationality: 'Chile',
     phone: '+56 912345678', // Chile prefix
     email: 'mateorodriguez@gmail.com',
-    gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
-    assistance: [
-      'I can climb and descend stairs, and move around the plane with some difficulty'
-    ]
+    gender: 'Male'
+    
   },
   {
     name: 'Valentina',
@@ -319,14 +226,7 @@ export const userDataINL = [
     nationality: 'Mexico',
     phone: '+52 9987654321', // Mexico prefix
     email: 'valentina.fernandez@gmail.com',
-    gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
-    assistance: [] // No assistance
+    gender: 'Female'
   },
   {
     name: 'Emilio',
@@ -336,16 +236,7 @@ export const userDataINL = [
     nationality: 'Spain',
     phone: '+34 912345678', // Spain prefix
     email: 'emiliocruz@gmail.com',
-    gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
-    assistance: [
-      'Help with climbing and descending stairs. I can move around the plane without difficulty'
-    ]
+    gender: 'Male'
   },
   {
     name: 'Lucía',
@@ -355,14 +246,7 @@ export const userDataINL = [
     nationality: 'Peru',
     phone: '+51 912345678', // Peru prefix
     email: 'luciaperez@gmail.com',
-    gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
-    assistance: [] // No assistance
+    gender: 'Female'
   },
   {
     name: 'Martín',
@@ -372,16 +256,7 @@ export const userDataINL = [
     nationality: 'Colombia',
     phone: '+57 3001234567', // Colombia prefix
     email: 'martin.lopez@gmail.com',
-    gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
-    assistance: [
-      'Intellectual disability'
-    ]
+    gender: 'Male'
   },
   {
     name: 'Camila',
@@ -391,14 +266,7 @@ export const userDataINL = [
     nationality: 'Guatemala',
     phone: '+502 91234567', // Guatemala prefix
     email: 'camila.sanchez@gmail.com',
-    gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
-    assistance: [] // No assistance
+    gender: 'Female'
   },
   {
     name: 'Andrés',
@@ -408,14 +276,7 @@ export const userDataINL = [
     nationality: 'Venezuela',
     phone: '+58 4123456789', // Venezuela prefix
     email: 'andres.morales@gmail.com',
-    gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
-    assistance: [] // No assistance
+    gender: 'Male'
   },
   {
     name: 'Julieta',
@@ -425,16 +286,7 @@ export const userDataINL = [
     nationality: 'Uruguay',
     phone: '+598 91234567', // Uruguay prefix
     email: 'julietanavarro@gmail.com',
-    gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
-    assistance: [
-      'Hearing difficulty'
-    ]
+    gender: 'Female'
   },
   {
     name: 'Diego',
@@ -444,14 +296,7 @@ export const userDataINL = [
     nationality: 'Ecuador',
     phone: '+593 912345678', // Ecuador prefix
     email: 'diego.martinez@gmail.com',
-    gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
-    assistance: [] // No assistance
+    gender: 'Male'
   }
 ];
 
@@ -467,12 +312,6 @@ export const userDataCHD = [
     phone: '+34 612345678', // Spain prefix
     email: 'lucasfernandez@gmail.com',
     gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [
       // 'Hearing difficulty',
       // 'I can climb and descend stairs, and move around the plane with some difficulty'
@@ -487,12 +326,6 @@ export const userDataCHD = [
     phone: '+52 123456789', // Mexico prefix
     email: 'valeriagarcia@gmail.com',
     gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [] // No assistance
   },
   {
@@ -504,12 +337,6 @@ export const userDataCHD = [
     phone: '+54 91123456789', // Argentina prefix
     email: 'mateoramirez@gmail.com',
     gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [
       'Visual difficulty'
     ]
@@ -523,12 +350,6 @@ export const userDataCHD = [
     phone: '+57 3001234567', // Colombia prefix
     email: 'isabellasanchez@gmail.com',
     gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [] // No assistance
   },
   {
@@ -540,12 +361,6 @@ export const userDataCHD = [
     phone: '+56 932345678', // Chile prefix
     email: 'diego.martinez@gmail.com',
     gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [] // No assistance
   },
   {
@@ -557,12 +372,6 @@ export const userDataCHD = [
     phone: '+34 678901234', // Spain prefix
     email: 'emmalopez@gmail.com',
     gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [
       'I can climb and descend stairs, and move around the plane with some difficulty'
     ]
@@ -576,12 +385,6 @@ export const userDataCHD = [
     phone: '+51 986543210', // Peru prefix
     email: 'danielcruz@gmail.com',
     gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [
       'Help with climbing and descending stairs. I can move around the plane without difficulty'
     ]
@@ -595,12 +398,6 @@ export const userDataCHD = [
     phone: '+598 91234567', // Uruguay prefix
     email: 'miamorales@gmail.com',
     gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [] // No assistance
   },
   {
@@ -612,12 +409,6 @@ export const userDataCHD = [
     phone: '+502 12345678', // Guatemala prefix
     email: 'hugotorres@gmail.com',
     gender: 'Male',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [] // No assistance
   },
   {
@@ -629,12 +420,6 @@ export const userDataCHD = [
     phone: '+58 4241234567', // Venezuela prefix
     email: 'olivianavarro@gmail.com',
     gender: 'Female',
-    cabinData: {
-      outboundClassFlight: CabinClass.ECONOMY,
-      outboundTypeFlight: CabinType.LIGHT,
-      returnClassFlight: CabinClass.ECONOMY,
-      returnTypeFlight: CabinType.LIGHT,
-    },
     assistance: [] // No assistance
   }
 ];
@@ -663,11 +448,13 @@ export const paymentCards = [
   {
     cardNumber: '2222 4000 7000 0005',
     expiryDate: '03/30',
-    cvc: '737'
+    cvc: '737',
+    nameOnCard: "Juan Pablo Antonio Maximiliano Alejandro Fernández de Córdoba Sánchez"
   },
   {
     cardNumber: '5577 0000 5577 0004',
     expiryDate: '03/30',
-    cvc: '737'
+    cvc: '737',
+    nameOnCard: "Sofia Martínez"
   }
 ];

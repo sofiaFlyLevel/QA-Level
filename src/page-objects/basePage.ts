@@ -1,4 +1,6 @@
 // basePage.ts
+import fs from 'fs';
+const path = require('path'); // Add path module to manage file paths
 
 // Función para obtener el sufijo ordinal (st, nd, rd, th)
 function getOrdinalSuffix(day: number): string {
@@ -45,3 +47,32 @@ export function extractPhoneWithoutPrefix(phone) {
   // Divide la cadena del teléfono por espacios y toma la segunda parte
   return phone.split(' ').slice(1).join(' ');
 }
+
+
+// export async function handleErrorWithScreenshot(page, error, testName) {
+//   console.error(`Error in ${testName}:`, error);
+
+//   // Check if the page is closed
+//   if (page.isClosed()) {
+//     console.error('Page is already closed, cannot take screenshot.');
+//     return;
+//   }
+
+//   // Ensure the screenshots directory exists
+//   const screenshotsDir = path.join(__dirname, 'screenshots');
+//   if (!fs.existsSync(screenshotsDir)) {
+//     fs.mkdirSync(screenshotsDir);
+//   }
+
+//   // Define the screenshot path
+//   const screenshotPath = path.join(screenshotsDir, `${testName}_error_${Date.now()}.png`);
+//   console.log(`Saving screenshot to: ${screenshotPath}`);
+
+//   try {
+//     // Take a screenshot
+//     await page.screenshot({ path: screenshotPath });
+//   } catch (screenshotError) {
+//     console.error('Error taking screenshot:', screenshotError);
+//   }
+// }
+
