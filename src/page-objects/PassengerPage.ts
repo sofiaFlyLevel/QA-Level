@@ -21,9 +21,10 @@ export async function fillPassengerData(page, DataADT, DataCHD, DataINL) {
         await page.getByLabel(DataADT[i].nationality).click();
   
         // Seleccionar el género para el adulto correspondiente
-        await page.getByRole('radio', { name: DataADT[i].gender }).check();
-  
-        
+        const gender = DataADT[i].gender.toLowerCase(); // 'male' o 'female'
+        await page.locator(`input[name="adults[${i}].gender"][value="${gender}"]`).check();
+
+
           // Comprobamos si hay asistencia
         if (DataADT[i].assistance.length > 0) {
           // Hacer clic en el elemento para expandir las opciones de asistencia
@@ -104,7 +105,10 @@ export async function fillPassengerData(page, DataADT, DataCHD, DataINL) {
     
       await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
       await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+     
+      // await page.waitForTimeout(5000); // Esperar 5 segundos
   
-      
+      // await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      // await page.waitForTimeout(5000); // Esperar 5 segundos
     
 }

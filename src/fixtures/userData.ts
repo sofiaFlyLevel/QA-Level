@@ -204,7 +204,7 @@ export const userDataINL = [
   { //[1]
     name: 'Mateó',
     surname: 'Rodríguez',
-    dateOfBirth: '2022-12-05', // 12 months old
+    dateOfBirth: '2023-12-05', // 12 months old
     language: 'Chile',
     nationality: 'Chile',
     phone: '+56 912345678', // Chile prefix
@@ -225,7 +225,7 @@ export const userDataINL = [
   {
     name: 'Emilio',
     surname: 'Cruz',
-    dateOfBirth: '2022-05-15', // 19 months old
+    dateOfBirth: '2023-05-15', // 19 months old
     language: 'Spain',
     nationality: 'Spain',
     phone: '+34 912345678', // Spain prefix
@@ -245,7 +245,7 @@ export const userDataINL = [
   {
     name: 'Martín',
     surname: 'López',
-    dateOfBirth: '2022-03-05', // 21 months old
+    dateOfBirth: '2023-03-05', // 21 months old
     language: 'Colombia',
     nationality: 'Colombia',
     phone: '+57 3001234567', // Colombia prefix
@@ -255,7 +255,7 @@ export const userDataINL = [
   {
     name: 'Camila',
     surname: 'Sánchez',
-    dateOfBirth: '2022-10-01', // 14 months old
+    dateOfBirth: '2023-10-01', // 14 months old
     language: 'Guatemala',
     nationality: 'Guatemala',
     phone: '+502 91234567', // Guatemala prefix
@@ -275,7 +275,7 @@ export const userDataINL = [
   {
     name: 'Julieta',
     surname: 'Navarro',
-    dateOfBirth: '2022-11-12', // 13 months old
+    dateOfBirth: '2023-11-12', // 13 months old
     language: 'Uruguay',
     nationality: 'Uruguay',
     phone: '+598 91234567', // Uruguay prefix
