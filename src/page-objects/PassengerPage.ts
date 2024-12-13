@@ -107,88 +107,65 @@ export async function fillPassengerData(page, DataADT, DataCHD, DataINL) {
       await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
          
 }
+
+
+
+
+
 //Adult0 no rellena bien 
 // export async function fillPassengerData(page, DataADT, DataCHD, DataINL) {
-//   const fillPersonData = async (group, prefix, data) => {
-//     for (let i = 0; i < data.length; i++) {
-//       const groupLocator = `#${group}-${i}`;
-//       const nameFieldLocator = `[name="${prefix}[${i}].name"]`;
-
-//       if (group === 'Adult' && i === 0) {
-//         // Tratamiento especial para #Adult-0 si aplica
-//                 // Esperar a que el campo de nombre esté disponible
-//         await page.locator(nameFieldLocator).fill(data[i].name);
-    
-//         // Llenar otros campos
-//         await page.locator(`[name="${prefix}[${i}].surname"]`).fill(data[i].surname);
-//         await page.locator(`[name="${prefix}[${i}].dateOfBirth"]`).fill(formatDate(data[i].dateOfBirth));
-    
-//         // Seleccionar nacionalidad
-//         const nationalityInput = page.getByRole('combobox');
-//         await nationalityInput.click();
-//         await nationalityInput.fill(data[i].nationality.substring(0, 3));
-//         await page.getByLabel(data[i].nationality).click();
-    
-//         // Seleccionar género si es un adulto
-//         if (prefix === 'adults') {
-//           const gender = data[i].gender.toLowerCase(); // 'male' o 'female'
-//           await page.locator(`input[name="${prefix}[${i}].gender"][value="${gender}"]`).check();
-//         }
-//       }
+//   const fillPassenger = async (type, data, variable) => {
       
-  
-//       // Solo esperar si no está visible (evitar redundancia para #Adult-0)
-//       if (!(await page.locator(groupLocator).isVisible())) {
-//         await page.locator(groupLocator).waitFor({ state: 'visible' });
-//       }
-  
-//       // Hacer clic en el grupo
-//       await page.locator(groupLocator).click();
-  
-//       // Esperar a que el campo de nombre esté disponible
-//       await page.locator(nameFieldLocator).waitFor({ state: 'visible' });
-//       await page.locator(nameFieldLocator).fill(data[i].name);
-  
-//       // Llenar otros campos
-//       await page.locator(`[name="${prefix}[${i}].surname"]`).fill(data[i].surname);
-//       await page.locator(`[name="${prefix}[${i}].dateOfBirth"]`).fill(formatDate(data[i].dateOfBirth));
-  
-//       // Seleccionar nacionalidad
-//       const nationalityInput = page.getByRole('combobox');
-//       await nationalityInput.click();
-//       await nationalityInput.fill(data[i].nationality.substring(0, 3));
-//       await page.getByLabel(data[i].nationality).click();
-  
-//       // Seleccionar género si es un adulto
-//       if (prefix === 'adults') {
-//         const gender = data[i].gender.toLowerCase(); // 'male' o 'female'
-//         await page.locator(`input[name="${prefix}[${i}].gender"][value="${gender}"]`).check();
-//       }
-  
-//       // Seleccionar opciones de asistencia si las hay
-//       if (data[i].assistance?.length) {
-//         for (const option of data[i].assistance) {
-//           const checkboxLocator = page.locator(
-//             `#${prefix}-${i} .form-check-input + span:has-text("${option}")`
-//           );
-//           if (await checkboxLocator.isVisible()) {
-//             await checkboxLocator.click();
+//       for (let i = 0; i < data.length; i++) {
+//           // Para adultos, asumimos que el primer adulto ya está desplegado
+//           if (type === 'Adult' && i > 0) {
+//               await page.locator(`#${type}-${i}`).click();
 //           }
-//         }
+
+//           // Completar los datos del pasajero
+//           await page.locator(`[name="${variable}[${i}].name"]`).fill(data[i].name);
+//           await page.locator(`[name="${variable}[${i}].surname"]`).fill(data[i].surname);
+//           await page.locator(`[name="${variable}[${i}].dateOfBirth"]`).fill(formatDate(data[i].dateOfBirth));
+
+//           // Seleccionar la nacionalidad
+//           await page.getByRole('combobox').click();
+//           await page.getByRole('combobox').fill(data[i].nationality.substring(0, 3));
+//           await page.getByLabel(data[i].nationality).click();
+
+//           // Seleccionar el género
+//           const gender = data[i].gender.toLowerCase();
+//           await page.locator(`input[name="${variable}[${i}].gender"][value="${gender}"]`).check();
+
+//           // Comprobar y seleccionar asistencia
+//           if (data[i].assistance.length > 0) {
+//               await page.locator(`#${type}-${i} .assistant-label`).click();
+//               for (const assistanceOption of data[i].assistance) {
+//                   const checkboxLocator = page.locator(`#${type}-${i} .form-check-input + span:has-text("${assistanceOption}")`);
+//                   if (await checkboxLocator.isVisible()) {
+//                       await checkboxLocator.click();
+//                   } else {
+//                       console.log(`No se encontró la opción de asistencia: ${assistanceOption} para el pasajero ${i}`);
+//                   }
+//               }
+//           }
 //       }
-//     }
 //   };
-  
 
-//   // Procesar en paralelo
-//   await Promise.all([
-//     fillPersonData('Adult', 'adults', DataADT),
-//     fillPersonData('Child', 'children', DataCHD),
-//     fillPersonData('Infant', 'infants', DataINL),
-//   ]);
+//   // Llenar datos de adultos, niños e infantes
+//   await page.waitForTimeout(5000); // Espera 5 segundos
+//   await fillPassenger('Adult', DataADT, 'adults');
+//   await fillPassenger('Child', DataCHD, 'children');
+//   await fillPassenger('Infant', DataINL, 'infants');
 
-//   // Rellenar detalles de contacto
+//   // Esperar a que el formulario de contacto esté visible
+//   await page.waitForSelector('#contact');
 //   await page.locator('#contact').click();
+  
+//   // Esperar hasta que el campo de teléfono esté habilitado
+//   await page.waitForSelector('input[name="contactDetails.phone"]');
+//   // Completar los detalles de contacto
 //   await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
 //   await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
 // }
+
+

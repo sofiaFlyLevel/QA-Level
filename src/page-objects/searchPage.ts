@@ -52,62 +52,53 @@ export async function selectCountryAndDate(page, apiData, origin, destination, c
 
   export async function selectRoundTripDates(page, apiData, origin, destination, calendarIndex = 0) {
     let selectedDepartureDate, selectedReturnDate;
-  
+
     try {
         // Seleccionar fecha de salida (primer calendario)
         selectedDepartureDate = await selectCountryAndDate(page, apiData, origin, destination, 0);
-  
+
         // Llamada a la API para fechas de regreso (cambiar origen y destino)
         const apiResponse = await getApiResponse(apiData.baseUrl, destination, origin, apiData.definition);
         const transformedReturnDates = transformApiResponse(apiResponse);
-  
-        // Calcular el intervalo de 1 a 2 meses después de la fecha de salida
+
+        // Crear un objeto de fecha para la fecha de salida
         const departureDateObj = new Date(selectedDepartureDate.year, selectedDepartureDate.month - 1, selectedDepartureDate.value);
-        const oneMonthAfterDeparture = new Date(departureDateObj);
-        oneMonthAfterDeparture.setMonth(departureDateObj.getMonth() + 1);
-  
-        const twoMonthsAfterDeparture = new Date(departureDateObj);
-        twoMonthsAfterDeparture.setMonth(departureDateObj.getMonth() + 2);
-  
-        // Generar una fecha aleatoria dentro del rango de 1 a 2 meses después de la fecha de salida
-        const randomReturnTime = new Date(oneMonthAfterDeparture.getTime() + Math.random() * (twoMonthsAfterDeparture.getTime() - oneMonthAfterDeparture.getTime()));
-  
-        // Filtrar fechas de regreso para que estén después de la fecha generada y al menos 5 días después
+
+        // Filtrar fechas de regreso para que estén después de la fecha de salida
         const filteredReturnDates = transformedReturnDates.filter(returnDate => {
             const returnDateObj = new Date(returnDate.year, returnDate.month - 1, returnDate.value);
-            const diffInDays = (returnDateObj - randomReturnTime) / (1000 * 60 * 60 * 24); // Diferencia en días
-            return returnDateObj >= randomReturnTime && diffInDays >= 5; // Al menos 5 días después de la fecha aleatoria generada
+            return returnDateObj > departureDateObj; // Asegurarse de que la fecha de regreso sea después de la de salida
         });
-  
+
         // Seleccionar la primera fecha válida de regreso (segundo calendario)
         if (filteredReturnDates.length > 0) {
             selectedReturnDate = filteredReturnDates[0];
-  
+
             const currentMonthLocator = page.locator('.react-datepicker__current-month').nth(calendarIndex);
             let currentMonthLabel = await currentMonthLocator.textContent();
             const targetMonth = new Date(selectedReturnDate.year, selectedReturnDate.month - 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
-  
+
             while (currentMonthLabel !== targetMonth) {
-                await page.locator('button.react-datepicker__navigation--next').nth(0).click();
+                await page.locator('button.react-datepicker__navigation--next').nth(calendarIndex).click();
                 currentMonthLabel = await currentMonthLocator.textContent();
             }
-  
+
             const formattedReturnDateLabel = 'Choose ' + formatDateWithOrdinal(selectedReturnDate) + ',';
             await page.getByLabel(formattedReturnDateLabel).click();
         } else {
             console.error('No se encontraron fechas de regreso válidas después de la fecha de salida.');
         }
-  
+
         // Mostrar las fechas seleccionadas
         console.log('Fecha de salida seleccionada:', selectedDepartureDate);
         console.log('Fecha de regreso seleccionada:', selectedReturnDate);
-  
+
         return { selectedDepartureDate, selectedReturnDate }; // Retornar las fechas seleccionadas
     } catch (error) {
         console.error('Error al gestionar el flujo de ida y vuelta:', error.message);
         throw error;
     }
-  }
+}
   
 
   
