@@ -121,3 +121,5 @@ export async function adjustPassengerCount(page, DataADT, DataCHD, DataINL) {
       await page.click('.pax-item[data-field="infant"] .js-plus');
   }
 }
+
+
