@@ -1,6 +1,10 @@
 export async function payWithCard(page, payCardData) {
+    try {
+        // Increase timeout to wait for iframe
+        await page.waitForSelector('iframe[title="Iframe for expiry date"]', { timeout: 60000 }); // 60 seconds timeout
+    
     // Verifica y espera a que el iframe esté presente
-    await page.waitForSelector('iframe[title="Iframe for expiry date"]');
+    // await page.waitForSelector('iframe[title="Iframe for expiry date"]');
   
     // Localiza el iframe y su contenido
     const iframe = page.frame({ url: /securedFields/ }); // Buscar iframe por URL parcial
@@ -21,4 +25,8 @@ export async function payWithCard(page, payCardData) {
     await page.getByRole('checkbox').check();
   
     await page.getByRole('button', { name: 'Pay $' }).click();
+} catch (error) {
+    console.error('Error while handling iframe payment:', error);
+    throw error; // Rethrow or handle accordingly
+  }
 }
