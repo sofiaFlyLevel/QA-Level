@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect , type Page} from '@playwright/test';
 import { userDataADT, userDataCHD, userDataINL, CabinClass, CabinType, paymentCards} from '../fixtures/userData';
 import { entornoData, apiData } from '../fixtures/environmentData';
 import { ruteData } from '../fixtures/ruteData';
-import {fillPassengerData, fillPassengerFor} from '../page-objects/PassengerPage'
+import {fillPassengerFor} from '../page-objects/PassengerPage'
 import {selectRoundTripDates, adjustPassengerCount} from '../page-objects/searchPage'
 import {selectFlights} from '../page-objects/FlightPage'
 import {payWithCard} from '../page-objects/paymentPage'
@@ -46,6 +46,7 @@ async function choosePassengers(page, DataADT, DataCHD, DataINL) {
 // Function to select flights for outbound and return
 async function chooseFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType) {
   await selectFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType);
+  // await page.waitForTimeout(5000);
   await page.getByRole('button', { name: 'Continue' }).click();
 }
 
@@ -2609,146 +2610,1632 @@ test.describe('Compra 1 Adulto Economy Extra - Premium Extra- Nombre sin caracte
 });
 
 // Ida: Premium - Light, Vuelta: Economy - Light
-// test.describe('Compra 1 Adulto Economy Extra - Premium Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
-//   let page;
-//   let Origin = ruteData.origin;
-//   let Destination = ruteData.destination;
-//   let DataADT = [userDataADT[0]]; 
-//   let DataCHD = []; 
-//   let DataINL = []; 
-//   let payCardData = paymentCards[0]; 
+test.describe('Compra 1 Adulto Premium Light - Economy Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
 
-//   //ida 
-//   const outboundFlightClass = CabinClass.ECONOMY;
-//   const outboundFlightType = CabinType.EXTRA;
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.LIGHT;
 
-//   // vuelta
-//   const returnFlightClass = CabinClass.PREMIUM;
-//   const returnFlightType = CabinType.EXTRA;
+  // vuelta
+  const returnFlightClass = CabinClass.ECONOMY;
+  const returnFlightType = CabinType.LIGHT;
 
 
-//   // Configuración inicial antes de ejecutar los tests
-//   test.beforeAll(async ({ browser }) => {
-//     // Crear la carpeta si no existe
-//     if (!fs.existsSync('screenshots')) {
-//       fs.mkdirSync('screenshots');
-//     }
-//     const context = await browser.newContext();
-//     page = await context.newPage();
-
-//     // Abre la página solo una vez al inicio
-//     await page.goto(ENTORNO);
-
-//     await page.getByRole('button', { name: 'Accept all cookies' }).click();
-//   });
-
-//   // Cierra el contexto y la página al finalizar todos los tests
-//   test.afterAll(async () => {
-//     await page.close();
-//   });
-
-//   test('chooseCity', async () => {
-//     await page.locator('div.searcher-input.station-selector.origin').click();
-//     await page.locator('div.iata', { hasText: Origin }).nth(0).click();
-//     await page.locator('div.iata').filter({ hasText: Destination }).nth(1).click();
-//   });
-
-//   test('toggleCityButton', async () =>{
-//     await page.locator('.swap-btn-icon.flight-swap-icon.icon-swap-black').click();
-//     await page.locator('.swap-btn-icon.flight-swap-icon.icon-swap-black').click();
-
-//     //comprobar que el destino es el correcto 
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
     
-//   });
-
-//   //mirar que sea el mes que estamos
-//   //la vuelta es lo mismo pero intercambiando origen-destino 
-//   // escoger la fecha de vuelta, más tarde de la de ida 
-//   // guadar la informacion de las fechas selecionadas en un una variable 
-
-//   test('chooseDate', async () => {
-//     const tripDates = await selectRoundTripDates(page, apiData, Origin, Destination);
-
-//     // Acceder a las fechas seleccionadas
-//     const departureDate = tripDates.selectedDepartureDate;
-//     const returnDate = tripDates.selectedReturnDate;
-
-//     // Mostrar las fechas seleccionadas en la consola (opcional)
-// // console.log('Fecha de salida:', departureDate);
-// // console.log('Fecha de regreso:', returnDate);
-//   });
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
   
- 
-
-//   test('choosePassage', async () => {
-//     await adjustPassengerCount(page, DataADT, DataCHD, DataINL); 
-
-//     await page.locator('#searcher_submit_button').click();
-
-//   });
-
-//   test('chosseFlights', async () => {
-
-//   await selectFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType); 
-
-//   await page.getByRole('button', { name: 'Continue' }).click();
-
-//   }); 
-
-//   test('fillPassengerData', async () => {
-//     try {
-//       await fillPassengerData(page, DataADT, DataCHD, DataINL);
-//     } catch (error) {
-//       // await handleErrorWithScreenshot(page, error, 'fillPassengerData');
-//         console.error('Error al llenar datos de pasajeros:', error);
-//     }
-
-//     await page.getByRole('button', { name: 'Complete your purchase' }).click();
-//     await page.waitForTimeout(5000); // Espera 5 segundos
+    test('payWithCard', async () => {
      
-//   });
-
-//   test('payWithCard', async () => {
-
-//     await payWithCard(page, payCardData); 
-   
-//     await page.waitForTimeout(10000); // Espera 10 segundos
-//   }); 
-
-  
-
-// });
-
+      await payWithCardInformation(page, payCardData);
+    });
+});
 // Ida: Premium - Light, Vuelta: Economy - Comfort
+
+test.describe('Compra 1 Adulto Premium Light - Economy Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.LIGHT;
+
+  // vuelta
+  const returnFlightClass = CabinClass.ECONOMY;
+  const returnFlightType = CabinType.COMFORT;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
 
 // Ida: Premium - Light, Vuelta: Economy - Extra
 
+test.describe('Compra 1 Adulto Premium Light - Economy Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.LIGHT;
+
+  // vuelta
+  const returnFlightClass = CabinClass.ECONOMY;
+  const returnFlightType = CabinType.EXTRA;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
+
 // Ida: Premium - Light, Vuelta: Premium - Light
+
+test.describe('Compra 1 Adulto Premium Light - Premium Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.LIGHT;
+
+  // vuelta
+  const returnFlightClass = CabinClass.PREMIUM;
+  const returnFlightType = CabinType.LIGHT;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
 
 // Ida: Premium - Light, Vuelta: Premium - Comfort
 
+test.describe('Compra 1 Adulto Premium Light - Premium Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.LIGHT;
+
+  // vuelta
+  const returnFlightClass = CabinClass.PREMIUM;
+  const returnFlightType = CabinType.COMFORT;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
+
 // Ida: Premium - Light, Vuelta: Premium - Extra
+
+test.describe('Compra 1 Adulto Premium Light - Premium Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.LIGHT;
+
+  // vuelta
+  const returnFlightClass = CabinClass.PREMIUM;
+  const returnFlightType = CabinType.EXTRA;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
 
 // Ida: Premium - Comfort, Vuelta: Economy - Light
 
+test.describe('Compra 1 Adulto Premium Comfort - Economy Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.COMFORT;
+
+  // vuelta
+  const returnFlightClass = CabinClass.ECONOMY;
+  const returnFlightType = CabinType.LIGHT;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
+
 // Ida: Premium - Comfort, Vuelta: Economy - Comfort
+test.describe('Compra 1 Adulto Premium Comfort - Economy Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.COMFORT;
+
+  // vuelta
+  const returnFlightClass = CabinClass.ECONOMY;
+  const returnFlightType = CabinType.COMFORT;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
 
 // Ida: Premium - Comfort, Vuelta: Economy - Extra
 
+test.describe('Compra 1 Adulto Premium Comfort - Economy Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.COMFORT;
+
+  // vuelta
+  const returnFlightClass = CabinClass.ECONOMY;
+  const returnFlightType = CabinType.EXTRA;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
+
 // Ida: Premium - Comfort, Vuelta: Premium - Light
 
+test.describe('Compra 1 Adulto Premium Comfort - Premium Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.COMFORT;
+
+  // vuelta
+  const returnFlightClass = CabinClass.PREMIUM;
+  const returnFlightType = CabinType.LIGHT;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
+
 // Ida: Premium - Comfort, Vuelta: Premium - Comfort
+test.describe('Compra 1 Adulto Premium Comfort - Premium Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.COMFORT;
+
+  // vuelta
+  const returnFlightClass = CabinClass.PREMIUM;
+  const returnFlightType = CabinType.COMFORT;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
 
 // Ida: Premium - Comfort, Vuelta: Premium - Extra
 
+test.describe('Compra 1 Adulto Premium Comfort - Premium Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.COMFORT;
+
+  // vuelta
+  const returnFlightClass = CabinClass.PREMIUM;
+  const returnFlightType = CabinType.EXTRA;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
+
 // Ida: Premium - Extra, Vuelta: Economy - Light
+test.describe('Compra 1 Adulto Premium Extra - Economy Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.EXTRA;
+
+  // vuelta
+  const returnFlightClass = CabinClass.ECONOMY;
+  const returnFlightType = CabinType.LIGHT;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
 
 // Ida: Premium - Extra, Vuelta: Economy - Comfort
 
+test.describe('Compra 1 Adulto Premium Extra - Economy Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.EXTRA;
+
+  // vuelta
+  const returnFlightClass = CabinClass.ECONOMY;
+  const returnFlightType = CabinType.COMFORT;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
+
 // Ida: Premium - Extra, Vuelta: Economy - Extra
+
+test.describe('Compra 1 Adulto Premium Extra - Economy Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.EXTRA;
+
+  // vuelta
+  const returnFlightClass = CabinClass.ECONOMY;
+  const returnFlightType = CabinType.EXTRA;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
 
 // Ida: Premium - Extra, Vuelta: Premium - Light
 
+test.describe('Compra 1 Adulto Premium Extra - Premium Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.EXTRA;
+
+  // vuelta
+  const returnFlightClass = CabinClass.PREMIUM;
+  const returnFlightType = CabinType.LIGHT;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
+
 // Ida: Premium - Extra, Vuelta: Premium - Comfort
+test.describe('Compra 1 Adulto Premium Extra - Premium Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.EXTRA;
+
+  // vuelta
+  const returnFlightClass = CabinClass.PREMIUM;
+  const returnFlightType = CabinType.COMFORT;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});
 
 // Ida: Premium - Extra, Vuelta: Premium - Extra
+test.describe('Compra 1 Adulto Premium Extra - Premium Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0]; 
+
+  //ida 
+  const outboundFlightClass = CabinClass.PREMIUM;
+  const outboundFlightType = CabinType.EXTRA;
+
+  // vuelta
+  const returnFlightClass = CabinClass.PREMIUM;
+  const returnFlightType = CabinType.EXTRA;
+
+
+     // Initial configuration before running tests
+     test.beforeAll(async ({ browser }) => {
+      // Create folder if it doesn't exist
+      if (!fs.existsSync('screenshots')) {
+        fs.mkdirSync('screenshots');
+      }
+      const context = await browser.newContext();
+      page = await context.newPage();
+  
+      // Open the page only once at the start
+      await openWebsiteAndAcceptCookies(page);
+    });
+  
+    // Close the context and page after all tests
+    test.afterAll(async () => {
+      await page.close();
+    });
+  
+    test('Booking', async () => {
+      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+    });
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataADT.length; i++) {
+      test(`fillPassengerAdult ${i + 1}`, async () => {
+        if (DataADT.length > 0) {
+          await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
+        }
+      });
+    }
+  
+    // Llenado de información para adultos (con un for para varios adultos)
+    for (let i = 0; i < DataCHD.length; i++) {
+      test(`fillPassengerChild ${i + 1}`, async () => {
+        if (DataCHD.length > 0) {
+          await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
+  
+        }
+      });
+    }
+  
+  
+      // Llenado de información para adultos (con un for para varios adultos)
+      for (let i = 0; i < DataINL.length; i++) {
+        test(`fillPassengerInfant ${i + 1}`, async () => {
+          if (DataINL.length > 0) {
+            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
+            await page.waitForTimeout(5000); // Espera 5 segundos  
+          }
+        });
+      }
+  
+  
+    test('fillcontact', async () => {
+  
+         
+      await page.locator('#contact').click();
+    
+      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+      
+      await page.getByRole('button', { name: 'Complete your purchase' }).click();
+      await page.waitForTimeout(5000); // Wait for 5 seconds
+    }); 
+  
+    test('payWithCard', async () => {
+     
+      await payWithCardInformation(page, payCardData);
+    });
+});

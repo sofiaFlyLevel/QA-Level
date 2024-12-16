@@ -27,7 +27,7 @@ export async function selectFlights(page, outboundFlightClass, outboundFlightTyp
         }
 
         await page.click(`div.price-cabin:has-text(\"${returnFlightClass}\")`);
-        if(outboundFlightClass == CabinClass.PREMIUM){
+        if(returnFlightClass == CabinClass.PREMIUM){
         await page.locator('div').filter({
             hasText: new RegExp(`^Continue with Premium ${returnFlightType}`)
         }).nth(1).click();

@@ -1,4 +1,11 @@
+// vuelo de escala
+
 export const ruteData = {
     origin: "FCO", 
-    destination: "JFK"
+    destination: "SCL"
 }
+// vuelo sin escala 
+// export const ruteData = {
+//     origin: "FCO", 
+//     destination: "SCL"
+// }
