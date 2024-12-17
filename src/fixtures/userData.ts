@@ -1,3 +1,18 @@
+const Language = {
+  ES: 'ES',
+  CA: 'CA',
+  EN: 'EN',
+};
+
+// Definir el enum de monedas
+const Money = {
+  USD: 'USD',
+  EUR: 'EUR',
+};
+
+export const LenguageChoose = Language.EN; 
+export const MoneyChosee = Money.USD; 
+
 export enum CabinType {
   LIGHT = 'Light',
   COMFORT = 'Comfort',
@@ -429,12 +444,7 @@ export const promocodeData = {
   
 
 
-export const Lenguage = {
-  CA: true,
-  ES: true,
-  EN: true
-}
-export const Money = 'USD'; 
+
 
 export const paymentCards = [
   {

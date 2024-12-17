@@ -1,5 +1,5 @@
 import {CabinClass} from '../fixtures/userData'
-export async function selectFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType) {
+export async function selectFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType, oneTrip=false) {
     try {
         // Espera 5 segundos
         await page.waitForTimeout(5000);
@@ -20,23 +20,25 @@ export async function selectFlights(page, outboundFlightClass, outboundFlightTyp
             }).nth(1).click();
         }
         
-
-
-        if (!returnFlightClass || !returnFlightType) {
-            throw new Error("Datos de vuelo de vuelta incompletos.");
-        }
-
-        await page.click(`div.price-cabin:has-text(\"${returnFlightClass}\")`);
-        if(returnFlightClass == CabinClass.PREMIUM){
-        await page.locator('div').filter({
-            hasText: new RegExp(`^Continue with Premium ${returnFlightType}`)
-        }).nth(1).click();
-        }
-        else{
+        if(!oneTrip){
+            if (!returnFlightClass || !returnFlightType) {
+                throw new Error("Datos de vuelo de vuelta incompletos.");
+            }
+    
+            await page.click(`div.price-cabin:has-text(\"${returnFlightClass}\")`);
+            if(returnFlightClass == CabinClass.PREMIUM){
             await page.locator('div').filter({
-                hasText: new RegExp(`^Continue with ${returnFlightType}`)
+                hasText: new RegExp(`^Continue with Premium ${returnFlightType}`)
             }).nth(1).click();
+            }
+            else{
+                await page.locator('div').filter({
+                    hasText: new RegExp(`^Continue with ${returnFlightType}`)
+                }).nth(1).click();
+            }
         }
+
+
 
     } catch (error) {
         console.error("Error seleccionando vuelos:", error);

@@ -1,5 +1,5 @@
 import { test, expect , type Page} from '@playwright/test';
-import { userDataADT, userDataCHD, userDataINL, CabinClass, CabinType, paymentCards} from '../fixtures/userData';
+import { userDataADT, userDataCHD, userDataINL, CabinClass, CabinType, paymentCards, LenguageChoose, MoneyChosee} from '../fixtures/userData';
 import { entornoData, apiData } from '../fixtures/environmentData';
 import { ruteData } from '../fixtures/ruteData';
 import {fillPassengerFor} from '../page-objects/PassengerPage'
@@ -26,6 +26,22 @@ async function chooseCity(page, Origin, Destination) {
   await page.locator('div.searcher-input.station-selector.origin').click();
   await page.locator('div.iata', { hasText: Origin }).nth(0).click();
   await page.locator('div.iata').filter({ hasText: Destination }).nth(1).click();
+}
+
+//Function choose lenguage and Money 
+async function chooseLengMoney(page) {
+  await page.getByRole('button', { name: ' EN' }).click();
+
+  // Hacer clic en el elemento correspondiente al idioma seleccionado
+  await page.click(`div[aria-labelledby="collapsible-nav-dropdown"] .dropdown-item:text("${LenguageChoose}")`);
+  await page.waitForTimeout(5000);
+
+  // Hacer clic en el elemento correspondiente a la moneda seleccionada
+  if(MoneyChosee != 'USD'){
+    await page.getByRole('button', { name: 'USD ($)' }).click();
+    await page.getByRole('button', { name: MoneyChosee }).click();
+  }
+
 }
 
 // Function to toggle cities (origin and destination)
@@ -70,6 +86,8 @@ async function payWithCardInformation(page, payCardData) {
 
 async function global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType)
 {
+  await chooseLengMoney(page); 
+  
   await chooseCity(page, Origin, Destination);
 
   await toggleCityButton(page);
@@ -81,6 +99,8 @@ async function global(page, Origin, Destination, DataADT, DataCHD, DataINL, outb
   await chooseFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType);
 
 }
+
+
 
 // Test Suite
 test.describe('Compra 1 Adulto Economy Light - Economy Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
