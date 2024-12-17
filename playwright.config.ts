@@ -42,6 +42,8 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    screenshot: 'only-on-failure', // Captura pantallas solo en caso de fallo
+    outputDir: 'test-results/screenshots', // Guarda capturas aquí
   },
 
   /* Configure projects for major browsers */
@@ -88,4 +90,5 @@ export default defineConfig({
   //   url: 'http://127.0.0.1:3000',
   //   reuseExistingServer: !process.env.CI,
   // },
+  
 });
