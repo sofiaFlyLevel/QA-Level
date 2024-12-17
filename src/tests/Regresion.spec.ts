@@ -35,8 +35,8 @@ async function toggleCityButton(page) {
 }
 
 // Function to select round trip dates
-async function chooseDate(page, apiData, Origin, Destination) {
-  await selectRoundTripDates(page, apiData, Origin, Destination);
+async function chooseDate(page, apiData, Origin, Destination, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType,  DataADT, DataCHD, DataINL) {
+  await selectRoundTripDates(page, apiData, Origin, Destination, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType,  DataADT, DataCHD, DataINL);
 }
 
 // Function to adjust the number of passengers
@@ -74,7 +74,7 @@ async function global(page, Origin, Destination, DataADT, DataCHD, DataINL, outb
 
   await toggleCityButton(page);
 
-  await chooseDate(page, apiData, Origin, Destination);
+  await chooseDate(page, apiData, Origin, Destination, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType,  DataADT, DataCHD, DataINL);
 
   await choosePassengers(page, DataADT, DataCHD, DataINL);
 

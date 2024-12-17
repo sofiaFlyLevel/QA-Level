@@ -1,5 +1,6 @@
-import { getApiResponse, transformApiResponse } from '../utils/apiHelper';
+import { getApiResponse, transformApiResponse, postApiResponse} from '../utils/apiHelper';
 import { formatDateWithOrdinal } from './basePage';
+import {Money, CabinClass, CabinType} from '../fixtures/userData'
 
 export async function selectCountryAndDate(page, apiData, origin, destination, calendarIndex = 0) {
     try {
@@ -50,12 +51,65 @@ export async function selectCountryAndDate(page, apiData, origin, destination, c
   }
   
 
-  export async function selectRoundTripDates(page, apiData, origin, destination, calendarIndex = 0) {
+  export async function selectRoundTripDates(page, apiData, origin, destination, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType, DataADT, DataCHD, DataINL, calendarIndex = 0) {
     let selectedDepartureDate, selectedReturnDate;
+
+    const passengers = {};
+
+    // Add to passengers object conditionally based on the length of DataADT, DataCHD, and DataINL
+    if (DataADT.length > 0) {
+        passengers.ADT = DataADT.length;
+    }
+    if (DataCHD.length > 0) {
+        passengers.CHD = DataCHD.length;
+    }
+    if (DataINL.length > 0) {
+        passengers.INF = DataINL.length;
+    }
 
     try {
         // Seleccionar fecha de salida (primer calendario)
         selectedDepartureDate = await selectCountryAndDate(page, apiData, origin, destination, 0);
+
+        let formattedDate = `${selectedDepartureDate.year}-${String(selectedDepartureDate.month).padStart(2, '0')}-${String(selectedDepartureDate.value).padStart(2, '0')}`;
+
+        const body = {
+          "Passengers": passengers,
+          "Preferences": {
+           "Currency": Money
+          },
+          "Journeys": [
+            {
+              "Origin": origin,
+              "Destination": destination,
+              "DepartureDate": formattedDate
+            }
+          ]
+        };
+        const response = await postApiResponse('https://apis-dev.airpricing.net', body);
+
+        // Check if the response contains Economy or Premium with the correct outboundFlightClass and outboundFlightType
+        let validCabinType = false;
+
+        response.journeys[0].fares.forEach(fare => {
+            const cabinClassMatch = (outboundFlightClass === CabinClass.ECONOMY && fare.cabinType === "Economy") ||
+                                    (outboundFlightClass === CabinClass.PREMIUM && fare.cabinType === "PremiumEconomy");
+
+            const cabinTypeMatch = (outboundFlightType === CabinType.LIGHT && fare.fareFamily === "LIGHT") ||
+                                   (outboundFlightType === CabinType.COMFORT && fare.fareFamily === "COMFORT") ||
+                                   (outboundFlightType === CabinType.EXTRA && fare.fareFamily === "EXTRA");
+
+            if (cabinClassMatch && cabinTypeMatch) {
+                validCabinType = true;
+            }
+        });
+
+        // If no matching cabin class or type is found, recalculate the departure date
+        if (!validCabinType) {
+            selectedDepartureDate = await selectCountryAndDate(page, apiData, origin, destination, 0);  // Recalculate the date
+            formattedDate = `${selectedDepartureDate.year}-${String(selectedDepartureDate.month).padStart(2, '0')}-${String(selectedDepartureDate.value).padStart(2, '0')}`;
+            body.Journeys[0].DepartureDate = formattedDate;
+        }
 
         // Llamada a la API para fechas de regreso (cambiar origen y destino)
         const apiResponse = await getApiResponse(apiData.baseUrl, destination, origin, apiData.definition);
@@ -64,30 +118,77 @@ export async function selectCountryAndDate(page, apiData, origin, destination, c
         // Crear un objeto de fecha para la fecha de salida
         const departureDateObj = new Date(selectedDepartureDate.year, selectedDepartureDate.month - 1, selectedDepartureDate.value);
 
-        // Filtrar fechas de regreso para que estén después de la fecha de salida
+        // Filtrar fechas de regreso para que estén después de la fecha de salida y al menos 7 días después
         const filteredReturnDates = transformedReturnDates.filter(returnDate => {
             const returnDateObj = new Date(returnDate.year, returnDate.month - 1, returnDate.value);
-            return returnDateObj > departureDateObj; // Asegurarse de que la fecha de regreso sea después de la de salida
+            const differenceInTime = returnDateObj - departureDateObj;
+            const differenceInDays = differenceInTime / (1000 * 3600 * 24); // Convertir la diferencia a días
+            return returnDateObj > departureDateObj && differenceInDays >= 7; // Asegurarse de que la fecha de regreso sea al menos 7 días después de la de salida
         });
 
-        // Seleccionar la primera fecha válida de regreso (segundo calendario)
-        if (filteredReturnDates.length > 0) {
+        // Verificar que las fechas de regreso sean válidas y tengan la clase y tipo de vuelo correctos
+        let validReturnDate = false;
+
+        while (!validReturnDate && filteredReturnDates.length > 0) {
             selectedReturnDate = filteredReturnDates[0];
 
-            const currentMonthLocator = page.locator('.react-datepicker__current-month').nth(calendarIndex);
-            let currentMonthLabel = await currentMonthLocator.textContent();
-            const targetMonth = new Date(selectedReturnDate.year, selectedReturnDate.month - 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+            // Verificar que la clase y tipo de vuelo de regreso coincidan
+            let validReturnCabinType = false;
+            const returnDateObj = new Date(selectedReturnDate.year, selectedReturnDate.month - 1, selectedReturnDate.value);
+            
+            const bodyReturn = {
+              "Passengers": passengers,
+              "Preferences": {
+               "Currency": Money
+              },
+              "Journeys": [
+                {
+                  "Origin": destination,
+                  "Destination": origin,
+                  "DepartureDate": `${selectedReturnDate.year}-${String(selectedReturnDate.month).padStart(2, '0')}-${String(selectedReturnDate.value).padStart(2, '0')}`
+                }
+              ]
+            };
+            const returnResponse = await postApiResponse('https://apis-dev.airpricing.net', bodyReturn);
 
-            while (currentMonthLabel !== targetMonth) {
-                await page.locator('button.react-datepicker__navigation--next').nth(calendarIndex).click();
-                currentMonthLabel = await currentMonthLocator.textContent();
+            returnResponse.journeys[0].fares.forEach(fare => {
+                const cabinClassMatch = (returnFlightClass === CabinClass.ECONOMY && fare.cabinType === "Economy") ||
+                                        (returnFlightClass === CabinClass.PREMIUM && fare.cabinType === "PremiumEconomy");
+
+                const cabinTypeMatch = (returnFlightType === CabinType.LIGHT && fare.fareFamily === "LIGHT") ||
+                                       (returnFlightType === CabinType.COMFORT && fare.fareFamily === "COMFORT") ||
+                                       (returnFlightType === CabinType.EXTRA && fare.fareFamily === "EXTRA");
+
+                if (cabinClassMatch && cabinTypeMatch) {
+                    validReturnCabinType = true;
+                }
+            });
+
+            // Si la fecha de regreso no cumple con los requisitos, seleccionar otra fecha de regreso
+            if (!validReturnCabinType) {
+                filteredReturnDates.shift(); // Eliminar la fecha no válida
+            } else {
+                validReturnDate = true;
             }
-
-            const formattedReturnDateLabel = 'Choose ' + formatDateWithOrdinal(selectedReturnDate) + ',';
-            await page.getByLabel(formattedReturnDateLabel).click();
-        } else {
-            console.error('No se encontraron fechas de regreso válidas después de la fecha de salida.');
         }
+
+        // Si no se encontró una fecha de regreso válida
+        if (!validReturnDate) {
+            throw new Error('No se encontró una fecha de regreso válida después de la fecha de salida.');
+        }
+
+        // Seleccionar la fecha de regreso válida
+        const currentMonthLocator = page.locator('.react-datepicker__current-month').nth(calendarIndex);
+        let currentMonthLabel = await currentMonthLocator.textContent();
+        const targetMonth = new Date(selectedReturnDate.year, selectedReturnDate.month - 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+        while (currentMonthLabel !== targetMonth) {
+            await page.locator('button.react-datepicker__navigation--next').nth(calendarIndex).click();
+            currentMonthLabel = await currentMonthLocator.textContent();
+        }
+
+        const formattedReturnDateLabel = 'Choose ' + formatDateWithOrdinal(selectedReturnDate) + ',';
+        await page.getByLabel(formattedReturnDateLabel).click();
 
         // Mostrar las fechas seleccionadas
         console.log('Fecha de salida seleccionada:', selectedDepartureDate);
@@ -99,6 +200,8 @@ export async function selectCountryAndDate(page, apiData, origin, destination, c
         throw error;
     }
 }
+
+
   
 
   

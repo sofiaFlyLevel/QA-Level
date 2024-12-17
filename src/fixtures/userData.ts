@@ -434,10 +434,7 @@ export const Lenguage = {
   ES: true,
   EN: true
 }
-export const Money = {
-  USD: true, 
-  EUR: true
-}
+export const Money = 'USD'; 
 
 export const paymentCards = [
   {
