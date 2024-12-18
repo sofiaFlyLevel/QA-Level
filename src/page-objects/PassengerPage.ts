@@ -5,7 +5,7 @@ import {formatDate} from './basePage'
 export async function fillPassengerFor(page, type, data, variable, i) {
 
       await page.locator(`#${type}-${i}`).click();
-      await page.waitForTimeout(5000); //lo tenemos asi por el combox que falta que se distinga para cada usuario 
+      await page.waitForTimeout(1000); //lo tenemos asi por el combox que falta que se distinga para cada usuario 
 
       // Completar los datos del adulto correspondiente
       await page.locator(`#${type}-${i} [name="${variable}[${i}].name"]`).fill(data.name);

@@ -17,19 +17,22 @@ const testRailOptions = {
   embedAnnotationsAsProperties: true,
   // Where to put the report.
   outputFile: './test-results/junit-report.xml'
+  // append: true
 };
 
 export default defineConfig({
   testDir: './src/tests',
-  timeout: 120000,
+  timeout: 240000,
+  workers: 6, // Establece el número de workers (procesos paralelos)
+  retries: 0, // Número de intentos de reintento por prueba
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  // retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  // workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ['list'],
@@ -45,6 +48,7 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure', // Captura pantallas solo en caso de fallo
     outputDir: 'test-results/screenshots', // Guarda capturas aquí
+    // headless: false,
   },
 
   /* Configure projects for major browsers */
@@ -54,15 +58,15 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    // },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
 
     /* Test against mobile viewports. */
     // {

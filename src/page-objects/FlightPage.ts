@@ -2,7 +2,7 @@ import {CabinClass} from '../fixtures/userData'
 export async function selectFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType, oneTrip=false) {
     try {
         // Espera 5 segundos
-        await page.waitForTimeout(5000);
+        await page.waitForTimeout(1000);
 
         if (!outboundFlightClass || !outboundFlightType) {
             throw new Error("Datos de vuelo de ida incompletos.");

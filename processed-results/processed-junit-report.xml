@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites><testsuite name="Booking1step.spec.ts" timestamp="2024-12-18T15:35:56.261Z" hostname="chromium" tests="1" failures="0" skipped="0" time="66.379" errors="0"><testcase name="Compra 1 Adulto Premium Extra - Economy Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras" classname="Booking1step.spec.ts" time="66.379"><steps><step name="Ejecución completa con reintentos"><system-out>
+Ejecución completa, intento 1 de 3
+Ejecutando Booking, intento 1
+Ejecutando Booking, intento 2
+Fecha de salida seleccionada: { year: [32m'2024'[39m, month: [32m'12'[39m, index: [33m3[39m, value: [33m27[39m }
+Fecha de regreso seleccionada: { year: [32m'2024'[39m, month: [32m'12'[39m, index: [33m4[39m, value: [33m28[39m }
+Ajustando número de pasajeros
+Ejecutando Booking, intento 3
+Ejecución completa, intento 2 de 3
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2024'[39m, month: [32m'12'[39m, index: [33m1[39m, value: [33m22[39m }
+Fecha de regreso seleccionada: { year: [32m'2024'[39m, month: [32m'12'[39m, index: [33m2[39m, value: [33m23[39m }
+Ajustando número de pasajeros
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+<system-err>
+Error al gestionar el flujo de ida y vuelta: No se encontró un tipo de cabina válido.
+Intento 1 fallido en Booking: Error: No se encontró un tipo de cabina válido.
+    at validateCabinType [90m(C:\playwright-project\[39msrc\page-objects\searchPage.ts:163:15[90m)[39m
+    at selectRoundTripDates [90m(C:\playwright-project\[39msrc\page-objects\searchPage.ts:88:9[90m)[39m
+    at chooseDate [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:55:3[90m)[39m
+    at global [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:95:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:107:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:129:27[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\Booking1step.spec.ts:1891:29
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m
+Error seleccionando vuelos: locator.click: Target page, context or browser has been closed
+Call log:
+[2m  - waiting for locator('div').filter({ hasText: /^Continue with Premium Extra/ }).nth(1)[22m
+
+    at selectFlights [90m(C:\playwright-project\[39msrc\page-objects\FlightPage.ts:15:23[90m)[39m
+    at chooseFlights [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:66:3[90m)[39m
+    at global [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:99:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:107:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:129:27[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\Booking1step.spec.ts:1891:29 {
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@51'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\FlightPage.ts'[39m,
+      line: [33m15[39m,
+      column: [33m23[39m,
+      function: [32m'selectFlights'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m'locator.click(div &gt;&gt; internal:has-text=/^Continue with Premium Extra/ &gt;&gt; nth=1)'[39m,
+    apiName: [32m'locator.click'[39m,
+    params: {
+      selector: [32m'div &gt;&gt; internal:has-text=/^Continue with Premium Extra/ &gt;&gt; nth=1'[39m,
+      strict: [33mtrue[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1734536200201[39m,
+    error: {
+      message: [32m'Error: locator.click: Target page, context or browser has been closed\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m"\x1B[2m  - waiting for locator('div').filter({ hasText: /^Continue with Premium Extra/ }).nth(1)\x1B[22m\n"[39m,
+      stack: [32m'Error: locator.click: Target page, context or browser has been closed\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m"\x1B[2m  - waiting for locator('div').filter({ hasText: /^Continue with Premium Extra/ }).nth(1)\x1B[22m\n"[39m +
+        [32m'\n'[39m +
+        [32m'    at selectFlights (C:\\playwright-project\\src\\page-objects\\FlightPage.ts:15:23)\n'[39m +
+        [32m'    at chooseFlights (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:66:3)\n'[39m +
+        [32m'    at global (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:99:3)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:107:7)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:129:27)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:1891:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Intento 2 fallido en Booking: locator.click: Target page, context or browser has been closed
+    at chooseFlights [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:68:56[90m)[39m
+    at global [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:99:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:107:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:129:27[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\Booking1step.spec.ts:1891:29 {
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@52'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\tests\\Booking1step.spec.ts'[39m,
+      line: [33m68[39m,
+      column: [33m56[39m,
+      function: [32m'chooseFlights'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m"locator.getByRole('button', { name: 'Continue' }).click"[39m,
+    apiName: [32m'locator.click'[39m,
+    params: {
+      selector: [32m'internal:role=button[name="Continue"i]'[39m,
+      strict: [33mtrue[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1734536200214[39m,
+    error: {
+      message: [32m'Error: locator.click: Target page, context or browser has been closed'[39m,
+      stack: [32m'Error: locator.click: Target page, context or browser has been closed\n'[39m +
+        [32m'    at chooseFlights (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:68:56)\n'[39m +
+        [32m'    at global (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:99:3)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:107:7)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:129:27)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:1891:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Intento 3 fallido en Booking: locator.click: Target page, context or browser has been closed
+    at chooseLengMoney [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:33:52[90m)[39m
+    at global [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:89:9[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:130:13[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:107:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:129:27[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\Booking1step.spec.ts:1891:29 {
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@53'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\tests\\Booking1step.spec.ts'[39m,
+      line: [33m33[39m,
+      column: [33m52[39m,
+      function: [32m'chooseLengMoney'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m"locator.getByRole('button', { name: ' EN' }).click"[39m,
+    apiName: [32m'locator.click'[39m,
+    params: { selector: [32m'internal:role=button[name=" EN"i]'[39m, strict: [33mtrue[39m },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1734536200227[39m,
+    error: {
+      message: [32m'Error: locator.click: Target page, context or browser has been closed'[39m,
+      stack: [32m'Error: locator.click: Target page, context or browser has been closed\n'[39m +
+        [32m'    at chooseLengMoney (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:33:52)\n'[39m +
+        [32m'    at global (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:89:9)\n'[39m +
+        [32m'    at fn (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:130:13)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:107:13)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:129:27)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:1891:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Error crítico durante la ejecución: page.screenshot: Target page, context or browser has been closed
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:112:20[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\Booking1step.spec.ts:129:27[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\Booking1step.spec.ts:1891:29 {
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@54'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\tests\\Booking1step.spec.ts'[39m,
+      line: [33m112[39m,
+      column: [33m20[39m,
+      function: [32m'runWithRetries'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m'page.screenshot'[39m,
+    apiName: [32m'page.screenshot'[39m,
+    params: {
+      path: [32m'test-results/screenshots/booking-error.png'[39m,
+      mask: [90mundefined[39m,
+      type: [32m'png'[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1734536200234[39m,
+    error: {
+      message: [32m'Error: page.screenshot: Target page, context or browser has been closed'[39m,
+      stack: [32m'Error: page.screenshot: Target page, context or browser has been closed\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:112:20)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:129:27)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\Booking1step.spec.ts:1891:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+
+</system-err>
+</step></steps></testcase></testsuite></testsuites>

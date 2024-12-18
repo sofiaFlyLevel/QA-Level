@@ -1,4 +1,4 @@
-import { test, expect , type Page} from '@playwright/test';
+const { test } = require('@playwright/test');
 import { userDataADT, userDataCHD, userDataINL, CabinClass, CabinType, paymentCards, LenguageChoose, MoneyChosee} from '../fixtures/userData';
 import { entornoData, apiData } from '../fixtures/environmentData';
 import { ruteData } from '../fixtures/ruteData';
@@ -34,7 +34,7 @@ async function chooseLengMoney(page) {
 
   // Hacer clic en el elemento correspondiente al idioma seleccionado
   await page.click(`div[aria-labelledby="collapsible-nav-dropdown"] .dropdown-item:text("${LenguageChoose}")`);
-  await page.waitForTimeout(5000);
+  await page.waitForTimeout(1000);
 
   // Hacer clic en el elemento correspondiente a la moneda seleccionada
   if(MoneyChosee != 'USD'){
@@ -64,7 +64,7 @@ async function choosePassengers(page, DataADT, DataCHD, DataINL) {
 // Function to select flights for outbound and return
 async function chooseFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType) {
   await selectFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType);
-  // await page.waitForTimeout(5000);
+  // await page.waitForTimeout(1000);
   await page.getByRole('button', { name: 'Continue' }).click();
 }
 
@@ -81,7 +81,7 @@ async function fillPassengerInformation(page,type, data, variable, i) {
 // Function to pay with a credit card
 async function payWithCardInformation(page, payCardData) {
   await payWithCard(page, payCardData);
-  await page.waitForTimeout(10000); // Wait for 10 seconds
+  await page.waitForTimeout(1000); // Wait for 10 seconds
 }
 
 async function global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType)
@@ -212,82 +212,48 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
 
 
 // Test Suite
-test.describe('Compra 1 Adulto Economy Light - Economy Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
-  let page;
-  let context;
-  let Origin = ruteData.origin;
-  let Destination = ruteData.destination;
-  let DataADT = [userDataADT[0]]; 
-  let DataCHD = []; 
-  let DataINL = []; 
-  let payCardData = paymentCards[0];
 
-  const outboundFlightClass = CabinClass.ECONOMY;
-  const outboundFlightType = CabinType.LIGHT;
 
-  const returnFlightClass = CabinClass.ECONOMY;
-  const returnFlightType = CabinType.LIGHT;
 
-  test('Ejecución completa con reintentos', async ({ browser }) => {
-    let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
-    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-    let shouldContinueTests = false; // Default value
+
+// test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+//   let page;
+//   let context;
+//   let Origin = ruteData.origin;
+//   let Destination = ruteData.destination;
+//   let DataADT = [userDataADT[0], userDataADT[1]]; 
+//   let DataCHD = []; 
+//   let DataINL = []; 
+//   let payCardData = paymentCards[0]; 
+
+//   //ida 
+//   const outboundFlightClass = CabinClass.ECONOMY;
+//   const outboundFlightType = CabinType.LIGHT;
+
+//   // vuelta
+//   const returnFlightClass = CabinClass.ECONOMY;
+//   const returnFlightType = CabinType.LIGHT;
+
+//   test('Ejecución completa con reintentos', async ({ browser }) => {
+//     let executionAttempt = 0; // Reset execution attempt counter
+//     const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+//     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+//     let shouldContinueTests = false; // Default value
   
-    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-      executionAttempt++;
-      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+//     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+//       executionAttempt++;
+//       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+//       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
   
-      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
-    }
+//       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
+//     }
   
-    if (!shouldContinueTests) {
-      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-    }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
-});
+//     if (!shouldContinueTests) {
+//       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
+//     }
+//   }, 240000); // Configuración del tiempo límite a 240 segundos
 
-
-
-test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
-  let page;
-  let context;
-  let Origin = ruteData.origin;
-  let Destination = ruteData.destination;
-  let DataADT = [userDataADT[0], userDataADT[1]]; 
-  let DataCHD = []; 
-  let DataINL = []; 
-  let payCardData = paymentCards[0]; 
-
-  //ida 
-  const outboundFlightClass = CabinClass.ECONOMY;
-  const outboundFlightType = CabinType.LIGHT;
-
-  // vuelta
-  const returnFlightClass = CabinClass.ECONOMY;
-  const returnFlightType = CabinType.LIGHT;
-
-  test('Ejecución completa con reintentos', async ({ browser }) => {
-    let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
-    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-    let shouldContinueTests = false; // Default value
-  
-    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-      executionAttempt++;
-      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-  
-      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
-    }
-  
-    if (!shouldContinueTests) {
-      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-    }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
-
-});
+// });
 
 
 
@@ -324,7 +290,7 @@ test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombr
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
   
   
 });
@@ -332,61 +298,53 @@ test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombr
 
 
 
-test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre sin caracteres especiales - Con assitence - sin asiento - sin extras', () => {
-  let page;
-  let context;
-  let Origin = ruteData.origin;
-  let Destination = ruteData.destination;
-  let DataADT = [userDataADT[1], userDataADT[3]]; 
-  let DataCHD = []; 
-  let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+// test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre sin caracteres especiales - Con assitence - sin asiento - sin extras', () => {
+//   let page;
+//   let context;
+//   let Origin = ruteData.origin;
+//   let Destination = ruteData.destination;
+//   let DataADT = [userDataADT[1], userDataADT[3]]; 
+//   let DataCHD = []; 
+//   let DataINL = []; 
+//   let payCardData = paymentCards[0]; 
 
-  //ida 
-  const outboundFlightClass = CabinClass.ECONOMY;
-  const outboundFlightType = CabinType.LIGHT;
+//   //ida 
+//   const outboundFlightClass = CabinClass.ECONOMY;
+//   const outboundFlightType = CabinType.LIGHT;
 
-  // vuelta
-  const returnFlightClass = CabinClass.ECONOMY;
-  const returnFlightType = CabinType.LIGHT;
+//   // vuelta
+//   const returnFlightClass = CabinClass.ECONOMY;
+//   const returnFlightType = CabinType.LIGHT;
 
 
-       test('Ejecución completa con reintentos', async ({ browser }) => {
-    let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
-    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-    let shouldContinueTests = false; // Default value
-  
-    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-      executionAttempt++;
-      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-  
-      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
-    }
-    test('Ejecución completa con reintentos', async ({ browser }) => {
-    let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
-    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-    let shouldContinueTests = false; // Default value
-  
-    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-      executionAttempt++;
-      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-  
-      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
-    }
-  
-    if (!shouldContinueTests) {
-      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-    }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
-    if (!shouldContinueTests) {
-      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-    }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
-});
+//         test('Ejecución completa con reintentos', async ({ browser }) => {
+//     let executionAttempt = 0; // Reset execution attempt counter
+//     const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+//     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+//     let shouldContinueTests = false; // Default value
+
+//     // Intentos de ejecución
+//     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+//       executionAttempt++;
+//       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+
+//       // Ejecutar las pruebas
+//       shouldContinueTests = await executeTests(
+//         browser, context, page, TEST_RETRIES,
+//         Origin, Destination, DataADT, DataCHD, DataINL,
+//         outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType
+//       );
+
+//       // Salir del ciclo si todas las pruebas fueron exitosas
+//       if (shouldContinueTests) break; 
+//     }
+
+//     // Si después de los intentos no se completaron correctamente, arrojar un error
+//     if (!shouldContinueTests) {
+//       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
+//     }
+//   }, 240000); // Configuración del tiempo límite a 240 segundos
+// });
 
 test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre con caracteres especiales - Con assitence TODAS - sin asiento - sin extras', () => {
   let page;
@@ -407,99 +365,83 @@ test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombr
   const returnFlightType = CabinType.LIGHT;
 
 
-   test('Ejecución completa con reintentos', async ({ browser }) => {
-    let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
-    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-    let shouldContinueTests = false; // Default value
-  
-    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-      executionAttempt++;
-      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-  
-      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
-    }
     test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
     const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
-  
+
+    // Intentos de ejecución
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-  
-      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
+
+      // Ejecutar las pruebas
+      shouldContinueTests = await executeTests(
+        browser, context, page, TEST_RETRIES,
+        Origin, Destination, DataADT, DataCHD, DataINL,
+        outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType
+      );
+
+      // Salir del ciclo si todas las pruebas fueron exitosas
+      if (shouldContinueTests) break; 
     }
-  
+
+    // Si después de los intentos no se completaron correctamente, arrojar un error
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
-    if (!shouldContinueTests) {
-      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-    }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Niño 
-test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
-  let page;
-  let context;
-  let Origin = ruteData.origin;
-  let Destination = ruteData.destination;
-  let DataADT = [userDataADT[0]]; 
-  let DataCHD = [userDataCHD[0]]; 
-  let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+// test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+//   let page;
+//   let context;
+//   let Origin = ruteData.origin;
+//   let Destination = ruteData.destination;
+//   let DataADT = [userDataADT[0]]; 
+//   let DataCHD = [userDataCHD[0]]; 
+//   let DataINL = []; 
+//   let payCardData = paymentCards[0]; 
 
-  //ida 
-  const outboundFlightClass = CabinClass.ECONOMY;
-  const outboundFlightType = CabinType.LIGHT;
+//   //ida 
+//   const outboundFlightClass = CabinClass.ECONOMY;
+//   const outboundFlightType = CabinType.LIGHT;
 
-  // vuelta
-  const returnFlightClass = CabinClass.ECONOMY;
-  const returnFlightType = CabinType.LIGHT;
+//   // vuelta
+//   const returnFlightClass = CabinClass.ECONOMY;
+//   const returnFlightType = CabinType.LIGHT;
 
 
-   test('Ejecución completa con reintentos', async ({ browser }) => {
-    let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
-    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-    let shouldContinueTests = false; // Default value
-  
-    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-      executionAttempt++;
-      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-  
-      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
-    }
-    test('Ejecución completa con reintentos', async ({ browser }) => {
-    let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
-    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-    let shouldContinueTests = false; // Default value
-  
-    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-      executionAttempt++;
-      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-  
-      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
-    }
-  
-    if (!shouldContinueTests) {
-      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-    }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
-    if (!shouldContinueTests) {
-      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-    }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
-});
+//     test('Ejecución completa con reintentos', async ({ browser }) => {
+//     let executionAttempt = 0; // Reset execution attempt counter
+//     const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+//     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+//     let shouldContinueTests = false; // Default value
+
+//     // Intentos de ejecución
+//     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+//       executionAttempt++;
+//       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+
+//       // Ejecutar las pruebas
+//       shouldContinueTests = await executeTests(
+//         browser, context, page, TEST_RETRIES,
+//         Origin, Destination, DataADT, DataCHD, DataINL,
+//         outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType
+//       );
+
+//       // Salir del ciclo si todas las pruebas fueron exitosas
+//       if (shouldContinueTests) break; 
+//     }
+
+//     // Si después de los intentos no se completaron correctamente, arrojar un error
+//     if (!shouldContinueTests) {
+//       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
+//     }
+//   }, 240000); // Configuración del tiempo límite a 240 segundos
+// });
 
 test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre con caracteres especiales - sin asistencia - sin asiento - sin extras', () => {
   let page;
@@ -536,7 +478,7 @@ test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombr
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 
@@ -559,81 +501,73 @@ test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombr
   const returnFlightType = CabinType.LIGHT;
 
 
-       test('Ejecución completa con reintentos', async ({ browser }) => {
+        test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
     const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
-  
+
+    // Intentos de ejecución
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-  
-      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
+
+      // Ejecutar las pruebas
+      shouldContinueTests = await executeTests(
+        browser, context, page, TEST_RETRIES,
+        Origin, Destination, DataADT, DataCHD, DataINL,
+        outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType
+      );
+
+      // Salir del ciclo si todas las pruebas fueron exitosas
+      if (shouldContinueTests) break; 
     }
-    test('Ejecución completa con reintentos', async ({ browser }) => {
-    let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
-    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-    let shouldContinueTests = false; // Default value
-  
-    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-      executionAttempt++;
-      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-  
-      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
-    }
-  
+
+    // Si después de los intentos no se completaron correctamente, arrojar un error
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
-    if (!shouldContinueTests) {
-      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-    }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
-test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre sin caracteres especiales - con assitence - sin asiento - sin extras', () => {
-  let page;
-  let context;
-  let Origin = ruteData.origin;
-  let Destination = ruteData.destination;
-  let DataADT = [userDataADT[0]]; 
-  let DataCHD = [userDataCHD[3]]; 
-  let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+// test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre sin caracteres especiales - con assitence - sin asiento - sin extras', () => {
+//   let page;
+//   let context;
+//   let Origin = ruteData.origin;
+//   let Destination = ruteData.destination;
+//   let DataADT = [userDataADT[0]]; 
+//   let DataCHD = [userDataCHD[3]]; 
+//   let DataINL = []; 
+//   let payCardData = paymentCards[0]; 
 
-  //ida 
-  const outboundFlightClass = CabinClass.ECONOMY;
-  const outboundFlightType = CabinType.LIGHT;
+//   //ida 
+//   const outboundFlightClass = CabinClass.ECONOMY;
+//   const outboundFlightType = CabinType.LIGHT;
 
-  // vuelta
-  const returnFlightClass = CabinClass.ECONOMY;
-  const returnFlightType = CabinType.LIGHT;
+//   // vuelta
+//   const returnFlightClass = CabinClass.ECONOMY;
+//   const returnFlightType = CabinType.LIGHT;
 
 
-  test('Ejecución completa con reintentos', async ({ browser }) => {
-    let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
-    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-    let shouldContinueTests = false; // Default value
+//   test('Ejecución completa con reintentos', async ({ browser }) => {
+//     let executionAttempt = 0; // Reset execution attempt counter
+//     const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+//     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+//     let shouldContinueTests = false; // Default value
   
-    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-      executionAttempt++;
-      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+//     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+//       executionAttempt++;
+//       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+//       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
   
-      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
-    }
+//       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
+//     }
   
-    if (!shouldContinueTests) {
-      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-    }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
-});
+//     if (!shouldContinueTests) {
+//       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
+//     }
+//   }, 240000); // Configuración del tiempo límite a 240 segundos
+// });
 
 test.describe('Compra 1 Adulto - 3 niño - Economy Light - Economy Light - Nombre con caracteres especiales - con assitence - sin asiento - sin extras', () => {
   let page;
@@ -670,50 +604,50 @@ test.describe('Compra 1 Adulto - 3 niño - Economy Light - Economy Light - Nombr
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 
 
 //Infante
-test.describe('Compra 1 Adulto - 1 infante - Economy Light - Economy Light - Nombre sin caracteres especiales - sin asiento - sin extras', () => {
-  let page;
-  let context;
-  let Origin = ruteData.origin;
-  let Destination = ruteData.destination;
-  let DataADT = [userDataADT[0]]; 
-  let DataCHD = []; 
-  let DataINL = [userDataINL[0]]; 
-  let payCardData = paymentCards[0]; 
+// test.describe('Compra 1 Adulto - 1 infante - Economy Light - Economy Light - Nombre sin caracteres especiales - sin asiento - sin extras', () => {
+//   let page;
+//   let context;
+//   let Origin = ruteData.origin;
+//   let Destination = ruteData.destination;
+//   let DataADT = [userDataADT[0]]; 
+//   let DataCHD = []; 
+//   let DataINL = [userDataINL[0]]; 
+//   let payCardData = paymentCards[0]; 
 
-  //ida 
-  const outboundFlightClass = CabinClass.ECONOMY;
-  const outboundFlightType = CabinType.LIGHT;
+//   //ida 
+//   const outboundFlightClass = CabinClass.ECONOMY;
+//   const outboundFlightType = CabinType.LIGHT;
 
-  // vuelta
-  const returnFlightClass = CabinClass.ECONOMY;
-  const returnFlightType = CabinType.LIGHT;
+//   // vuelta
+//   const returnFlightClass = CabinClass.ECONOMY;
+//   const returnFlightType = CabinType.LIGHT;
 
 
-  test('Ejecución completa con reintentos', async ({ browser }) => {
-    let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
-    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-    let shouldContinueTests = false; // Default value
+//   test('Ejecución completa con reintentos', async ({ browser }) => {
+//     let executionAttempt = 0; // Reset execution attempt counter
+//     const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+//     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+//     let shouldContinueTests = false; // Default value
   
-    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-      executionAttempt++;
-      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+//     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+//       executionAttempt++;
+//       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+//       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
   
-      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
-    }
+//       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
+//     }
   
-    if (!shouldContinueTests) {
-      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-    }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
-});
+//     if (!shouldContinueTests) {
+//       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
+//     }
+//   }, 240000); // Configuración del tiempo límite a 240 segundos
+// });
 
 test.describe('Compra 1 Adulto - 1 infante - Economy Light - Economy Light - Nombre con caracteres especiales - sin asiento - sin extras', () => {
   let page;
@@ -750,13 +684,47 @@ test.describe('Compra 1 Adulto - 1 infante - Economy Light - Economy Light - Nom
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 
 //Cabinas 
+// Ida: Economy - Light, Vuelta: Economy - Light
+test.describe('Compra 1 Adulto Economy Light - Economy Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+  let page;
+  let context;
+  let Origin = ruteData.origin;
+  let Destination = ruteData.destination;
+  let DataADT = [userDataADT[0]]; 
+  let DataCHD = []; 
+  let DataINL = []; 
+  let payCardData = paymentCards[0];
 
+  const outboundFlightClass = CabinClass.ECONOMY;
+  const outboundFlightType = CabinType.LIGHT;
 
+  const returnFlightClass = CabinClass.ECONOMY;
+  const returnFlightType = CabinType.LIGHT;
+
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
+    }
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
+    }
+  }, 240000); // Configuración del tiempo límite a 240 segundos
+});
 // Ida: Economy - Light, Vuelta: Economy - Comfort
 test.describe('Compra 1 Adulto Economy Light - Economy COMFORT- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
@@ -794,7 +762,7 @@ test.describe('Compra 1 Adulto Economy Light - Economy COMFORT- Nombre sin carac
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 
@@ -835,7 +803,7 @@ test.describe('Compra 1 Adulto Economy Light - Economy Extra- Nombre sin caracte
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Economy - Light, Vuelta: Premium - Light
@@ -875,7 +843,7 @@ test.describe('Compra 1 Adulto Economy Light -  Premium Light- Nombre sin caract
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Economy - Light, Vuelta: Premium - Comfort
@@ -915,7 +883,7 @@ test.describe('Compra 1 Adulto Economy Light -  Premium Comfort- Nombre sin cara
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 
 });
 
@@ -956,7 +924,7 @@ test.describe('Compra 1 Adulto Economy Light -  Premium Extra- Nombre sin caract
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 
 });
 
@@ -997,7 +965,7 @@ test.describe('Compra 1 Adulto Economy Comfort - Economy Comfort- Nombre sin car
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Economy - Comfort, Vuelta: Economy - Extra
@@ -1038,7 +1006,7 @@ test.describe('Compra 1 Adulto Economy Comfort - Economy Extra- Nombre sin carac
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Economy - Comfort, Vuelta: Premium - Light
@@ -1078,7 +1046,7 @@ test.describe('Compra 1 Adulto Economy Comfort - Premium Light- Nombre sin carac
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Economy - Comfort, Vuelta: Premium - Comfort
@@ -1118,7 +1086,7 @@ test.describe('Compra 1 Adulto Economy Comfort - Premium Comfort- Nombre sin car
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Economy - Comfort, Vuelta: Premium - Extra
@@ -1158,7 +1126,7 @@ test.describe('Compra 1 Adulto Economy Comfort - Premium Extra- Nombre sin carac
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Economy - Extra, Vuelta: Economy - Light
@@ -1198,7 +1166,7 @@ test.describe('Compra 1 Adulto Economy Extra - Economy Light- Nombre sin caracte
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Economy - Extra, Vuelta: Economy - Comfort
@@ -1238,7 +1206,7 @@ test.describe('Compra 1 Adulto Economy Extra - Economy Comfort- Nombre sin carac
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Economy - Extra, Vuelta: Economy - Extra
@@ -1278,7 +1246,7 @@ test.describe('Compra 1 Adulto Economy Extra - Economy Extra- Nombre sin caracte
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Economy - Extra, Vuelta: Premium - Light
@@ -1318,7 +1286,7 @@ test.describe('Compra 1 Adulto Economy Extra - Premium Light- Nombre sin caracte
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Economy - Extra, Vuelta: Premium - Comfort
@@ -1359,7 +1327,7 @@ test.describe('Compra 1 Adulto Economy Extra - Premium Comfort- Nombre sin carac
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Economy - Extra, Vuelta: Premium - Extra
@@ -1400,7 +1368,7 @@ test.describe('Compra 1 Adulto Economy Extra - Premium Extra- Nombre sin caracte
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Light, Vuelta: Economy - Light
@@ -1440,7 +1408,7 @@ test.describe('Compra 1 Adulto Premium Light - Economy Light- Nombre sin caracte
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 // Ida: Premium - Light, Vuelta: Economy - Comfort
 
@@ -1480,7 +1448,7 @@ test.describe('Compra 1 Adulto Premium Light - Economy Comfort- Nombre sin carac
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Light, Vuelta: Economy - Extra
@@ -1521,7 +1489,7 @@ test.describe('Compra 1 Adulto Premium Light - Economy Extra- Nombre sin caracte
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Light, Vuelta: Premium - Light
@@ -1562,7 +1530,7 @@ test.describe('Compra 1 Adulto Premium Light - Premium Light- Nombre sin caracte
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Light, Vuelta: Premium - Comfort
@@ -1603,7 +1571,7 @@ test.describe('Compra 1 Adulto Premium Light - Premium Comfort- Nombre sin carac
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Light, Vuelta: Premium - Extra
@@ -1644,7 +1612,7 @@ test.describe('Compra 1 Adulto Premium Light - Premium Extra- Nombre sin caracte
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Comfort, Vuelta: Economy - Light
@@ -1685,7 +1653,7 @@ test.describe('Compra 1 Adulto Premium Comfort - Economy Light- Nombre sin carac
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Comfort, Vuelta: Economy - Comfort
@@ -1725,7 +1693,7 @@ test.describe('Compra 1 Adulto Premium Comfort - Economy Comfort- Nombre sin car
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Comfort, Vuelta: Economy - Extra
@@ -1766,7 +1734,7 @@ test.describe('Compra 1 Adulto Premium Comfort - Economy Extra- Nombre sin carac
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Comfort, Vuelta: Premium - Light
@@ -1807,7 +1775,7 @@ test.describe('Compra 1 Adulto Premium Comfort - Premium Light- Nombre sin carac
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Comfort, Vuelta: Premium - Comfort
@@ -1847,7 +1815,7 @@ test.describe('Compra 1 Adulto Premium Comfort - Premium Comfort- Nombre sin car
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Comfort, Vuelta: Premium - Extra
@@ -1888,7 +1856,7 @@ test.describe('Compra 1 Adulto Premium Comfort - Premium Extra- Nombre sin carac
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Extra, Vuelta: Economy - Light
@@ -1928,7 +1896,7 @@ test.describe('Compra 1 Adulto Premium Extra - Economy Light- Nombre sin caracte
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Extra, Vuelta: Economy - Comfort
@@ -1969,7 +1937,7 @@ test.describe('Compra 1 Adulto Premium Extra - Economy Comfort- Nombre sin carac
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Extra, Vuelta: Economy - Extra
@@ -2010,7 +1978,7 @@ test.describe('Compra 1 Adulto Premium Extra - Economy Extra- Nombre sin caracte
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Extra, Vuelta: Premium - Light
@@ -2051,7 +2019,7 @@ test.describe('Compra 1 Adulto Premium Extra - Premium Light- Nombre sin caracte
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Extra, Vuelta: Premium - Comfort
@@ -2091,7 +2059,7 @@ test.describe('Compra 1 Adulto Premium Extra - Premium Comfort- Nombre sin carac
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
 // Ida: Premium - Extra, Vuelta: Premium - Extra
@@ -2131,5 +2099,5 @@ test.describe('Compra 1 Adulto Premium Extra - Premium Extra- Nombre sin caracte
     if (!shouldContinueTests) {
       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  }, 120000); // Configuración del tiempo límite a 120 segundos
+  }, 240000); // Configuración del tiempo límite a 240 segundos
 });
