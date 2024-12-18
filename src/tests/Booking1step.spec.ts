@@ -100,11 +100,121 @@ async function global(page, Origin, Destination, DataADT, DataCHD, DataINL, outb
 
 }
 
+const runWithRetries = async (fn, screenshotPath, testName, page, TEST_RETRIES) => {
+  for (let attempt = 1; attempt <= TEST_RETRIES; attempt++) {
+    try {
+      console.log(`Ejecutando ${testName}, intento ${attempt}`);
+      await fn();
+      return true; // Éxito
+    } catch (error) {
+      console.error(`Intento ${attempt} fallido en ${testName}:`, error);
+      if (attempt === TEST_RETRIES) {
+        await page.screenshot({ path: screenshotPath });
+        console.error(`Prueba ${testName} fallida después de ${TEST_RETRIES} intentos.`);
+        return false; // Fallo
+      }
+    }
+  }
+};
+
+const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType) => {
+  let shouldContinueTests = true; // Re-initialize here for each execution attempt
+  try {
+    // Configurar navegador
+    context = await browser.newContext();
+    page = await context.newPage();
+    await openWebsiteAndAcceptCookies(page);
+
+    // Pruebas
+    shouldContinueTests = await runWithRetries(
+      () => global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType),
+      'test-results/screenshots/booking-error.png',
+      'Booking',
+      page, 
+      TEST_RETRIES
+    );
+
+    if (!shouldContinueTests) return shouldContinueTests; // Early exit if the booking test fails
+
+    for (let i = 0; i < DataADT.length; i++) {
+      if (!shouldContinueTests) break;
+      shouldContinueTests = await runWithRetries(
+        () => fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i),
+        `test-results/screenshots/adult-${i + 1}-error.png`,
+        `fillPassengerAdult ${i + 1}`,
+        page, 
+        TEST_RETRIES
+      );
+      if (!shouldContinueTests) return shouldContinueTests; // Early exit if the adult test fails
+    }
+
+    for (let i = 0; i < DataCHD.length; i++) {
+      if (!shouldContinueTests) break;
+      shouldContinueTests = await runWithRetries(
+        () => fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i),
+        `test-results/screenshots/child-${i + 1}-error.png`,
+        `fillPassengerChild ${i + 1}`,
+        page, 
+        TEST_RETRIES
+      );
+      if (!shouldContinueTests) return shouldContinueTests; // Early exit if the child test fails
+    }
+
+    for (let i = 0; i < DataINL.length; i++) {
+      if (!shouldContinueTests) break;
+      shouldContinueTests = await runWithRetries(
+        () => fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i),
+        `test-results/screenshots/infant-${i + 1}-error.png`,
+        `fillPassengerInfant ${i + 1}`,
+        page, 
+        TEST_RETRIES
+      );
+      if (!shouldContinueTests) return shouldContinueTests; // Early exit if the infant test fails
+    }
+
+    if (shouldContinueTests) {
+      shouldContinueTests = await runWithRetries(
+        async () => {
+          await page.locator('#contact').click();
+          await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
+          await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
+          await page.getByRole('button', { name: 'Complete your purchase' }).click();
+          await page.waitForTimeout(1000);
+        },
+        'test-results/screenshots/fillcontact-error.png',
+        'fillContact',
+        page, 
+        TEST_RETRIES
+      );
+    }
+
+    if (shouldContinueTests) {
+      shouldContinueTests = await runWithRetries(
+        () => payWithCardInformation(page, payCardData),
+        'test-results/screenshots/payWithCard-error.png',
+        'payWithCard',
+        page, 
+        TEST_RETRIES
+      );
+    }
+
+  } catch (error) {
+    console.error('Error crítico durante la ejecución:', error);
+    shouldContinueTests = false;
+  } finally {
+    if (page) await page.close();
+    if (context) await context.close();
+  }
+
+  return shouldContinueTests; // Return the status of the test execution
+};
+
 
 
 // Test Suite
 test.describe('Compra 1 Adulto Economy Light - Economy Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -118,92 +228,31 @@ test.describe('Compra 1 Adulto Economy Light - Economy Light - Nombre sin caract
   const returnFlightClass = CabinClass.ECONOMY;
   const returnFlightType = CabinType.LIGHT;
 
-    test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 
 
 test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0], userDataADT[1]]; 
@@ -219,93 +268,32 @@ test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombr
   const returnFlightClass = CabinClass.ECONOMY;
   const returnFlightType = CabinType.LIGHT;
 
-
-   test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-  for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 
 });
 
 
+
 test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre con caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[1], userDataADT[2]]; 
@@ -313,100 +301,40 @@ test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombr
   let DataINL = []; 
   let payCardData = paymentCards[0]; 
 
-  //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
   const outboundFlightType = CabinType.LIGHT;
-
-  // vuelta
   const returnFlightClass = CabinClass.ECONOMY;
   const returnFlightType = CabinType.LIGHT;
+  
 
-
-    test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
-
+  }, 120000); // Configuración del tiempo límite a 120 segundos
+  
+  
 });
+
+
+
 
 test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre sin caracteres especiales - Con assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[1], userDataADT[3]]; 
@@ -423,91 +351,46 @@ test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombr
   const returnFlightType = CabinType.LIGHT;
 
 
-    test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+       test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+    test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
+  }, 120000); // Configuración del tiempo límite a 120 segundos
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre con caracteres especiales - Con assitence TODAS - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[4], userDataADT[5]]; 
@@ -524,92 +407,47 @@ test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombr
   const returnFlightType = CabinType.LIGHT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+   test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+    test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
+  }, 120000); // Configuración del tiempo límite a 120 segundos
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Niño 
 test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -626,193 +464,85 @@ test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombr
   const returnFlightType = CabinType.LIGHT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+   test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+    test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
+  }, 120000); // Configuración del tiempo límite a 120 segundos
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
-test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre con caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre con caracteres especiales - sin asistencia - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
-  let DataADT = [userDataADT[0]]; 
-  let DataCHD = [userDataCHD[1]]; 
-  let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let DataADT = [userDataADT[0]];
+  let DataCHD = [userDataCHD[1]];
+  let DataINL = [];
+  let payCardData = paymentCards[0];
 
-  //ida 
+  // Ida
   const outboundFlightClass = CabinClass.ECONOMY;
   const outboundFlightType = CabinType.LIGHT;
 
-  // vuelta
+  // Vuelta
   const returnFlightClass = CabinClass.ECONOMY;
   const returnFlightType = CabinType.LIGHT;
 
-
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
-    }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
-    }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
   
-
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
+    }
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
+    }
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
+
 
 test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre con caracteres especiales - con assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -829,91 +559,46 @@ test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombr
   const returnFlightType = CabinType.LIGHT;
 
 
-    test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+       test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+    test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
+  }, 120000); // Configuración del tiempo límite a 120 segundos
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre sin caracteres especiales - con assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -930,90 +615,29 @@ test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombr
   const returnFlightType = CabinType.LIGHT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 test.describe('Compra 1 Adulto - 3 niño - Economy Light - Economy Light - Nombre con caracteres especiales - con assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -1029,86 +653,24 @@ test.describe('Compra 1 Adulto - 3 niño - Economy Light - Economy Light - Nombr
   const returnFlightClass = CabinClass.ECONOMY;
   const returnFlightType = CabinType.LIGHT;
 
-  test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 
@@ -1116,6 +678,7 @@ test.describe('Compra 1 Adulto - 3 niño - Economy Light - Economy Light - Nombr
 //Infante
 test.describe('Compra 1 Adulto - 1 infante - Economy Light - Economy Light - Nombre sin caracteres especiales - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -1132,90 +695,29 @@ test.describe('Compra 1 Adulto - 1 infante - Economy Light - Economy Light - Nom
   const returnFlightType = CabinType.LIGHT;
 
 
-    test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 test.describe('Compra 1 Adulto - 1 infante - Economy Light - Economy Light - Nombre con caracteres especiales - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -1231,86 +733,24 @@ test.describe('Compra 1 Adulto - 1 infante - Economy Light - Economy Light - Nom
   const returnFlightClass = CabinClass.ECONOMY;
   const returnFlightType = CabinType.LIGHT;
 
-   test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 
@@ -1320,6 +760,7 @@ test.describe('Compra 1 Adulto - 1 infante - Economy Light - Economy Light - Nom
 // Ida: Economy - Light, Vuelta: Economy - Comfort
 test.describe('Compra 1 Adulto Economy Light - Economy COMFORT- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -1336,92 +777,31 @@ test.describe('Compra 1 Adulto Economy Light - Economy COMFORT- Nombre sin carac
   const returnFlightType = CabinType.COMFORT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 
 // Ida: Economy - Light, Vuelta: Economy - Extra
 test.describe('Compra 1 Adulto Economy Light - Economy Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -1438,91 +818,30 @@ test.describe('Compra 1 Adulto Economy Light - Economy Extra- Nombre sin caracte
   const returnFlightType = CabinType.EXTRA;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Economy - Light, Vuelta: Premium - Light
 test.describe('Compra 1 Adulto Economy Light -  Premium Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -1539,91 +858,30 @@ test.describe('Compra 1 Adulto Economy Light -  Premium Light- Nombre sin caract
   const returnFlightType = CabinType.LIGHT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Economy - Light, Vuelta: Premium - Comfort
 test.describe('Compra 1 Adulto Economy Light -  Premium Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -1640,92 +898,31 @@ test.describe('Compra 1 Adulto Economy Light -  Premium Comfort- Nombre sin cara
   const returnFlightType = CabinType.COMFORT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 
 });
 
 // Ida: Economy - Light, Vuelta: Premium - Extra
 test.describe('Compra 1 Adulto Economy Light -  Premium Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -1742,86 +939,24 @@ test.describe('Compra 1 Adulto Economy Light -  Premium Extra- Nombre sin caract
   const returnFlightType = CabinType.EXTRA;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 
 });
 
@@ -1829,6 +964,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.describe('Compra 1 Adulto Economy Comfort - Economy Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -1844,92 +980,31 @@ test.describe('Compra 1 Adulto Economy Comfort - Economy Comfort- Nombre sin car
   const returnFlightClass = CabinClass.ECONOMY;
   const returnFlightType = CabinType.COMFORT;
 
-   test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Economy - Comfort, Vuelta: Economy - Extra
 
 test.describe('Compra 1 Adulto Economy Comfort - Economy Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -1946,91 +1021,30 @@ test.describe('Compra 1 Adulto Economy Comfort - Economy Extra- Nombre sin carac
   const returnFlightType = CabinType.EXTRA;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Economy - Comfort, Vuelta: Premium - Light
 test.describe('Compra 1 Adulto Economy Comfort - Premium Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -2047,91 +1061,30 @@ test.describe('Compra 1 Adulto Economy Comfort - Premium Light- Nombre sin carac
   const returnFlightType = CabinType.LIGHT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Economy - Comfort, Vuelta: Premium - Comfort
 test.describe('Compra 1 Adulto Economy Comfort - Premium Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -2148,91 +1101,30 @@ test.describe('Compra 1 Adulto Economy Comfort - Premium Comfort- Nombre sin car
   const returnFlightType = CabinType.COMFORT;
 
 
-    test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Economy - Comfort, Vuelta: Premium - Extra
 test.describe('Compra 1 Adulto Economy Comfort - Premium Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -2249,91 +1141,30 @@ test.describe('Compra 1 Adulto Economy Comfort - Premium Extra- Nombre sin carac
   const returnFlightType = CabinType.EXTRA;
 
 
-    test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Economy - Extra, Vuelta: Economy - Light
 test.describe('Compra 1 Adulto Economy Extra - Economy Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -2350,91 +1181,30 @@ test.describe('Compra 1 Adulto Economy Extra - Economy Light- Nombre sin caracte
   const returnFlightType = CabinType.LIGHT;
 
 
-    test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Economy - Extra, Vuelta: Economy - Comfort
 test.describe('Compra 1 Adulto Economy Extra - Economy Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -2451,91 +1221,30 @@ test.describe('Compra 1 Adulto Economy Extra - Economy Comfort- Nombre sin carac
   const returnFlightType = CabinType.COMFORT;
 
 
-    test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Economy - Extra, Vuelta: Economy - Extra
 test.describe('Compra 1 Adulto Economy Extra - Economy Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -2552,91 +1261,30 @@ test.describe('Compra 1 Adulto Economy Extra - Economy Extra- Nombre sin caracte
   const returnFlightType = CabinType.EXTRA;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Economy - Extra, Vuelta: Premium - Light
 test.describe('Compra 1 Adulto Economy Extra - Premium Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -2653,92 +1301,31 @@ test.describe('Compra 1 Adulto Economy Extra - Premium Light- Nombre sin caracte
   const returnFlightType = CabinType.LIGHT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Economy - Extra, Vuelta: Premium - Comfort
 
 test.describe('Compra 1 Adulto Economy Extra - Premium Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -2755,92 +1342,31 @@ test.describe('Compra 1 Adulto Economy Extra - Premium Comfort- Nombre sin carac
   const returnFlightType = CabinType.COMFORT;
 
 
-    test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Economy - Extra, Vuelta: Premium - Extra
 
 test.describe('Compra 1 Adulto Economy Extra - Premium Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -2857,91 +1383,30 @@ test.describe('Compra 1 Adulto Economy Extra - Premium Extra- Nombre sin caracte
   const returnFlightType = CabinType.EXTRA;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Light, Vuelta: Economy - Light
 test.describe('Compra 1 Adulto Premium Light - Economy Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -2958,91 +1423,30 @@ test.describe('Compra 1 Adulto Premium Light - Economy Light- Nombre sin caracte
   const returnFlightType = CabinType.LIGHT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 // Ida: Premium - Light, Vuelta: Economy - Comfort
 
 test.describe('Compra 1 Adulto Premium Light - Economy Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -3059,92 +1463,31 @@ test.describe('Compra 1 Adulto Premium Light - Economy Comfort- Nombre sin carac
   const returnFlightType = CabinType.COMFORT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Light, Vuelta: Economy - Extra
 
 test.describe('Compra 1 Adulto Premium Light - Economy Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -3161,92 +1504,31 @@ test.describe('Compra 1 Adulto Premium Light - Economy Extra- Nombre sin caracte
   const returnFlightType = CabinType.EXTRA;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Light, Vuelta: Premium - Light
 
 test.describe('Compra 1 Adulto Premium Light - Premium Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -3263,92 +1545,31 @@ test.describe('Compra 1 Adulto Premium Light - Premium Light- Nombre sin caracte
   const returnFlightType = CabinType.LIGHT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Light, Vuelta: Premium - Comfort
 
 test.describe('Compra 1 Adulto Premium Light - Premium Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -3365,92 +1586,31 @@ test.describe('Compra 1 Adulto Premium Light - Premium Comfort- Nombre sin carac
   const returnFlightType = CabinType.COMFORT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Light, Vuelta: Premium - Extra
 
 test.describe('Compra 1 Adulto Premium Light - Premium Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -3467,92 +1627,31 @@ test.describe('Compra 1 Adulto Premium Light - Premium Extra- Nombre sin caracte
   const returnFlightType = CabinType.EXTRA;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Comfort, Vuelta: Economy - Light
 
 test.describe('Compra 1 Adulto Premium Comfort - Economy Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -3569,91 +1668,30 @@ test.describe('Compra 1 Adulto Premium Comfort - Economy Light- Nombre sin carac
   const returnFlightType = CabinType.LIGHT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Comfort, Vuelta: Economy - Comfort
 test.describe('Compra 1 Adulto Premium Comfort - Economy Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -3670,92 +1708,31 @@ test.describe('Compra 1 Adulto Premium Comfort - Economy Comfort- Nombre sin car
   const returnFlightType = CabinType.COMFORT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Comfort, Vuelta: Economy - Extra
 
 test.describe('Compra 1 Adulto Premium Comfort - Economy Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -3772,92 +1749,31 @@ test.describe('Compra 1 Adulto Premium Comfort - Economy Extra- Nombre sin carac
   const returnFlightType = CabinType.EXTRA;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Comfort, Vuelta: Premium - Light
 
 test.describe('Compra 1 Adulto Premium Comfort - Premium Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -3874,91 +1790,30 @@ test.describe('Compra 1 Adulto Premium Comfort - Premium Light- Nombre sin carac
   const returnFlightType = CabinType.LIGHT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Comfort, Vuelta: Premium - Comfort
 test.describe('Compra 1 Adulto Premium Comfort - Premium Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -3975,92 +1830,31 @@ test.describe('Compra 1 Adulto Premium Comfort - Premium Comfort- Nombre sin car
   const returnFlightType = CabinType.COMFORT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Comfort, Vuelta: Premium - Extra
 
 test.describe('Compra 1 Adulto Premium Comfort - Premium Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -4077,91 +1871,30 @@ test.describe('Compra 1 Adulto Premium Comfort - Premium Extra- Nombre sin carac
   const returnFlightType = CabinType.EXTRA;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Extra, Vuelta: Economy - Light
 test.describe('Compra 1 Adulto Premium Extra - Economy Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -4178,92 +1911,31 @@ test.describe('Compra 1 Adulto Premium Extra - Economy Light- Nombre sin caracte
   const returnFlightType = CabinType.LIGHT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Extra, Vuelta: Economy - Comfort
 
 test.describe('Compra 1 Adulto Premium Extra - Economy Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -4280,92 +1952,31 @@ test.describe('Compra 1 Adulto Premium Extra - Economy Comfort- Nombre sin carac
   const returnFlightType = CabinType.COMFORT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Extra, Vuelta: Economy - Extra
 
 test.describe('Compra 1 Adulto Premium Extra - Economy Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -4382,92 +1993,31 @@ test.describe('Compra 1 Adulto Premium Extra - Economy Extra- Nombre sin caracte
   const returnFlightType = CabinType.EXTRA;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Extra, Vuelta: Premium - Light
 
 test.describe('Compra 1 Adulto Premium Extra - Premium Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -4484,91 +2034,30 @@ test.describe('Compra 1 Adulto Premium Extra - Premium Light- Nombre sin caracte
   const returnFlightType = CabinType.LIGHT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Extra, Vuelta: Premium - Comfort
 test.describe('Compra 1 Adulto Premium Extra - Premium Comfort- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -4585,91 +2074,30 @@ test.describe('Compra 1 Adulto Premium Extra - Premium Comfort- Nombre sin carac
   const returnFlightType = CabinType.COMFORT;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
 
 // Ida: Premium - Extra, Vuelta: Premium - Extra
 test.describe('Compra 1 Adulto Premium Extra - Premium Extra- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
+  let context;
   let Origin = ruteData.origin;
   let Destination = ruteData.destination;
   let DataADT = [userDataADT[0]]; 
@@ -4686,84 +2114,22 @@ test.describe('Compra 1 Adulto Premium Extra - Premium Extra- Nombre sin caracte
   const returnFlightType = CabinType.EXTRA;
 
 
-test.beforeAll(async ({ browser }) => {
-    if (!fs.existsSync('screenshots')) {
-      fs.mkdirSync('screenshots');
+  test('Ejecución completa con reintentos', async ({ browser }) => {
+    let executionAttempt = 0; // Reset execution attempt counter
+    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+    let shouldContinueTests = false; // Default value
+  
+    while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+      executionAttempt++;
+      console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+  
+      if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await openWebsiteAndAcceptCookies(page);
-  });
-
-  test.afterAll(async () => {
-    await page.close();
-  });
-
-  test('Booking', async () => {
-    try {
-      await global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/booking-error.png' });
-      throw error; // Rethrow para marcar el test como fallido
+  
+    if (!shouldContinueTests) {
+      throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
     }
-  });
-
-  for (let i = 0; i < DataADT.length; i++) {
-    test(`fillPassengerAdult ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/adult-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-   for (let i = 0; i < DataCHD.length; i++) {
-    test(`fillPassengerChild ${i + 1}`, async () => {
-      try {
-        await fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i);
-      } catch (error) {
-        await page.screenshot({ path: `test-results/screenshots/child-${i + 1}-error.png` });
-        throw error;
-      }
-    });
-  }
-
-    
-      // Llenado de información para adultos (con un for para varios adultos)
-      for (let i = 0; i < DataINL.length; i++) {
-        test(`fillPassengerInfant ${i + 1}`, async () => {
-          if (DataINL.length > 0) {
-            try {
-            await fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i);
-          } catch (error) {
-            await page.screenshot({ path: `test-results/screenshots/infant-${i + 1}-error.png` });
-            throw error;
-          }
-          }
-        });
-      }
-
-  test('fillcontact', async () => {
-    try {
-      await page.locator('#contact').click();
-      await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
-      await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-      await page.getByRole('button', { name: 'Complete your purchase' }).click();
-      await page.waitForTimeout(5000);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/fillcontact-error.png' });
-      throw error;
-    }
-  });
-
-  test('payWithCard', async () => {
-    try {
-      await payWithCardInformation(page, payCardData);
-    } catch (error) {
-      await page.screenshot({ path: 'test-results/screenshots/payWithCard-error.png' });
-      throw error;
-    }
-  });
+  }, 120000); // Configuración del tiempo límite a 120 segundos
 });
