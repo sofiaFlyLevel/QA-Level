@@ -2,22 +2,23 @@ import { getApiResponse, transformApiResponse, postApiResponse} from '../utils/a
 import { formatDateWithOrdinal } from './basePage';
 import {Money, CabinClass, CabinType} from '../fixtures/userData'
 
-export async function selectCountryAndDate(page, apiData, origin, destination, calendarIndex = 0, startDate = null) {
+
+export async function selectCountryAndDate(page, apiData, origin, destination, calendarIndex = 0, startDate = null, rangeStartMonths, rangeEndMonths ) {
     try {
         // Llamada a la API para obtener fechas disponibles
         const apiResponse = await getApiResponse(apiData.baseUrl, origin, destination, apiData.definition);
         const transformedDates = transformApiResponse(apiResponse);
 
-        // Calcular la fecha inicial (si no se pasa, usar hoy) y los límites de un mes y dos meses adelante
+        // Calcular la fecha inicial (si no se pasa, usar hoy) y los límites de rango en meses
         const today = startDate ? new Date(startDate) : new Date();
-        const oneMonthLater = new Date(today);
-        oneMonthLater.setMonth(today.getMonth() + 1);
+        const rangeStartDate = new Date(today);
+        rangeStartDate.setMonth(today.getMonth() + rangeStartMonths);
 
-        const twoMonthsLater = new Date(today);
-        twoMonthsLater.setMonth(today.getMonth() + 2);
+        const rangeEndDate = new Date(today);
+        rangeEndDate.setMonth(today.getMonth() + rangeEndMonths);
 
-        // Generar una fecha aleatoria entre 1 y 2 meses a partir de hoy
-        const randomTime = new Date(today.getTime() + Math.random() * (twoMonthsLater.getTime() - oneMonthLater.getTime()));
+        // Generar una fecha aleatoria dentro del rango especificado
+        const randomTime = new Date(rangeStartDate.getTime() + Math.random() * (rangeEndDate.getTime() - rangeStartDate.getTime()));
 
         // Buscar la fecha más cercana a la fecha aleatoria generada
         const selectedDate = transformedDates.find(date => {
@@ -39,8 +40,6 @@ export async function selectCountryAndDate(page, apiData, origin, destination, c
             currentMonthLabel = await currentMonthLocator.textContent();
         }
 
-        
-
         return selectedDate; // Retornar la fecha seleccionada
     } catch (error) {
         console.error('Error al seleccionar país y fecha:', error.message);
@@ -48,7 +47,8 @@ export async function selectCountryAndDate(page, apiData, origin, destination, c
     }
 }
 
-export async function selectRoundTripDates(page, apiData, origin, destination, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType, DataADT, DataCHD, DataINL, oneTrip = false, calendarIndex = 0) {
+export async function selectRoundTripDates(page, apiData, origin, destination, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType, DataADT, DataCHD, DataINL, oneTrip = false, 
+    calendarIndex = 0, rangeStartMonths = 3, rangeEndMonths = 5) {
     let selectedDepartureDate, selectedReturnDate, transformedDates;
 
     const passengers = {};
@@ -66,7 +66,7 @@ export async function selectRoundTripDates(page, apiData, origin, destination, o
 
     try {
         // Selección de fecha de ida
-        selectedDepartureDate = await selectCountryAndDate(page, apiData, origin, destination, 0);
+        selectedDepartureDate = await selectCountryAndDate(page, apiData, origin, destination, 0, null, rangeStartMonths, rangeEndMonths);
         let formattedDepartureDate = `${selectedDepartureDate.year}-${String(selectedDepartureDate.month).padStart(2, '0')}-${String(selectedDepartureDate.value).padStart(2, '0')}`;
 
         // Validar clase de cabina y tipo para la ida
@@ -163,6 +163,7 @@ function validateCabinType(response, flightClass, flightType) {
         throw new Error('No se encontró un tipo de cabina válido.');
     }
 }
+
 
 
 

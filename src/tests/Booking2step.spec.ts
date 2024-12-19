@@ -77,6 +77,31 @@ async function fillPassengerInformation(page,type, data, variable, i) {
  
 }
 
+// Function to seatmap
+async function seatmap(page) {
+  try {
+    // await page.locator('div').filter({ hasText: /^\$41\$3810\$33\$33\$3810\$38\$41$/ }).getByRole('img').click();
+  await page.waitForTimeout(5000); // Wait for 5 seconds
+    // await page.getByText('D12').click();
+    // await page.locator('.seat-map__mapper > div:nth-child(8) > div:nth-child(2) > .compartment__seat-icon > .occupied').click();
+    // await page.locator('.tooltip-arrow-shadow').click();
+    // await page.getByText('$41A12Delantero$41frontwindow$3812$33$33$3812$38$').click();
+    const selector = 'p.seat-types-legend__header';
+    const exists = await page.locator(selector).filter({ hasText: 'Seat types' }).count() > 0;
+  
+    if (exists) {
+      console.log('El elemento con el título "Seat types" y clase "seat-types-legend__header" existe.');
+    } else {
+      console.log('El elemento no existe.');
+    }
+
+    //await page.locator('div:nth-child(9) > div > .compartment__seat-icon > .tooltip-container > .seat-icon__zoom > img').first().click();
+  } catch (error) {
+    console.error('Error while filling passenger data:', error);
+  }
+ 
+}
+
 // Function to pay with a credit card
 async function payWithCardInformation(page, payCardData) {
   await payWithCard(page, payCardData);
@@ -92,7 +117,6 @@ async function global(page, Origin, Destination, DataADT, DataCHD, DataINL, outb
   if(oneTripBoll){
     await page.getByRole('button', { name: 'One way' }).click(); // en ingles esta 
   }
-
 
   await toggleCityButton(page);
 
@@ -183,10 +207,77 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
           await page.locator('#contact').click();
           await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
           await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-          await page.getByRole('button', { name: 'Complete your purchase' }).click();
+          await page.getByRole('button', { name: 'Customize your flight' }).click();
           await page.waitForTimeout(1000);
         },
         'test-results/screenshots/fillcontact-error.png',
+        'fillContact',
+        page, 
+        TEST_RETRIES
+      );
+    }
+    //seatmap
+    if (shouldContinueTests) {
+      shouldContinueTests = await runWithRetries(
+        () => seatmap(page),
+        'test-results/screenshots/seat-error.png',
+        'payWithCard',
+        page, 
+        TEST_RETRIES
+      );
+    } 
+
+    // Bag
+    if (shouldContinueTests) {
+      shouldContinueTests = await runWithRetries(
+        () => bag(page),
+        'test-results/screenshots/bag-error.png',
+        'payWithCard',
+        page, 
+        TEST_RETRIES
+      );
+    }
+
+    //eat
+    if (shouldContinueTests) {
+      shouldContinueTests = await runWithRetries(
+        () => eat(page),
+        'test-results/screenshots/eat-error.png',
+        'payWithCard',
+        page, 
+        TEST_RETRIES
+      );
+    }
+    //extra baggage
+    if (shouldContinueTests) {
+      shouldContinueTests = await runWithRetries(
+        () => extrabaggage(page),
+        'test-results/screenshots/extra-baggage-error.png',
+        'payWithCard',
+        page, 
+        TEST_RETRIES
+      );
+    }
+    //pet
+
+    if (shouldContinueTests) {
+      shouldContinueTests = await runWithRetries(
+        () => pet(page, payCardData),
+        'test-results/screenshots/pet-error.png',
+        'payWithCard',
+        page, 
+        TEST_RETRIES
+      );
+    }
+
+    //Continue 
+    if (shouldContinueTests) {
+      shouldContinueTests = await runWithRetries(
+        async () => {
+          await page.getByRole('button', { name: 'Continue' }).click();
+          await page.waitForTimeout(1000);
+        },
+        'test-results/screenshots/extra-error.png',
         'fillContact',
         page, 
         TEST_RETRIES

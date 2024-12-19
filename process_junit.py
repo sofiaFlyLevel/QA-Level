@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import subprocess
 import os
+from datetime import datetime
 
 def process_junit_report(input_path, output_path):
     if not os.path.exists(input_path):
@@ -87,6 +88,10 @@ except FileNotFoundError as e:
     print(str(e))
     exit(1)
 
+# Crear un título dinámico
+current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")  # Formato: YYYY-MM-DD_HH-MM-SS
+dynamic_title = f"Playwright Automated Test Run {current_time}"
+
 # Subir a TestRail usando trcli
 try:
     subprocess.run([ 
@@ -97,7 +102,7 @@ try:
         "--project", "Level",
         "parse_junit",
         "-f", output_path,
-        "--title", "Playwright Automated Test Run"
+        "--title", dynamic_title  # Usar el título dinámico aquí
     ], check=True)
 
     print("Results successfully uploaded to TestRail.")

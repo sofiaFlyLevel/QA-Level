@@ -1,7 +1,7 @@
 // entornoData.ts
 export const entornoData = {
     prod: {
-        url: 'https://www.flylevel.com/'
+        url: 'https://www.flylevel.com/en/?currencyCode=USD'
     },
     dev: {
       url: "https://lv-uihomeweb-webapp-dev.azurewebsites.net/?searchFlightBkn=APS"

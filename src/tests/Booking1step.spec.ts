@@ -236,7 +236,7 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
 
 //   test('Ejecución completa con reintentos', async ({ browser }) => {
 //     let executionAttempt = 0; // Reset execution attempt counter
-//     const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+//     const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
 //     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
 //     let shouldContinueTests = false; // Default value
   
@@ -275,7 +275,7 @@ test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombr
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -319,7 +319,7 @@ test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombr
 
 //         test('Ejecución completa con reintentos', async ({ browser }) => {
 //     let executionAttempt = 0; // Reset execution attempt counter
-//     const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+//     const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
 //     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
 //     let shouldContinueTests = false; // Default value
 
@@ -367,7 +367,7 @@ test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombr
 
     test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
 
@@ -416,7 +416,7 @@ test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombr
 
 //     test('Ejecución completa con reintentos', async ({ browser }) => {
 //     let executionAttempt = 0; // Reset execution attempt counter
-//     const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+//     const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
 //     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
 //     let shouldContinueTests = false; // Default value
 
@@ -463,7 +463,7 @@ test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombr
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -503,7 +503,7 @@ test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombr
 
         test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
 
@@ -551,7 +551,7 @@ test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombr
 
 //   test('Ejecución completa con reintentos', async ({ browser }) => {
 //     let executionAttempt = 0; // Reset execution attempt counter
-//     const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+//     const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
 //     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
 //     let shouldContinueTests = false; // Default value
   
@@ -589,7 +589,7 @@ test.describe('Compra 1 Adulto - 3 niño - Economy Light - Economy Light - Nombr
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -631,7 +631,7 @@ test.describe('Compra 1 Adulto - 3 niño - Economy Light - Economy Light - Nombr
 
 //   test('Ejecución completa con reintentos', async ({ browser }) => {
 //     let executionAttempt = 0; // Reset execution attempt counter
-//     const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+//     const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
 //     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
 //     let shouldContinueTests = false; // Default value
   
@@ -669,7 +669,7 @@ test.describe('Compra 1 Adulto - 1 infante - Economy Light - Economy Light - Nom
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -708,7 +708,7 @@ test.describe('Compra 1 Adulto Economy Light - Economy Light - Nombre sin caract
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -747,7 +747,7 @@ test.describe('Compra 1 Adulto Economy Light - Economy COMFORT- Nombre sin carac
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -788,7 +788,7 @@ test.describe('Compra 1 Adulto Economy Light - Economy Extra- Nombre sin caracte
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -828,7 +828,7 @@ test.describe('Compra 1 Adulto Economy Light -  Premium Light- Nombre sin caract
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -868,7 +868,7 @@ test.describe('Compra 1 Adulto Economy Light -  Premium Comfort- Nombre sin cara
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -909,7 +909,7 @@ test.describe('Compra 1 Adulto Economy Light -  Premium Extra- Nombre sin caract
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -950,7 +950,7 @@ test.describe('Compra 1 Adulto Economy Comfort - Economy Comfort- Nombre sin car
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -991,7 +991,7 @@ test.describe('Compra 1 Adulto Economy Comfort - Economy Extra- Nombre sin carac
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1031,7 +1031,7 @@ test.describe('Compra 1 Adulto Economy Comfort - Premium Light- Nombre sin carac
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1071,7 +1071,7 @@ test.describe('Compra 1 Adulto Economy Comfort - Premium Comfort- Nombre sin car
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1111,7 +1111,7 @@ test.describe('Compra 1 Adulto Economy Comfort - Premium Extra- Nombre sin carac
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1151,7 +1151,7 @@ test.describe('Compra 1 Adulto Economy Extra - Economy Light- Nombre sin caracte
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1191,7 +1191,7 @@ test.describe('Compra 1 Adulto Economy Extra - Economy Comfort- Nombre sin carac
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1231,7 +1231,7 @@ test.describe('Compra 1 Adulto Economy Extra - Economy Extra- Nombre sin caracte
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1271,7 +1271,7 @@ test.describe('Compra 1 Adulto Economy Extra - Premium Light- Nombre sin caracte
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1312,7 +1312,7 @@ test.describe('Compra 1 Adulto Economy Extra - Premium Comfort- Nombre sin carac
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1353,7 +1353,7 @@ test.describe('Compra 1 Adulto Economy Extra - Premium Extra- Nombre sin caracte
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1393,7 +1393,7 @@ test.describe('Compra 1 Adulto Premium Light - Economy Light- Nombre sin caracte
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1433,7 +1433,7 @@ test.describe('Compra 1 Adulto Premium Light - Economy Comfort- Nombre sin carac
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1474,7 +1474,7 @@ test.describe('Compra 1 Adulto Premium Light - Economy Extra- Nombre sin caracte
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1515,7 +1515,7 @@ test.describe('Compra 1 Adulto Premium Light - Premium Light- Nombre sin caracte
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1556,7 +1556,7 @@ test.describe('Compra 1 Adulto Premium Light - Premium Comfort- Nombre sin carac
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1597,7 +1597,7 @@ test.describe('Compra 1 Adulto Premium Light - Premium Extra- Nombre sin caracte
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1638,7 +1638,7 @@ test.describe('Compra 1 Adulto Premium Comfort - Economy Light- Nombre sin carac
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1678,7 +1678,7 @@ test.describe('Compra 1 Adulto Premium Comfort - Economy Comfort- Nombre sin car
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1719,7 +1719,7 @@ test.describe('Compra 1 Adulto Premium Comfort - Economy Extra- Nombre sin carac
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1760,7 +1760,7 @@ test.describe('Compra 1 Adulto Premium Comfort - Premium Light- Nombre sin carac
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1800,7 +1800,7 @@ test.describe('Compra 1 Adulto Premium Comfort - Premium Comfort- Nombre sin car
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1841,7 +1841,7 @@ test.describe('Compra 1 Adulto Premium Comfort - Premium Extra- Nombre sin carac
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1881,7 +1881,7 @@ test.describe('Compra 1 Adulto Premium Extra - Economy Light- Nombre sin caracte
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1922,7 +1922,7 @@ test.describe('Compra 1 Adulto Premium Extra - Economy Comfort- Nombre sin carac
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -1963,7 +1963,7 @@ test.describe('Compra 1 Adulto Premium Extra - Economy Extra- Nombre sin caracte
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -2004,7 +2004,7 @@ test.describe('Compra 1 Adulto Premium Extra - Premium Light- Nombre sin caracte
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -2044,7 +2044,7 @@ test.describe('Compra 1 Adulto Premium Extra - Premium Comfort- Nombre sin carac
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
@@ -2084,7 +2084,7 @@ test.describe('Compra 1 Adulto Premium Extra - Premium Extra- Nombre sin caracte
 
   test('Ejecución completa con reintentos', async ({ browser }) => {
     let executionAttempt = 0; // Reset execution attempt counter
-    const MAX_RETRIES = 3; // Número máximo de intentos para la ejecución completa
+    const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
     let shouldContinueTests = false; // Default value
   
