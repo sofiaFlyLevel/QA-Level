@@ -220,7 +220,7 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
 
 
 // Test Suite
-test.describe('1 Adt EcoLight - sin assitence', () => {
+test.describe('1. 1 Adt EcoLight - sin assitence', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -260,7 +260,7 @@ test.describe('1 Adt EcoLight - sin assitence', () => {
 
 
 
-test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre con caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+test.describe('2. Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre con caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -300,7 +300,7 @@ test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombr
   
 });
 
-test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre con caracteres especiales - Con assitence TODAS - sin asiento - sin extras', () => {
+test.describe('3. Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre con caracteres especiales - Con assitence TODAS - sin asiento - sin extras', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -350,57 +350,7 @@ test.describe('Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombr
   }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
-// test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
-//   let page;
-//   let context;
-//   let Origin = ruteData.origin;
-//   let Destination = ruteData.destination;
-//   let DataADT = [userDataADT[0]]; 
-//   let DataCHD = [userDataCHD[0]]; 
-//   let DataINL = []; 
-//     let payCardData = paymentCards[0];
-  let lenguageLocal = Language.EN; 
-  let dayOffset = -1; // Default value 
-
-//   //ida 
-//   const outboundFlightClass = CabinClass.ECONOMY;
-//   const outboundFlightType = CabinType.LIGHT;
-
-//   // vuelta
-//   const returnFlightClass = CabinClass.ECONOMY;
-//   const returnFlightType = CabinType.LIGHT;
-
-
-//     test('Ejecución completa con reintentos', async ({ browser }) => {
-//     let executionAttempt = 0; // Reset execution attempt counter
-//     const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
-//     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-//     let shouldContinueTests = false; // Default value
-
-//     // Intentos de ejecución
-//     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-//       executionAttempt++;
-//       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-
-//       // Ejecutar las pruebas
-//       shouldContinueTests = await executeTests(
-//         browser, context, page, TEST_RETRIES,
-//         Origin, Destination, DataADT, DataCHD, DataINL,
-//         outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType
-//       );
-
-//       // Salir del ciclo si todas las pruebas fueron exitosas
-//       if (shouldContinueTests) break; 
-//     }
-
-//     // Si después de los intentos no se completaron correctamente, arrojar un error
-//     if (!shouldContinueTests) {
-//       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-//     }
-//   }, 240000); // Configuración del tiempo límite a 240 segundos
-// });
-
-test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre con caracteres especiales - sin asistencia - sin asiento - sin extras', () => {
+test.describe('4. Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre con caracteres especiales - sin asistencia - sin asiento - sin extras', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -441,7 +391,7 @@ test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombr
 });
 
 
-test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre con caracteres especiales - con assitence - sin asiento - sin extras', () => {
+test.describe('5. Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre con caracteres especiales - con assitence - sin asiento - sin extras', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -491,7 +441,7 @@ test.describe('Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombr
   }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
-test.describe('Compra 1 Adulto - 3 niño - Economy Light - Economy Light - Nombre con caracteres especiales - con assitence - sin asiento - sin extras', () => {
+test.describe('6. Compra 1 Adulto - 3 niño - Economy Light - Economy Light - Nombre con caracteres especiales - con assitence - sin asiento - sin extras', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -536,7 +486,7 @@ test.describe('Compra 1 Adulto - 3 niño - Economy Light - Economy Light - Nombr
 //Infante
 
 
-test.describe('Compra 1 Adulto - 1 infante - Economy Light- Nombre con caracteres especiales - sin asiento - sin extras', () => {
+test.describe('7. Compra 1 Adulto - 1 infante - Economy Light- Nombre con caracteres especiales - sin asiento - sin extras', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -579,7 +529,7 @@ test.describe('Compra 1 Adulto - 1 infante - Economy Light- Nombre con caractere
 
 //Cabinas 
 // Ida: Economy - Light, Vuelta: Economy - Light
-test.describe('Compra 1 Adulto Economy Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+test.describe('8. Compra 1 Adulto Economy Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -619,7 +569,7 @@ test.describe('Compra 1 Adulto Economy Light - Nombre sin caracteres especiales 
 
 // Ida: Economy - Comfort, Vuelta: Economy - Comfort
 
-test.describe('Compra 1 Adulto Economy Comfort - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+test.describe('9. Compra 1 Adulto Economy Comfort - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -661,7 +611,7 @@ test.describe('Compra 1 Adulto Economy Comfort - Nombre sin caracteres especiale
 
 
 // Ida: Economy - Extra, Vuelta: Economy - Light
-test.describe('Compra 1 Adulto Economy Extra - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+test.describe('10. Compra 1 Adulto Economy Extra - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -703,7 +653,7 @@ test.describe('Compra 1 Adulto Economy Extra - Nombre sin caracteres especiales 
 });
 
 // Ida: Premium - Light, Vuelta: Economy - Light
-test.describe('Compra 1 Adulto Premium Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+test.describe('11. Compra 1 Adulto Premium Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -745,7 +695,7 @@ test.describe('Compra 1 Adulto Premium Light- Nombre sin caracteres especiales -
 });
 // Ida: Premium - Light, Vuelta: Economy - Comfort
 
-test.describe('Compra 1 Adulto Premium Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+test.describe('12. Compra 1 Adulto Premium Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -788,7 +738,7 @@ test.describe('Compra 1 Adulto Premium Light - Nombre sin caracteres especiales 
 
 // Ida: Premium - Comfort, Vuelta: Economy - Light
 
-test.describe('Compra 1 Adulto Premium Comfort - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+test.describe('13. Compra 1 Adulto Premium Comfort - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -831,7 +781,7 @@ test.describe('Compra 1 Adulto Premium Comfort - Nombre sin caracteres especiale
 
 
 // Ida: Premium - Extra, Vuelta: Economy - Light
-test.describe('Compra 1 Adulto Premium Extra - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
+test.describe('14. Compra 1 Adulto Premium Extra - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras', () => {
   let page;
   let context;
   let Origin = ruteData.origin;

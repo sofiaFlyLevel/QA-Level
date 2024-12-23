@@ -219,8 +219,8 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
 
 
 
-// English test suite
-test.describe('1. error - dd/mm/aaaa (Fecha CA/ES) in EN ', () => {
+// test suite
+test.describe('1. error - dd/mm/aaaa (Fecha CA/ES) ', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -229,7 +229,7 @@ test.describe('1. error - dd/mm/aaaa (Fecha CA/ES) in EN ', () => {
   let DataCHD = []; 
   let DataINL = []; 
   let payCardData = paymentCards[0];
-  let lenguageLocal = Language.EN; 
+  let lenguageLocal = Language.CA; 
   let dayOffset = -1; // Default value
 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -257,3 +257,41 @@ test.describe('1. error - dd/mm/aaaa (Fecha CA/ES) in EN ', () => {
     }
   }, 240000); // Configuración del tiempo límite a 240 segundos
 });
+
+test.describe('2. mm/dd/aaaa (fecha EN)  ', () => {
+    let page;
+    let context;
+    let Origin = ruteData.origin;
+    let Destination = ruteData.destination;
+    let DataADT = [userDataADT[0]]; 
+    let DataCHD = []; 
+    let DataINL = []; 
+    let payCardData = paymentCards[0];
+    let lenguageLocal = Language.CA; 
+    let dayOffset = -1; // Default value
+  
+    const outboundFlightClass = CabinClass.ECONOMY;
+    const outboundFlightType = CabinType.LIGHT;
+  
+    const returnFlightClass = CabinClass.ECONOMY;
+    const returnFlightType = CabinType.LIGHT;
+  
+    test('Ejecución completa con reintentos', async ({ browser }) => {
+      let executionAttempt = 0; // Reset execution attempt counter
+      const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
+      const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+      let shouldContinueTests = false; // Default value
+    
+      while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+        executionAttempt++;
+        console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+        shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
+    
+        if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
+      }
+    
+      if (!shouldContinueTests) {
+        throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
+      }
+    }, 240000); // Configuración del tiempo límite a 240 segundos
+  });
