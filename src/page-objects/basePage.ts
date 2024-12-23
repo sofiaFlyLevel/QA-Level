@@ -1,6 +1,8 @@
 // basePage.ts
 import fs from 'fs';
 const path = require('path'); // Add path module to manage file paths
+import { format } from 'date-fns';
+import { es, enUS } from 'date-fns/locale'; // Importar locales
 
 // Función para obtener el sufijo ordinal (st, nd, rd, th)
 function getOrdinalSuffix(day: number): string {
@@ -48,7 +50,29 @@ export function extractPhoneWithoutPrefix(phone) {
   return phone.split(' ').slice(1).join(' ');
 }
 
+export function getDateOfBirth(age, locale, dayOffset = 0) {
+  const today = new Date();
+  const baseDate  = new Date(today.getFullYear() - age, today.getMonth(), today.getDate());
+ // Ajusta la fecha con el offset de días
+ const birthDate = new Date(baseDate);
+ birthDate.setDate(baseDate.getDate() + dayOffset);
 
+  let dateFormat;
+  switch (locale) {
+    case 'ES':
+    case 'CA':
+      dateFormat = 'dd/MM/yyyy';
+      break;
+    case 'EN':
+    default:
+      dateFormat = 'MM/dd/yyyy';
+      break;
+  }
+
+  const localeObj = locale === 'ES' || locale === 'CA' ? es : enUS;
+  const returnDate = format(birthDate, dateFormat, { locale: localeObj });
+  return returnDate;
+}
 
 // export async function handleErrorWithScreenshot(page, error, testName) {
 //   console.error(`Error in ${testName}:`, error);

@@ -1,5 +1,5 @@
 import { test, expect , type Page} from '@playwright/test';
-import { userDataADT, userDataCHD, userDataINL, CabinClass, CabinType, paymentCards, Language, MoneyChosee, LenguageChoose} from '../fixtures/userData';
+import { userDataADT, userDataCHD, userDataINL, CabinClass, CabinType, paymentCards, Language,LenguageChoose, MoneyChosee} from '../fixtures/userData';
 import { entornoData, apiData } from '../fixtures/environmentData';
 import { ruteData } from '../fixtures/ruteData';
 import {fillPassengerFor} from '../page-objects/PassengerPage'
@@ -12,7 +12,7 @@ import fs from 'fs';
 // C:\Users\sofiamartínezlópez\AppData\Roaming\Python\Python312\Scripts\trcli -y -h "https://leveltestautomation.testrail.io" -u "sofiainkoova@gmail.com" -p "TestRail1!" --project "Level" parse_junit -f "./test-results/processed-junit-report.xml" --title "Playwright Automated Test Run" --comment "Automated test execution steps attached. See details below."
 // npm run pro
 let ENTORNO = entornoData.pre.url; 
-let oneTripBoll = false;
+let oneTripBoll = true
 // Helper functions for test steps
 
 // Function for opening the website and accepting cookies
@@ -219,9 +219,8 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
 
 
 
-
-// Test Suite
-test.describe('1 Adt EcoLight - sin assitence', () => {
+// English test suite
+test.describe('1. error - dd/mm/aaaa (Fecha CA/ES) in EN ', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -229,7 +228,7 @@ test.describe('1 Adt EcoLight - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-    let payCardData = paymentCards[0];
+  let payCardData = paymentCards[0];
   let lenguageLocal = Language.EN; 
   let dayOffset = -1; // Default value
 
@@ -248,7 +247,7 @@ test.describe('1 Adt EcoLight - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -258,5 +257,3 @@ test.describe('1 Adt EcoLight - sin assitence', () => {
     }
   }, 240000); // Configuración del tiempo límite a 240 segundos
 });
-
-

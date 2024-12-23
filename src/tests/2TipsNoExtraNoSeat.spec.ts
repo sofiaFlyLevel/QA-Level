@@ -1,19 +1,18 @@
-const { test } = require('@playwright/test');
-import { userDataADT, userDataCHD, userDataINL, CabinClass, CabinType, paymentCards, LenguageChoose, MoneyChosee} from '../fixtures/userData';
+import { test, expect , type Page} from '@playwright/test';
+import { userDataADT, userDataCHD, userDataINL, CabinClass, CabinType, paymentCards, Language, MoneyChosee, LenguageChoose} from '../fixtures/userData';
 import { entornoData, apiData } from '../fixtures/environmentData';
 import { ruteData } from '../fixtures/ruteData';
 import {fillPassengerFor} from '../page-objects/PassengerPage'
 import {selectRoundTripDates, adjustPassengerCount} from '../page-objects/searchPage'
 import {selectFlights} from '../page-objects/FlightPage'
 import {payWithCard} from '../page-objects/paymentPage'
-// import {handleErrorWithScreenshot} from '../page-objects/basePage'
+import {getDateOfBirth} from '../page-objects/basePage'
 import fs from 'fs';
 // C:\Users\sofiamartínezlópez\AppData\Roaming\Python\Python312\Scripts\trcli -y -h "https://leveltestautomation.testrail.io" -u "sofiainkoova@gmail.com" -p "TestRail1!" --project "Level" parse_junit -f "./test-results/junit-report.xml" --title "Playwright Automated Test Run"
 // C:\Users\sofiamartínezlópez\AppData\Roaming\Python\Python312\Scripts\trcli -y -h "https://leveltestautomation.testrail.io" -u "sofiainkoova@gmail.com" -p "TestRail1!" --project "Level" parse_junit -f "./test-results/processed-junit-report.xml" --title "Playwright Automated Test Run" --comment "Automated test execution steps attached. See details below."
-//paython copedy.py para juntar los archivos
 // npm run pro
 let ENTORNO = entornoData.pre.url; 
-
+let oneTripBoll = false;
 // Helper functions for test steps
 
 // Function for opening the website and accepting cookies
@@ -44,7 +43,6 @@ async function chooseLengMoney(page) {
   }
 
 }
-
 // Function to toggle cities (origin and destination)
 async function toggleCityButton(page) {
   await page.locator('.swap-btn-icon.flight-swap-icon.icon-swap-black').click();
@@ -52,8 +50,8 @@ async function toggleCityButton(page) {
 }
 
 // Function to select round trip dates
-async function chooseDate(page, apiData, Origin, Destination, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType,  DataADT, DataCHD, DataINL) {
-  await selectRoundTripDates(page, apiData, Origin, Destination, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType,  DataADT, DataCHD, DataINL);
+async function chooseDate(page, apiData, Origin, Destination, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType,  DataADT, DataCHD, DataINL, oneTrip) {
+  await selectRoundTripDates(page, apiData, Origin, Destination, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType,  DataADT, DataCHD, DataINL, oneTrip);
 }
 
 // Function to adjust the number of passengers
@@ -63,16 +61,16 @@ async function choosePassengers(page, DataADT, DataCHD, DataINL) {
 }
 
 // Function to select flights for outbound and return
-async function chooseFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType) {
-  await selectFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType);
+async function chooseFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType, oneTrip) {
+  await selectFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType, oneTrip);
   // await page.waitForTimeout(1000);
   await page.getByRole('button', { name: 'Continue' }).click();
 }
 
 // Function to fill passenger data
-async function fillPassengerInformation(page,type, data, variable, i) {
+async function fillPassengerInformation(page,type, data, variable, i, lenguageLocal, dayOffset) {
   try {
-    await fillPassengerFor(page, type, data, variable, i);
+    await fillPassengerFor(page, type, data, variable, i, lenguageLocal, dayOffset);
   } catch (error) {
     console.error('Error while filling passenger data:', error);
   }
@@ -81,25 +79,32 @@ async function fillPassengerInformation(page,type, data, variable, i) {
 
 // Function to pay with a credit card
 async function payWithCardInformation(page, payCardData) {
-  await payWithCard(page, payCardData);
-  await page.waitForTimeout(1000); // Wait for 10 seconds
-}
+    await payWithCard(page, payCardData);
+    await page.waitForTimeout(1000); // Wait for 10 seconds
+  }
+  
 
 async function global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType)
 {
   await chooseLengMoney(page); 
-  
+
   await chooseCity(page, Origin, Destination);
+
+  if(oneTripBoll){
+    await page.getByRole('button', { name: 'One way' }).click(); // en ingles esta 
+  }
+
 
   await toggleCityButton(page);
 
-  await chooseDate(page, apiData, Origin, Destination, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType,  DataADT, DataCHD, DataINL);
+  await chooseDate(page, apiData, Origin, Destination, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType,  DataADT, DataCHD, DataINL, oneTripBoll);
 
   await choosePassengers(page, DataADT, DataCHD, DataINL);
 
-  await chooseFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType);
+  await chooseFlights(page, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType, oneTripBoll);
 
 }
+
 
 const runWithRetries = async (fn, screenshotPath, testName, page, TEST_RETRIES) => {
   for (let attempt = 1; attempt <= TEST_RETRIES; attempt++) {
@@ -118,7 +123,7 @@ const runWithRetries = async (fn, screenshotPath, testName, page, TEST_RETRIES) 
   }
 };
 
-const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType) => {
+const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset) => {
   let shouldContinueTests = true; // Re-initialize here for each execution attempt
   try {
     // Configurar navegador
@@ -140,7 +145,7 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
     for (let i = 0; i < DataADT.length; i++) {
       if (!shouldContinueTests) break;
       shouldContinueTests = await runWithRetries(
-        () => fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i),
+        () => fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i, lenguageLocal, dayOffset),
         `test-results/screenshots/adult-${i + 1}-error.png`,
         `fillPassengerAdult ${i + 1}`,
         page, 
@@ -152,7 +157,7 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
     for (let i = 0; i < DataCHD.length; i++) {
       if (!shouldContinueTests) break;
       shouldContinueTests = await runWithRetries(
-        () => fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i),
+        () => fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i, lenguageLocal, dayOffset),
         `test-results/screenshots/child-${i + 1}-error.png`,
         `fillPassengerChild ${i + 1}`,
         page, 
@@ -164,7 +169,7 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
     for (let i = 0; i < DataINL.length; i++) {
       if (!shouldContinueTests) break;
       shouldContinueTests = await runWithRetries(
-        () => fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i),
+        () => fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i, lenguageLocal, dayOffset),
         `test-results/screenshots/infant-${i + 1}-error.png`,
         `fillPassengerInfant ${i + 1}`,
         page, 
@@ -189,15 +194,16 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
       );
     }
 
+    
     if (shouldContinueTests) {
-      shouldContinueTests = await runWithRetries(
-        () => payWithCardInformation(page, payCardData),
-        'test-results/screenshots/payWithCard-error.png',
-        'payWithCard',
-        page, 
-        TEST_RETRIES
-      );
-    }
+        shouldContinueTests = await runWithRetries(
+          () => payWithCardInformation(page, payCardData),
+          'test-results/screenshots/payWithCard-error.png',
+          'payWithCard',
+          page, 
+          TEST_RETRIES
+        );
+      }
 
   } catch (error) {
     console.error('Error crítico durante la ejecución:', error);
@@ -212,52 +218,6 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
 
 
 
-// Test Suite
-
-
-
-
-// test.describe('Compra 2 adt (Diferente) Eco Light - Eco Light  - sin assitence', () => {
-//   let page;
-//   let context;
-//   let Origin = ruteData.origin;
-//   let Destination = ruteData.destination;
-//   let DataADT = [userDataADT[0], userDataADT[1]]; 
-//   let DataCHD = []; 
-//   let DataINL = []; 
-//   let payCardData = paymentCards[0]; 
-
-//   //ida 
-//   const outboundFlightClass = CabinClass.ECONOMY;
-//   const outboundFlightType = CabinType.LIGHT;
-
-//   // vuelta
-//   const returnFlightClass = CabinClass.ECONOMY;
-//   const returnFlightType = CabinType.LIGHT;
-
-//   test('Ejecución completa con reintentos', async ({ browser }) => {
-//     let executionAttempt = 0; // Reset execution attempt counter
-//     const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
-//     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-//     let shouldContinueTests = false; // Default value
-  
-//     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-//       executionAttempt++;
-//       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-//       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-  
-//       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
-//     }
-  
-//     if (!shouldContinueTests) {
-//       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-//     }
-//   }, 240000); // Configuración del tiempo límite a 240 segundos
-
-// });
-
-
-
 test.describe('Compra 2 adt (Diferente) Eco Light - Eco Light - sin assitence', () => {
   let page;
   let context;
@@ -266,7 +226,9 @@ test.describe('Compra 2 adt (Diferente) Eco Light - Eco Light - sin assitence', 
   let DataADT = [userDataADT[1], userDataADT[2]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   const outboundFlightClass = CabinClass.ECONOMY;
   const outboundFlightType = CabinType.LIGHT;
@@ -283,7 +245,7 @@ test.describe('Compra 2 adt (Diferente) Eco Light - Eco Light - sin assitence', 
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -297,56 +259,6 @@ test.describe('Compra 2 adt (Diferente) Eco Light - Eco Light - sin assitence', 
 });
 
 
-
-
-// test.describe('Compra 2 adt (Diferente) Eco Light - Eco Light  - Con assitence', () => {
-//   let page;
-//   let context;
-//   let Origin = ruteData.origin;
-//   let Destination = ruteData.destination;
-//   let DataADT = [userDataADT[1], userDataADT[3]]; 
-//   let DataCHD = []; 
-//   let DataINL = []; 
-//   let payCardData = paymentCards[0]; 
-
-//   //ida 
-//   const outboundFlightClass = CabinClass.ECONOMY;
-//   const outboundFlightType = CabinType.LIGHT;
-
-//   // vuelta
-//   const returnFlightClass = CabinClass.ECONOMY;
-//   const returnFlightType = CabinType.LIGHT;
-
-
-//         test('Ejecución completa con reintentos', async ({ browser }) => {
-//     let executionAttempt = 0; // Reset execution attempt counter
-//     const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
-//     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-//     let shouldContinueTests = false; // Default value
-
-//     // Intentos de ejecución
-//     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-//       executionAttempt++;
-//       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-
-//       // Ejecutar las pruebas
-//       shouldContinueTests = await executeTests(
-//         browser, context, page, TEST_RETRIES,
-//         Origin, Destination, DataADT, DataCHD, DataINL,
-//         outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType
-//       );
-
-//       // Salir del ciclo si todas las pruebas fueron exitosas
-//       if (shouldContinueTests) break; 
-//     }
-
-//     // Si después de los intentos no se completaron correctamente, arrojar un error
-//     if (!shouldContinueTests) {
-//       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-//     }
-//   }, 240000); // Configuración del tiempo límite a 240 segundos
-// });
-
 test.describe('Compra 2 adt (Diferente) Eco Light - EC - Con assitence TODAS', () => {
   let page;
   let context;
@@ -355,7 +267,9 @@ test.describe('Compra 2 adt (Diferente) Eco Light - EC - Con assitence TODAS', (
   let DataADT = [userDataADT[4], userDataADT[5]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -378,11 +292,7 @@ test.describe('Compra 2 adt (Diferente) Eco Light - EC - Con assitence TODAS', (
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
 
       // Ejecutar las pruebas
-      shouldContinueTests = await executeTests(
-        browser, context, page, TEST_RETRIES,
-        Origin, Destination, DataADT, DataCHD, DataINL,
-        outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType
-      );
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
 
       // Salir del ciclo si todas las pruebas fueron exitosas
       if (shouldContinueTests) break; 
@@ -395,54 +305,6 @@ test.describe('Compra 2 adt (Diferente) Eco Light - EC - Con assitence TODAS', (
   }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
-// chd 
-// test.describe('Compra 1 adt - 1 chd - Eco Light - Eco Light  - sin assitence', () => {
-//   let page;
-//   let context;
-//   let Origin = ruteData.origin;
-//   let Destination = ruteData.destination;
-//   let DataADT = [userDataADT[0]]; 
-//   let DataCHD = [userDataCHD[0]]; 
-//   let DataINL = []; 
-//   let payCardData = paymentCards[0]; 
-
-//   //ida 
-//   const outboundFlightClass = CabinClass.ECONOMY;
-//   const outboundFlightType = CabinType.LIGHT;
-
-//   // vuelta
-//   const returnFlightClass = CabinClass.ECONOMY;
-//   const returnFlightType = CabinType.LIGHT;
-
-
-//     test('Ejecución completa con reintentos', async ({ browser }) => {
-//     let executionAttempt = 0; // Reset execution attempt counter
-//     const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
-//     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-//     let shouldContinueTests = false; // Default value
-
-//     // Intentos de ejecución
-//     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-//       executionAttempt++;
-//       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-
-//       // Ejecutar las pruebas
-//       shouldContinueTests = await executeTests(
-//         browser, context, page, TEST_RETRIES,
-//         Origin, Destination, DataADT, DataCHD, DataINL,
-//         outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType
-//       );
-
-//       // Salir del ciclo si todas las pruebas fueron exitosas
-//       if (shouldContinueTests) break; 
-//     }
-
-//     // Si después de los intentos no se completaron correctamente, arrojar un error
-//     if (!shouldContinueTests) {
-//       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-//     }
-//   }, 240000); // Configuración del tiempo límite a 240 segundos
-// });
 
 test.describe('Compra 1 adt - 1 chd - Eco Light - Eco Light - sin asistencia', () => {
   let page;
@@ -453,6 +315,8 @@ test.describe('Compra 1 adt - 1 chd - Eco Light - Eco Light - sin asistencia', (
   let DataCHD = [userDataCHD[1]];
   let DataINL = [];
   let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   // Ida
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -471,7 +335,7 @@ test.describe('Compra 1 adt - 1 chd - Eco Light - Eco Light - sin asistencia', (
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -491,7 +355,9 @@ test.describe('Compra 1 adt - 1 chd - Eco Light - Eco Light - con assitence', ()
   let DataADT = [userDataADT[0]]; 
   let DataCHD = [userDataCHD[2]]; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -514,11 +380,7 @@ test.describe('Compra 1 adt - 1 chd - Eco Light - Eco Light - con assitence', ()
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
 
       // Ejecutar las pruebas
-      shouldContinueTests = await executeTests(
-        browser, context, page, TEST_RETRIES,
-        Origin, Destination, DataADT, DataCHD, DataINL,
-        outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType
-      );
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
 
       // Salir del ciclo si todas las pruebas fueron exitosas
       if (shouldContinueTests) break; 
@@ -531,44 +393,6 @@ test.describe('Compra 1 adt - 1 chd - Eco Light - Eco Light - con assitence', ()
   }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
-// test.describe('Compra 1 adt - 1 chd - Eco Light - Eco Light  - con assitence', () => {
-//   let page;
-//   let context;
-//   let Origin = ruteData.origin;
-//   let Destination = ruteData.destination;
-//   let DataADT = [userDataADT[0]]; 
-//   let DataCHD = [userDataCHD[3]]; 
-//   let DataINL = []; 
-//   let payCardData = paymentCards[0]; 
-
-//   //ida 
-//   const outboundFlightClass = CabinClass.ECONOMY;
-//   const outboundFlightType = CabinType.LIGHT;
-
-//   // vuelta
-//   const returnFlightClass = CabinClass.ECONOMY;
-//   const returnFlightType = CabinType.LIGHT;
-
-
-//   test('Ejecución completa con reintentos', async ({ browser }) => {
-//     let executionAttempt = 0; // Reset execution attempt counter
-//     const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
-//     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-//     let shouldContinueTests = false; // Default value
-  
-//     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-//       executionAttempt++;
-//       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-//       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-  
-//       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
-//     }
-  
-//     if (!shouldContinueTests) {
-//       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-//     }
-//   }, 240000); // Configuración del tiempo límite a 240 segundos
-// });
 
 test.describe('Compra 1 adt - 3 chd - Eco Light - Eco Light - con assitence', () => {
   let page;
@@ -578,7 +402,9 @@ test.describe('Compra 1 adt - 3 chd - Eco Light - Eco Light - con assitence', ()
   let DataADT = [userDataADT[0]]; 
   let DataCHD = [userDataCHD[3], userDataCHD[4], userDataCHD[5]]; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   // Ida
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -597,7 +423,7 @@ test.describe('Compra 1 adt - 3 chd - Eco Light - Eco Light - con assitence', ()
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -610,46 +436,6 @@ test.describe('Compra 1 adt - 3 chd - Eco Light - Eco Light - con assitence', ()
 
 
 
-//inl
-// test.describe('Compra 1 adt - 1 inl - Eco Light - Eco Light ', () => {
-//   let page;
-//   let context;
-//   let Origin = ruteData.origin;
-//   let Destination = ruteData.destination;
-//   let DataADT = [userDataADT[0]]; 
-//   let DataCHD = []; 
-//   let DataINL = [userDataINL[0]]; 
-//   let payCardData = paymentCards[0]; 
-
-//   //ida 
-//   const outboundFlightClass = CabinClass.ECONOMY;
-//   const outboundFlightType = CabinType.LIGHT;
-
-//   // vuelta
-//   const returnFlightClass = CabinClass.ECONOMY;
-//   const returnFlightType = CabinType.LIGHT;
-
-
-//   test('Ejecución completa con reintentos', async ({ browser }) => {
-//     let executionAttempt = 0; // Reset execution attempt counter
-//     const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
-//     const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
-//     let shouldContinueTests = false; // Default value
-  
-//     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
-//       executionAttempt++;
-//       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-//       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
-  
-//       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
-//     }
-  
-//     if (!shouldContinueTests) {
-//       throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
-//     }
-//   }, 240000); // Configuración del tiempo límite a 240 segundos
-// });
-
 test.describe('Compra 1 adt - 1 inl - Eco Light - Eco Light ', () => {
   let page;
   let context;
@@ -658,7 +444,9 @@ test.describe('Compra 1 adt - 1 inl - Eco Light - Eco Light ', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = [userDataINL[1]]; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -677,7 +465,7 @@ test.describe('Compra 1 adt - 1 inl - Eco Light - Eco Light ', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -700,6 +488,8 @@ test.describe('Compra 1 adt Eco Light - Eco Light  - sin assitence', () => {
   let DataCHD = []; 
   let DataINL = []; 
   let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   const outboundFlightClass = CabinClass.ECONOMY;
   const outboundFlightType = CabinType.LIGHT;
@@ -716,7 +506,7 @@ test.describe('Compra 1 adt Eco Light - Eco Light  - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -735,7 +525,9 @@ test.describe('Compra 1 adt Eco Light - Eco COMFORT - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -755,7 +547,7 @@ test.describe('Compra 1 adt Eco Light - Eco COMFORT - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -776,7 +568,9 @@ test.describe('Compra 1 adt Eco Light - Eco Extra - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -796,7 +590,7 @@ test.describe('Compra 1 adt Eco Light - Eco Extra - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -816,7 +610,9 @@ test.describe('Compra 1 adt Eco Light -  PremLight - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -836,7 +632,7 @@ test.describe('Compra 1 adt Eco Light -  PremLight - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -856,7 +652,9 @@ test.describe('Compra 1 adt Eco Light -  PremComfort - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -876,7 +674,7 @@ test.describe('Compra 1 adt Eco Light -  PremComfort - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -897,7 +695,9 @@ test.describe('Compra 1 adt Eco Light -  PremExtra - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -917,7 +717,7 @@ test.describe('Compra 1 adt Eco Light -  PremExtra - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -939,7 +739,9 @@ test.describe('Compra 1 adt Eco Comfort - Eco Comfort - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -958,7 +760,7 @@ test.describe('Compra 1 adt Eco Comfort - Eco Comfort - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -979,7 +781,9 @@ test.describe('Compra 1 adt Eco Comfort - Eco Extra - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -999,7 +803,7 @@ test.describe('Compra 1 adt Eco Comfort - Eco Extra - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1019,7 +823,9 @@ test.describe('Compra 1 adt Eco Comfort - PremLight - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -1039,7 +845,7 @@ test.describe('Compra 1 adt Eco Comfort - PremLight - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1059,7 +865,9 @@ test.describe('Compra 1 adt Eco Comfort - PremComfort - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -1079,7 +887,7 @@ test.describe('Compra 1 adt Eco Comfort - PremComfort - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1099,7 +907,9 @@ test.describe('Compra 1 adt Eco Comfort - PremExtra - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -1119,7 +929,7 @@ test.describe('Compra 1 adt Eco Comfort - PremExtra - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1139,7 +949,9 @@ test.describe('Compra 1 adt Eco Extra - Eco Light - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -1159,7 +971,7 @@ test.describe('Compra 1 adt Eco Extra - Eco Light - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1179,7 +991,9 @@ test.describe('Compra 1 adt Eco Extra - Eco Comfort - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -1199,7 +1013,7 @@ test.describe('Compra 1 adt Eco Extra - Eco Comfort - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1219,7 +1033,9 @@ test.describe('Compra 1 adt Eco Extra - Eco Extra - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -1239,7 +1055,7 @@ test.describe('Compra 1 adt Eco Extra - Eco Extra - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1259,7 +1075,9 @@ test.describe('Compra 1 adt Eco Extra - PremLight - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -1279,7 +1097,7 @@ test.describe('Compra 1 adt Eco Extra - PremLight - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1300,7 +1118,9 @@ test.describe('Compra 1 adt Eco Extra - PremComfort - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -1320,7 +1140,7 @@ test.describe('Compra 1 adt Eco Extra - PremComfort - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1341,7 +1161,9 @@ test.describe('Compra 1 adt Eco Extra - PremExtra - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.ECONOMY;
@@ -1361,7 +1183,7 @@ test.describe('Compra 1 adt Eco Extra - PremExtra - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1381,7 +1203,9 @@ test.describe('Compra 1 adt PremLight - Eco Light - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1401,7 +1225,7 @@ test.describe('Compra 1 adt PremLight - Eco Light - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1421,7 +1245,9 @@ test.describe('Compra 1 adt PremLight - Eco Comfort - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1441,7 +1267,7 @@ test.describe('Compra 1 adt PremLight - Eco Comfort - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1462,7 +1288,9 @@ test.describe('Compra 1 adt PremLight - Eco Extra - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1482,7 +1310,7 @@ test.describe('Compra 1 adt PremLight - Eco Extra - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1503,7 +1331,9 @@ test.describe('Compra 1 adt PremLight - PremLight - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1523,7 +1353,7 @@ test.describe('Compra 1 adt PremLight - PremLight - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1544,7 +1374,9 @@ test.describe('Compra 1 adt PremLight - PremComfort - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1564,7 +1396,7 @@ test.describe('Compra 1 adt PremLight - PremComfort - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1585,7 +1417,9 @@ test.describe('Compra 1 adt PremLight - PremExtra - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1605,7 +1439,7 @@ test.describe('Compra 1 adt PremLight - PremExtra - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1626,7 +1460,9 @@ test.describe('Compra 1 adt PremComfort - Eco Light - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1646,7 +1482,7 @@ test.describe('Compra 1 adt PremComfort - Eco Light - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1666,7 +1502,9 @@ test.describe('Compra 1 adt PremComfort - Eco Comfort - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1686,7 +1524,7 @@ test.describe('Compra 1 adt PremComfort - Eco Comfort - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1707,7 +1545,9 @@ test.describe('Compra 1 adt PremComfort - Eco Extra - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1727,7 +1567,7 @@ test.describe('Compra 1 adt PremComfort - Eco Extra - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1748,7 +1588,9 @@ test.describe('Compra 1 adt PremComfort - PremLight - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1768,7 +1610,7 @@ test.describe('Compra 1 adt PremComfort - PremLight - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1788,7 +1630,9 @@ test.describe('Compra 1 adt PremComfort - PremComfort - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1808,7 +1652,7 @@ test.describe('Compra 1 adt PremComfort - PremComfort - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1829,7 +1673,9 @@ test.describe('Compra 1 adt PremComfort - PremExtra - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1849,7 +1695,7 @@ test.describe('Compra 1 adt PremComfort - PremExtra - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1869,7 +1715,9 @@ test.describe('Compra 1 adt PremExtra - Eco Light - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1889,7 +1737,7 @@ test.describe('Compra 1 adt PremExtra - Eco Light - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1910,7 +1758,9 @@ test.describe('Compra 1 adt PremExtra - Eco Comfort - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1930,7 +1780,7 @@ test.describe('Compra 1 adt PremExtra - Eco Comfort - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1951,7 +1801,9 @@ test.describe('Compra 1 adt PremExtra - Eco Extra - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -1971,7 +1823,7 @@ test.describe('Compra 1 adt PremExtra - Eco Extra - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -1992,7 +1844,9 @@ test.describe('Compra 1 adt PremExtra - PremLight - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -2012,7 +1866,7 @@ test.describe('Compra 1 adt PremExtra - PremLight - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -2032,7 +1886,9 @@ test.describe('Compra 1 adt PremExtra - PremComfort - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -2052,7 +1908,7 @@ test.describe('Compra 1 adt PremExtra - PremComfort - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -2072,7 +1928,9 @@ test.describe('Compra 1 adt PremExtra - PremExtra - sin assitence', () => {
   let DataADT = [userDataADT[0]]; 
   let DataCHD = []; 
   let DataINL = []; 
-  let payCardData = paymentCards[0]; 
+  let payCardData = paymentCards[0];
+  let lenguageLocal = Language.EN; 
+  let dayOffset = -1; // Default value
 
   //ida 
   const outboundFlightClass = CabinClass.PREMIUM;
@@ -2092,7 +1950,7 @@ test.describe('Compra 1 adt PremExtra - PremExtra - sin assitence', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType);
+       shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }

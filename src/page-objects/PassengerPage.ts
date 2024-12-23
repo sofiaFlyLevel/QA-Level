@@ -1,8 +1,8 @@
-import {formatDate} from './basePage'
+import {formatDate, getDateOfBirth} from './basePage'
 
 
 
-export async function fillPassengerFor(page, type, data, variable, i) {
+export async function fillPassengerFor(page, type, data, variable, i, lenguageLocal, dayOffset ) {
 
       await page.locator(`#${type}-${i}`).click();
       await page.waitForTimeout(1000); //lo tenemos asi por el combox que falta que se distinga para cada usuario 
@@ -10,7 +10,7 @@ export async function fillPassengerFor(page, type, data, variable, i) {
       // Completar los datos del adulto correspondiente
       await page.locator(`#${type}-${i} [name="${variable}[${i}].name"]`).fill(data.name);
       await page.locator(`#${type}-${i} [name="${variable}[${i}].surname"]`).fill(data.surname);
-      await page.locator(`#${type}-${i} [name="${variable}[${i}].dateOfBirth"]`).fill(formatDate(data.dateOfBirth));
+      await page.locator(`#${type}-${i} [name="${variable}[${i}].dateOfBirth"]`).fill(getDateOfBirth(data.dateOfBirth, lenguageLocal, dayOffset ));
 
       // Seleccionar la nacionalidad (suponiendo que esto es lo que debe hacerse para cada adulto)
       await page.getByRole('combobox').click();
