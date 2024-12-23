@@ -72,7 +72,7 @@ def extract_comments_from_report(report_path):
     return "\n".join(comments)
 
 # Procesar el reporte JUnit
-input_path = './test-results/junit-report.xml'
+input_path = './external-test-reports/junit-report.xml'
 output_path = './test-results/processed-junit-report.xml'
 
 try:

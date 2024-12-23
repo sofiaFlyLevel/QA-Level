@@ -1,0 +1,1255 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites id="" name="" tests="41" failures="3" skipped="0" errors="0" time="436.817265">
+<testsuite name="2TipsNoExtraNoSeat.spec.ts" timestamp="2024-12-23T08:42:45.231Z" hostname="chromium" tests="41" failures="3" skipped="0" time="2023.834" errors="0">
+<testcase name="Compra 2 adt (Diferente) Eco Light - EC - Con assitence TODAS › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="240.535">
+<failure message="2TipsNoExtraNoSeat.spec.ts:368:5 Ejecución completa con reintentos" type="FAILURE">
+  [chromium] › 2TipsNoExtraNoSeat.spec.ts:368:5 › Compra 2 adt (Diferente) Eco Light - EC - Con assitence TODAS › Ejecución completa con reintentos 
+
+    Test timeout of 240000ms exceeded.
+
+    Error: browserContext.close: Test ended.
+    Browser logs:
+
+    &lt;launching&gt; C:\Users\SofiaMartínezLópez\AppData\Local\ms-playwright\chromium_headless_shell-1148\chrome-win\headless_shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --enable-automation --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\Users\SOFIAM~1\AppData\Local\Temp\playwright_chromiumdev_profile-nJcRAb --remote-debugging-pipe --no-startup-window
+    &lt;launched&gt; pid=22356
+    [pid=22356] &lt;gracefully close start&gt;
+
+      204 |   } finally {
+      205 |     if (page) await page.close();
+    &gt; 206 |     if (context) await context.close();
+          |                  ^
+      207 |   }
+      208 |
+      209 |   return shouldContinueTests; // Return the status of the test execution
+        at executeTests (C:\playwright-project\src\tests\2TipsNoExtraNoSeat.spec.ts:206:18)
+        at C:\playwright-project\src\tests\2TipsNoExtraNoSeat.spec.ts:380:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\2TipsNoExtraNoSeat-Compra--dd409-ión-completa-con-reintentos-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+</failure>
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m2[39m, value: [33m5[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m3[39m, value: [33m8[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerAdult 2, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Ejecución completa, intento 2 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m6[39m, value: [33m15[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m7[39m, value: [33m17[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerAdult 2, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando fillContact, intento 2
+Ejecutando fillContact, intento 3
+
+</system-out>
+<system-err>
+Error while handling iframe payment: page.waitForSelector: Timeout 60000ms exceeded.
+Call log:
+[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible[22m
+
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:83:20[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:193:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:192:35[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:380:29 {
+  name: [32m'TimeoutError'[39m,
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@88'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\paymentPage.ts'[39m,
+      line: [33m4[39m,
+      column: [33m20[39m,
+      function: [32m'payWithCard'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m'page.waitForSelector(iframe[title="Iframe for expiry date"])'[39m,
+    apiName: [32m'page.waitForSelector'[39m,
+    params: {
+      selector: [32m'iframe[title="Iframe for expiry date"]'[39m,
+      timeout: [33m60000[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1734943467613[39m,
+    error: {
+      message: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m,
+      stack: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m +
+        [32m'\n'[39m +
+        [32m'    at payWithCard (C:\\playwright-project\\src\\page-objects\\paymentPage.ts:4:20)\n'[39m +
+        [32m'    at payWithCardInformation (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:83:20)\n'[39m +
+        [32m'    at fn (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:193:15)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:107:13)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:192:35)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:380:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Intento 1 fallido en payWithCard: page.waitForSelector: Timeout 60000ms exceeded.
+Call log:
+[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible[22m
+
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:83:20[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:193:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:192:35[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:380:29 {
+  name: [32m'TimeoutError'[39m,
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@88'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\paymentPage.ts'[39m,
+      line: [33m4[39m,
+      column: [33m20[39m,
+      function: [32m'payWithCard'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m'page.waitForSelector(iframe[title="Iframe for expiry date"])'[39m,
+    apiName: [32m'page.waitForSelector'[39m,
+    params: {
+      selector: [32m'iframe[title="Iframe for expiry date"]'[39m,
+      timeout: [33m60000[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1734943467613[39m,
+    error: {
+      message: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m,
+      stack: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m +
+        [32m'\n'[39m +
+        [32m'    at payWithCard (C:\\playwright-project\\src\\page-objects\\paymentPage.ts:4:20)\n'[39m +
+        [32m'    at payWithCardInformation (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:83:20)\n'[39m +
+        [32m'    at fn (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:193:15)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:107:13)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:192:35)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:380:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Error while handling iframe payment: page.waitForSelector: Timeout 60000ms exceeded.
+Call log:
+[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible[22m
+
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:83:20[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:193:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:192:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:380:29 {
+  name: [32m'TimeoutError'[39m,
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@89'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\paymentPage.ts'[39m,
+      line: [33m4[39m,
+      column: [33m20[39m,
+      function: [32m'payWithCard'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m'page.waitForSelector(iframe[title="Iframe for expiry date"])'[39m,
+    apiName: [32m'page.waitForSelector'[39m,
+    params: {
+      selector: [32m'iframe[title="Iframe for expiry date"]'[39m,
+      timeout: [33m60000[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1734943527638[39m,
+    error: {
+      message: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m,
+      stack: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m +
+        [32m'\n'[39m +
+        [32m'    at payWithCard (C:\\playwright-project\\src\\page-objects\\paymentPage.ts:4:20)\n'[39m +
+        [32m'    at payWithCardInformation (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:83:20)\n'[39m +
+        [32m'    at fn (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:193:15)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:107:13)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:192:29)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:380:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Intento 2 fallido en payWithCard: page.waitForSelector: Timeout 60000ms exceeded.
+Call log:
+[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible[22m
+
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:83:20[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:193:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:192:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:380:29 {
+  name: [32m'TimeoutError'[39m,
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@89'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\paymentPage.ts'[39m,
+      line: [33m4[39m,
+      column: [33m20[39m,
+      function: [32m'payWithCard'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m'page.waitForSelector(iframe[title="Iframe for expiry date"])'[39m,
+    apiName: [32m'page.waitForSelector'[39m,
+    params: {
+      selector: [32m'iframe[title="Iframe for expiry date"]'[39m,
+      timeout: [33m60000[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1734943527638[39m,
+    error: {
+      message: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m,
+      stack: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m +
+        [32m'\n'[39m +
+        [32m'    at payWithCard (C:\\playwright-project\\src\\page-objects\\paymentPage.ts:4:20)\n'[39m +
+        [32m'    at payWithCardInformation (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:83:20)\n'[39m +
+        [32m'    at fn (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:193:15)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:107:13)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:192:29)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:380:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Error while handling iframe payment: page.waitForSelector: Timeout 60000ms exceeded.
+Call log:
+[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible[22m
+
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:83:20[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:193:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:192:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:380:29 {
+  name: [32m'TimeoutError'[39m,
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@90'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\paymentPage.ts'[39m,
+      line: [33m4[39m,
+      column: [33m20[39m,
+      function: [32m'payWithCard'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m'page.waitForSelector(iframe[title="Iframe for expiry date"])'[39m,
+    apiName: [32m'page.waitForSelector'[39m,
+    params: {
+      selector: [32m'iframe[title="Iframe for expiry date"]'[39m,
+      timeout: [33m60000[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1734943587648[39m,
+    error: {
+      message: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m,
+      stack: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m +
+        [32m'\n'[39m +
+        [32m'    at payWithCard (C:\\playwright-project\\src\\page-objects\\paymentPage.ts:4:20)\n'[39m +
+        [32m'    at payWithCardInformation (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:83:20)\n'[39m +
+        [32m'    at fn (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:193:15)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:107:13)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:192:29)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:380:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Intento 3 fallido en payWithCard: page.waitForSelector: Timeout 60000ms exceeded.
+Call log:
+[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible[22m
+
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:83:20[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:193:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:192:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:380:29 {
+  name: [32m'TimeoutError'[39m,
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@90'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\paymentPage.ts'[39m,
+      line: [33m4[39m,
+      column: [33m20[39m,
+      function: [32m'payWithCard'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m'page.waitForSelector(iframe[title="Iframe for expiry date"])'[39m,
+    apiName: [32m'page.waitForSelector'[39m,
+    params: {
+      selector: [32m'iframe[title="Iframe for expiry date"]'[39m,
+      timeout: [33m60000[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1734943587648[39m,
+    error: {
+      message: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m,
+      stack: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m +
+        [32m'\n'[39m +
+        [32m'    at payWithCard (C:\\playwright-project\\src\\page-objects\\paymentPage.ts:4:20)\n'[39m +
+        [32m'    at payWithCardInformation (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:83:20)\n'[39m +
+        [32m'    at fn (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:193:15)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:107:13)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:192:29)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:380:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Prueba payWithCard fallida después de 3 intentos.
+Error while filling passenger data: page.waitForTimeout: Test ended.
+    at fillPassengerFor [90m(C:\playwright-project\[39msrc\page-objects\PassengerPage.ts:8:18[90m)[39m
+    at fillPassengerInformation [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:74:5[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:141:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:380:29
+Error while filling passenger data: locator.click: Target page, context or browser has been closed
+    at fillPassengerFor [90m(C:\playwright-project\[39msrc\page-objects\PassengerPage.ts:7:43[90m)[39m
+    at fillPassengerInformation [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:74:27[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:142:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:141:35[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:380:29
+Intento 1 fallido en fillContact: locator.click: Target page, context or browser has been closed
+    at fn [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:178:42[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:176:35[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:380:29
+Intento 2 fallido en fillContact: locator.click: Target page, context or browser has been closed
+    at fn [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:178:42[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:176:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:380:29
+Intento 3 fallido en fillContact: locator.click: Target page, context or browser has been closed
+    at fn [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:178:42[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:176:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:380:29
+Error crítico durante la ejecución: page.screenshot: Target page, context or browser has been closed
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:112:20[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:176:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:380:29
+
+Warning: attachment 2TipsNoExtraNoSeat-Compra--dd409-ión-completa-con-reintentos-chromium\test-failed-1.png is missing
+</system-err>
+</testcase>
+<testcase name="Compra 1 adt - 1 chd - Eco Light - Eco Light - sin asistencia › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="48.458">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Ejecutando Booking, intento 2
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m3[39m, value: [33m8[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m4[39m, value: [33m10[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerChild 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+<system-err>
+Error al gestionar el flujo de ida y vuelta: locator.click: Error: strict mode violation: getByLabel('Choose Tuesday, April 29th,') resolved to 2 elements:
+    1) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029"&gt;…&lt;/div&gt; aka getByLabel('Month April,').getByLabel('Choose Tuesday, April 29th,')
+    2) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029 react-datepicker__day--outside-month"&gt;&lt;/div&gt; aka getByLabel('Month May,').getByLabel('Choose Tuesday, April 29th,')
+
+Call log:
+[2m  - waiting for getByLabel('Choose Tuesday, April 29th,')[22m
+
+Intento 1 fallido en Booking: locator.click: Error: strict mode violation: getByLabel('Choose Tuesday, April 29th,') resolved to 2 elements:
+    1) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029"&gt;…&lt;/div&gt; aka getByLabel('Month April,').getByLabel('Choose Tuesday, April 29th,')
+    2) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029 react-datepicker__day--outside-month"&gt;&lt;/div&gt; aka getByLabel('Month May,').getByLabel('Choose Tuesday, April 29th,')
+
+Call log:
+[2m  - waiting for getByLabel('Choose Tuesday, April 29th,')[22m
+
+    at selectRoundTripDates [90m(C:\playwright-project\[39msrc\page-objects\searchPage.ts:127:57[90m)[39m
+    at chooseDate [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:55:3[90m)[39m
+    at global [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:95:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:129:27[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:473:29 {
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@38'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\searchPage.ts'[39m,
+      line: [33m127[39m,
+      column: [33m57[39m,
+      function: [32m'selectRoundTripDates'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m"locator.getByLabel('Choose Tuesday, April 29th,').click"[39m,
+    apiName: [32m'locator.click'[39m,
+    params: {
+      selector: [32m'internal:label="Choose Tuesday, April 29th,"i'[39m,
+      strict: [33mtrue[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1734943380928[39m,
+    error: {
+      message: [32m"Error: locator.click: Error: strict mode violation: getByLabel('Choose Tuesday, April 29th,') resolved to 2 elements:\n"[39m +
+        [32m`    1) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029"&gt;…&lt;/div&gt; aka getByLabel('Month April,').getByLabel('Choose Tuesday, April 29th,')\n`[39m +
+        [32m`    2) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029 react-datepicker__day--outside-month"&gt;&lt;/div&gt; aka getByLabel('Month May,').getByLabel('Choose Tuesday, April 29th,')\n`[39m +
+        [32m'\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m"\x1B[2m  - waiting for getByLabel('Choose Tuesday, April 29th,')\x1B[22m\n"[39m,
+      stack: [32m"Error: locator.click: Error: strict mode violation: getByLabel('Choose Tuesday, April 29th,') resolved to 2 elements:\n"[39m +
+        [32m`    1) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029"&gt;…&lt;/div&gt; aka getByLabel('Month April,').getByLabel('Choose Tuesday, April 29th,')\n`[39m +
+        [32m`    2) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029 react-datepicker__day--outside-month"&gt;&lt;/div&gt; aka getByLabel('Month May,').getByLabel('Choose Tuesday, April 29th,')\n`[39m +
+        [32m'\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m"\x1B[2m  - waiting for getByLabel('Choose Tuesday, April 29th,')\x1B[22m\n"[39m +
+        [32m'\n'[39m +
+        [32m'    at selectRoundTripDates (C:\\playwright-project\\src\\page-objects\\searchPage.ts:127:57)\n'[39m +
+        [32m'    at chooseDate (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:55:3)\n'[39m +
+        [32m'    at global (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:95:3)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:107:7)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:129:27)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:473:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+
+</system-err>
+</testcase>
+<testcase name="Compra 1 adt - 1 chd - Eco Light - Eco Light - con assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="48.101">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'3'[39m, index: [33m10[39m, value: [33m25[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'3'[39m, index: [33m11[39m, value: [33m26[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerChild 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt - 3 chd - Eco Light - Eco Light - con assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="48.921">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m7[39m, value: [33m17[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m8[39m, value: [33m19[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerChild 1, intento 1
+Ejecutando fillPassengerChild 2, intento 1
+Ejecutando fillPassengerChild 3, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt - 1 inl - Eco Light - Eco Light  › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="44.264">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m0[39m, value: [33m1[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m1[39m, value: [33m3[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerInfant 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+<system-err>
+Error while filling passenger data: TypeError: Cannot read properties of undefined (reading 'length')
+    at fillPassengerFor [90m(C:\playwright-project\[39msrc\page-objects\PassengerPage.ts:29:27[90m)[39m
+    at fillPassengerInformation [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:74:5[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:165:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:679:29
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m
+
+</system-err>
+</testcase>
+<testcase name="Compra 1 adt Eco Light - Eco Light  - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="30.671">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m2[39m, value: [33m6[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m3[39m, value: [33m8[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Light - Eco COMFORT - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="27.607">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'3'[39m, index: [33m11[39m, value: [33m28[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'3'[39m, index: [33m12[39m, value: [33m29[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Light - Eco Extra - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="35.385">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m7[39m, value: [33m17[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m8[39m, value: [33m19[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Light -  PremComfort - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="37.902">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Ejecutando Booking, intento 2
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m3[39m, value: [33m8[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m4[39m, value: [33m10[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+<system-err>
+Error al gestionar el flujo de ida y vuelta: locator.click: Error: strict mode violation: getByLabel('Choose Tuesday, April 29th,') resolved to 2 elements:
+    1) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029"&gt;…&lt;/div&gt; aka getByLabel('Month April,').getByLabel('Choose Tuesday, April 29th,')
+    2) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029 react-datepicker__day--outside-month"&gt;&lt;/div&gt; aka getByLabel('Month May,').getByLabel('Choose Tuesday, April 29th,')
+
+Call log:
+[2m  - waiting for getByLabel('Choose Tuesday, April 29th,')[22m
+
+Intento 1 fallido en Booking: locator.click: Error: strict mode violation: getByLabel('Choose Tuesday, April 29th,') resolved to 2 elements:
+    1) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029"&gt;…&lt;/div&gt; aka getByLabel('Month April,').getByLabel('Choose Tuesday, April 29th,')
+    2) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029 react-datepicker__day--outside-month"&gt;&lt;/div&gt; aka getByLabel('Month May,').getByLabel('Choose Tuesday, April 29th,')
+
+Call log:
+[2m  - waiting for getByLabel('Choose Tuesday, April 29th,')[22m
+
+    at selectRoundTripDates [90m(C:\playwright-project\[39msrc\page-objects\searchPage.ts:91:56[90m)[39m
+    at chooseDate [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:55:3[90m)[39m
+    at global [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:95:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:129:27[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:878:29 {
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@29'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\searchPage.ts'[39m,
+      line: [33m91[39m,
+      column: [33m56[39m,
+      function: [32m'selectRoundTripDates'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m"locator.getByLabel('Choose Tuesday, April 29th,').click"[39m,
+    apiName: [32m'locator.click'[39m,
+    params: {
+      selector: [32m'internal:label="Choose Tuesday, April 29th,"i'[39m,
+      strict: [33mtrue[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1734943454240[39m,
+    error: {
+      message: [32m"Error: locator.click: Error: strict mode violation: getByLabel('Choose Tuesday, April 29th,') resolved to 2 elements:\n"[39m +
+        [32m`    1) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029"&gt;…&lt;/div&gt; aka getByLabel('Month April,').getByLabel('Choose Tuesday, April 29th,')\n`[39m +
+        [32m`    2) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029 react-datepicker__day--outside-month"&gt;&lt;/div&gt; aka getByLabel('Month May,').getByLabel('Choose Tuesday, April 29th,')\n`[39m +
+        [32m'\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m"\x1B[2m  - waiting for getByLabel('Choose Tuesday, April 29th,')\x1B[22m\n"[39m,
+      stack: [32m"Error: locator.click: Error: strict mode violation: getByLabel('Choose Tuesday, April 29th,') resolved to 2 elements:\n"[39m +
+        [32m`    1) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029"&gt;…&lt;/div&gt; aka getByLabel('Month April,').getByLabel('Choose Tuesday, April 29th,')\n`[39m +
+        [32m`    2) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029 react-datepicker__day--outside-month"&gt;&lt;/div&gt; aka getByLabel('Month May,').getByLabel('Choose Tuesday, April 29th,')\n`[39m +
+        [32m'\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m"\x1B[2m  - waiting for getByLabel('Choose Tuesday, April 29th,')\x1B[22m\n"[39m +
+        [32m'\n'[39m +
+        [32m'    at selectRoundTripDates (C:\\playwright-project\\src\\page-objects\\searchPage.ts:91:56)\n'[39m +
+        [32m'    at chooseDate (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:55:3)\n'[39m +
+        [32m'    at global (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:95:3)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:107:7)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:129:27)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:878:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+
+</system-err>
+</testcase>
+<testcase name="Compra 1 adt Eco Light -  PremExtra - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="28.238">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m0[39m, value: [33m1[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m1[39m, value: [33m3[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Comfort - Eco Comfort - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="30.719">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m4[39m, value: [33m10[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m5[39m, value: [33m13[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Comfort - PremLight - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="32.842">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m6[39m, value: [33m15[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m7[39m, value: [33m17[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Comfort - PremComfort - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="28.785">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m0[39m, value: [33m1[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m1[39m, value: [33m3[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Comfort - PremExtra - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="28.926">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m9[39m, value: [33m22[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m10[39m, value: [33m24[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Extra - Eco Light - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="27.32">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m3[39m, value: [33m8[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m4[39m, value: [33m10[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Extra - Eco Comfort - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="27.262">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m2[39m, value: [33m5[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m3[39m, value: [33m8[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Extra - Eco Extra - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="32.177">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m2[39m, value: [33m5[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m3[39m, value: [33m8[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Extra - PremLight - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="32.569">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m1[39m, value: [33m3[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m2[39m, value: [33m5[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Extra - PremComfort - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="32.653">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m0[39m, value: [33m1[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m1[39m, value: [33m3[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Extra - PremExtra - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="29.861">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m5[39m, value: [33m12[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m6[39m, value: [33m15[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremLight - Eco Light - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="29.224">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m6[39m, value: [33m15[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m7[39m, value: [33m17[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremLight - Eco Comfort - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="30.596">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m10[39m, value: [33m24[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m11[39m, value: [33m26[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremLight - Eco Extra - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="26.529">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m1[39m, value: [33m3[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m2[39m, value: [33m5[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremLight - PremComfort - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="28.295">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m0[39m, value: [33m1[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m1[39m, value: [33m3[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremLight - PremExtra - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="26.304">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m6[39m, value: [33m15[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m7[39m, value: [33m17[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremComfort - Eco Light - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="26.116">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m3[39m, value: [33m8[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m4[39m, value: [33m10[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremComfort - Eco Comfort - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="36.175">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m0[39m, value: [33m1[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m1[39m, value: [33m3[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremComfort - Eco Extra - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="37.942">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m1[39m, value: [33m3[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m2[39m, value: [33m5[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremComfort - PremLight - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="37.485">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m10[39m, value: [33m24[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m11[39m, value: [33m26[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremComfort - PremComfort - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="38.992">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m5[39m, value: [33m13[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m6[39m, value: [33m15[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremComfort - PremExtra - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="42.341">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m5[39m, value: [33m13[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m6[39m, value: [33m15[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremExtra - Eco Light - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="52.02">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Ejecutando Booking, intento 2
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m7[39m, value: [33m17[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m8[39m, value: [33m20[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+<system-err>
+Error al gestionar el flujo de ida y vuelta: locator.click: Error: strict mode violation: getByLabel('Choose Tuesday, April 29th,') resolved to 2 elements:
+    1) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029"&gt;…&lt;/div&gt; aka getByLabel('Month April,').getByLabel('Choose Tuesday, April 29th,')
+    2) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029 react-datepicker__day--outside-month"&gt;&lt;/div&gt; aka getByLabel('Month May,').getByLabel('Choose Tuesday, April 29th,')
+
+Call log:
+[2m  - waiting for getByLabel('Choose Tuesday, April 29th,')[22m
+
+Intento 1 fallido en Booking: locator.click: Error: strict mode violation: getByLabel('Choose Tuesday, April 29th,') resolved to 2 elements:
+    1) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029"&gt;…&lt;/div&gt; aka getByLabel('Month April,').getByLabel('Choose Tuesday, April 29th,')
+    2) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029 react-datepicker__day--outside-month"&gt;&lt;/div&gt; aka getByLabel('Month May,').getByLabel('Choose Tuesday, April 29th,')
+
+Call log:
+[2m  - waiting for getByLabel('Choose Tuesday, April 29th,')[22m
+
+    at selectRoundTripDates [90m(C:\playwright-project\[39msrc\page-objects\searchPage.ts:127:57[90m)[39m
+    at chooseDate [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:55:3[90m)[39m
+    at global [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:95:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:107:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:129:27[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:1891:29 {
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@36'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\searchPage.ts'[39m,
+      line: [33m127[39m,
+      column: [33m57[39m,
+      function: [32m'selectRoundTripDates'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m"locator.getByLabel('Choose Tuesday, April 29th,').click"[39m,
+    apiName: [32m'locator.click'[39m,
+    params: {
+      selector: [32m'internal:label="Choose Tuesday, April 29th,"i'[39m,
+      strict: [33mtrue[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1734943647467[39m,
+    error: {
+      message: [32m"Error: locator.click: Error: strict mode violation: getByLabel('Choose Tuesday, April 29th,') resolved to 2 elements:\n"[39m +
+        [32m`    1) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029"&gt;…&lt;/div&gt; aka getByLabel('Month April,').getByLabel('Choose Tuesday, April 29th,')\n`[39m +
+        [32m`    2) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029 react-datepicker__day--outside-month"&gt;&lt;/div&gt; aka getByLabel('Month May,').getByLabel('Choose Tuesday, April 29th,')\n`[39m +
+        [32m'\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m"\x1B[2m  - waiting for getByLabel('Choose Tuesday, April 29th,')\x1B[22m\n"[39m,
+      stack: [32m"Error: locator.click: Error: strict mode violation: getByLabel('Choose Tuesday, April 29th,') resolved to 2 elements:\n"[39m +
+        [32m`    1) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029"&gt;…&lt;/div&gt; aka getByLabel('Month April,').getByLabel('Choose Tuesday, April 29th,')\n`[39m +
+        [32m`    2) &lt;div title="" tabindex="-1" role="option" aria-disabled="false" aria-selected="false" aria-label="Choose Tuesday, April 29th, 2025" class="react-datepicker__day react-datepicker__day react-datepicker__day--029 react-datepicker__day--outside-month"&gt;&lt;/div&gt; aka getByLabel('Month May,').getByLabel('Choose Tuesday, April 29th,')\n`[39m +
+        [32m'\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m"\x1B[2m  - waiting for getByLabel('Choose Tuesday, April 29th,')\x1B[22m\n"[39m +
+        [32m'\n'[39m +
+        [32m'    at selectRoundTripDates (C:\\playwright-project\\src\\page-objects\\searchPage.ts:127:57)\n'[39m +
+        [32m'    at chooseDate (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:55:3)\n'[39m +
+        [32m'    at global (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:95:3)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:107:7)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:129:27)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\2TipsNoExtraNoSeat.spec.ts:1891:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+
+</system-err>
+</testcase>
+<testcase name="Compra 1 adt PremExtra - Eco Comfort - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="35.027">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m4[39m, value: [33m10[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m5[39m, value: [33m12[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremExtra - Eco Extra - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="34.608">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m3[39m, value: [33m8[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m4[39m, value: [33m10[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremExtra - PremLight - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="38.665">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m1[39m, value: [33m3[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m2[39m, value: [33m5[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremExtra - PremComfort - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="33.198">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m3[39m, value: [33m8[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m4[39m, value: [33m10[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremExtra - PremExtra - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="28.565">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m5[39m, value: [33m13[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m6[39m, value: [33m15[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 2 adt (Diferente) Eco Light - Eco Light - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="29.103">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m9[39m, value: [33m22[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m10[39m, value: [33m24[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerAdult 2, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Light -  PremLight - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="31.269">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m8[39m, value: [33m20[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m9[39m, value: [33m22[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt Eco Comfort - Eco Extra - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="36.73">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m1[39m, value: [33m3[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'5'[39m, index: [33m2[39m, value: [33m6[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+<testcase name="Compra 1 adt PremLight - PremLight - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="29.252">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Fecha de salida seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m0[39m, value: [33m1[39m }
+Fecha de regreso seleccionada: { year: [32m'2025'[39m, month: [32m'4'[39m, index: [33m1[39m, value: [33m3[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>
