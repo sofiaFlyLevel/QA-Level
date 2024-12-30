@@ -1,7 +1,69 @@
+import os
+import shutil
 import xml.etree.ElementTree as ET
 import subprocess
-import os
 from datetime import datetime
+
+def update_junit_report(input_path, external_dir):
+    if not os.path.exists(input_path):
+        raise FileNotFoundError(f"Input file {input_path} does not exist.")
+
+    # Crear el directorio externo si no existe
+    if not os.path.exists(external_dir):
+        os.makedirs(external_dir)
+
+    # Definir la ruta del archivo de destino
+    output_path = os.path.join(external_dir, "junit-report.xml")
+
+    # Si el archivo de destino no existe o está vacío, copiar el archivo de entrada
+    if not os.path.exists(output_path) or os.path.getsize(output_path) == 0:
+        shutil.copy(input_path, output_path)
+        print(f"El archivo {output_path} no existía o estaba vacío. Se copió directamente desde {input_path}.")
+        return output_path
+
+    # Intentar analizar el archivo existente
+    try:
+        existing_tree = ET.parse(output_path)
+        existing_root = existing_tree.getroot()
+    except ET.ParseError:
+        print(f"El archivo {output_path} no es un XML válido. Se reemplazará con {input_path}.")
+        shutil.copy(input_path, output_path)
+        return output_path
+
+    # Analizar el nuevo reporte JUnit
+    new_tree = ET.parse(input_path)
+    new_root = new_tree.getroot()
+
+    # Bandera para rastrear si se hicieron actualizaciones
+    updated = False
+
+    # Fusionar o actualizar los casos de prueba
+    for new_testsuite in new_root.findall("testsuite"):
+        existing_testsuite = existing_root.find(f".//testsuite[@name='{new_testsuite.attrib['name']}']")
+        if existing_testsuite is None:
+            existing_root.append(new_testsuite)
+            updated = True
+        else:
+            for new_testcase in new_testsuite.findall("testcase"):
+                existing_testcase = existing_testsuite.find(f".//testcase[@name='{new_testcase.attrib['name']}']")
+                if existing_testcase is None:
+                    existing_testsuite.append(new_testcase)
+                    updated = True
+                else:
+                    if not ET.tostring(existing_testcase, encoding='utf-8') == ET.tostring(new_testcase, encoding='utf-8'):
+                        existing_testsuite.remove(existing_testcase)
+                        existing_testsuite.append(new_testcase)
+                        updated = True
+
+    # Guardar el contenido actualizado si hubo cambios
+    if updated:
+        existing_tree.write(output_path, encoding="utf-8", xml_declaration=True)
+        print(f"Reporte JUnit actualizado guardado en {output_path}")
+    else:
+        print("No se detectaron actualizaciones. El reporte JUnit ya estaba al día.")
+
+    return output_path
+
 
 def process_junit_report(input_path, output_path):
     if not os.path.exists(input_path):
@@ -19,7 +81,7 @@ def process_junit_report(input_path, output_path):
 
         for testcase in testsuite.findall('testcase'):
             # Separar el nombre en `test.describe` y el nombre del paso
-            name_parts = testcase.attrib['name'].split(' › ')  # Divisor utilizado en Playwright
+            name_parts = testcase.attrib['name'].split(' › ')  # Separador usado en Playwright
             if len(name_parts) > 1:
                 describe_name = name_parts[0].strip()
                 step_name = name_parts[1].strip()
@@ -34,78 +96,59 @@ def process_junit_report(input_path, output_path):
                     steps = ET.SubElement(test_describe, 'steps')
                     test_describe_cases[describe_name] = steps
                 
-                # Agregar el paso dentro del `test.describe`
+                # Agregar el paso dentro de `test.describe`
                 steps = test_describe_cases[describe_name]
                 step = ET.SubElement(steps, 'step', {'name': step_name})
                 for child in testcase:
-                    step.append(child)  # Copiar contenido de pasos (errores, salidas, etc.)
+                    step.append(child)  # Copiar contenido del paso (errores, salidas, etc.)
                 
             else:
-                # Si no hay " › ", mantener el testcase como está
+                # Si no contiene " › ", mantener el caso de prueba tal como está
                 new_testsuite.append(testcase)
 
     # Guardar el nuevo archivo procesado
     new_tree = ET.ElementTree(new_root)
     new_tree.write(output_path, encoding='utf-8', xml_declaration=True)
-    print(f"Processed JUnit report saved to {output_path}")
+    print(f"Reporte JUnit procesado guardado en {output_path}")
 
-# Leer el archivo procesado y generar comentarios
-def extract_comments_from_report(report_path):
-    if not os.path.exists(report_path):
-        raise FileNotFoundError(f"Processed report file {report_path} does not exist.")
-    
-    tree = ET.parse(report_path)
-    root = tree.getroot()
-    comments = []
 
-    for testsuite in root.findall('testsuite'):
-        for testcase in testsuite.findall('testcase'):
-            describe_name = testcase.attrib.get('name', 'Unnamed Test')
-            steps = testcase.find('steps')
-            comments.append(f"Test Case: {describe_name}")
-            if steps is not None:
-                for step in steps.findall('step'):
-                    step_name = step.attrib.get('name', 'Unnamed Step')
-                    comments.append(f" - Step: {step_name}")
-            comments.append("")  # Espaciado entre casos
-
-    return "\n".join(comments)
-
-# Procesar el reporte JUnit
-input_path = './external-test-reports/junit-report.xml'
-output_path = './test-results/processed-junit-report.xml'
+# Script principal
+input_path = './test-results/junit-report.xml'
+external_dir = './external-test-reports'
 
 try:
-    process_junit_report(input_path, output_path)
+    # Paso 1: Actualizar el reporte JUnit
+    updated_path = update_junit_report(input_path, external_dir)
+
+    # Paso 2: Procesar el reporte actualizado
+    dynamic_name = input("Ingrese un nombre para el archivo de salida procesado (por defecto: marca de tiempo actual): ")
+    if not dynamic_name.strip():
+        dynamic_name = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+    processed_output_path = f"./test-results/processed-junit-report-{dynamic_name}.xml"
+    process_junit_report(updated_path, processed_output_path)
+
+    # Paso 3: Preguntar si se desea subir a TestRail
+    upload_to_testrail = input("¿Desea subir los resultados a TestRail? (yes/no): ").strip().lower()
+
+    if upload_to_testrail == 'yes':
+        subprocess.run([
+            "C:\\Users\\sofiamartínezlópez\\AppData\\Roaming\\Python\\Python312\\Scripts\\trcli", "-y",
+            "-h", "https://leveltestautomation.testrail.io",
+            "-u", "sofiainkoova@gmail.com",
+            "-p", "TestRail1!",
+            "--project", "Level",
+            "parse_junit",
+            "-f", processed_output_path,
+            "--title", f"{dynamic_name}"
+        ], check=True)
+        print("Resultados subidos exitosamente a TestRail.")
+    else:
+        print("Los resultados no fueron subidos a TestRail.")
+
 except FileNotFoundError as e:
     print(str(e))
     exit(1)
-
-# Generar el comentario
-try:
-    comments = extract_comments_from_report(output_path)
-except FileNotFoundError as e:
-    print(str(e))
-    exit(1)
-
-# Crear un título dinámico
-current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")  # Formato: YYYY-MM-DD_HH-MM-SS
-dynamic_title = f"Playwright Automated Test Run {current_time}"
-
-# Subir a TestRail usando trcli
-try:
-    subprocess.run([ 
-        "C:\\Users\\sofiamartínezlópez\\AppData\\Roaming\\Python\\Python312\\Scripts\\trcli", "-y",
-        "-h", "https://leveltestautomation.testrail.io",
-        "-u", "sofiainkoova@gmail.com",
-        "-p", "TestRail1!",
-        "--project", "Level",
-        "parse_junit",
-        "-f", output_path,
-        "--title", dynamic_title  # Usar el título dinámico aquí
-    ], check=True)
-
-    print("Results successfully uploaded to TestRail.")
 except subprocess.CalledProcessError as e:
-    print(f"Failed to upload results to TestRail: {e}")
+    print(f"Fallo al subir los resultados a TestRail: {e}")
     exit(1)

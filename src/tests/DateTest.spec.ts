@@ -68,9 +68,9 @@ async function chooseFlights(page, outboundFlightClass, outboundFlightType, retu
 }
 
 // Function to fill passenger data
-async function fillPassengerInformation(page,type, data, variable, i, lenguageLocal, dayOffset) {
+async function fillPassengerInformation(page,type, data, variable, i, lenguageLocal, dayOffset, dateOfBirth = null) {
   try {
-    await fillPassengerFor(page, type, data, variable, i, lenguageLocal, dayOffset);
+    await fillPassengerFor(page, type, data, variable, i, lenguageLocal, dayOffset, dateOfBirth);
   } catch (error) {
     console.error('Error while filling passenger data:', error);
   }
@@ -123,7 +123,7 @@ const runWithRetries = async (fn, screenshotPath, testName, page, TEST_RETRIES) 
   }
 };
 
-const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset) => {
+const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset,dateOfBirth = null) => {
   let shouldContinueTests = true; // Re-initialize here for each execution attempt
   try {
     // Configurar navegador
@@ -145,7 +145,7 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
     for (let i = 0; i < DataADT.length; i++) {
       if (!shouldContinueTests) break;
       shouldContinueTests = await runWithRetries(
-        () => fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i, lenguageLocal, dayOffset),
+        () => fillPassengerInformation(page, 'Adult', DataADT[i], 'adults', i, lenguageLocal, dayOffset, dateOfBirth ),
         `test-results/screenshots/adult-${i + 1}-error.png`,
         `fillPassengerAdult ${i + 1}`,
         page, 
@@ -157,7 +157,7 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
     for (let i = 0; i < DataCHD.length; i++) {
       if (!shouldContinueTests) break;
       shouldContinueTests = await runWithRetries(
-        () => fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i, lenguageLocal, dayOffset),
+        () => fillPassengerInformation(page, 'Child', DataCHD[i], 'children', i, lenguageLocal, dayOffset, dateOfBirth ),
         `test-results/screenshots/child-${i + 1}-error.png`,
         `fillPassengerChild ${i + 1}`,
         page, 
@@ -169,7 +169,7 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
     for (let i = 0; i < DataINL.length; i++) {
       if (!shouldContinueTests) break;
       shouldContinueTests = await runWithRetries(
-        () => fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i, lenguageLocal, dayOffset),
+        () => fillPassengerInformation(page, 'Infant', DataINL[i], 'infants', i, lenguageLocal, dayOffset, dateOfBirth ),
         `test-results/screenshots/infant-${i + 1}-error.png`,
         `fillPassengerInfant ${i + 1}`,
         page, 
@@ -220,7 +220,7 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
 
 
 // test suite
-test.describe('1. error - dd/mm/aaaa (Fecha CA/ES) ', () => {
+test.describe('1. error - dd/mm/aaaa (Fecha CA/ES)', () => {
   let page;
   let context;
   let Origin = ruteData.origin;
@@ -247,7 +247,7 @@ test.describe('1. error - dd/mm/aaaa (Fecha CA/ES) ', () => {
     while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
       executionAttempt++;
       console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
+      shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset,null);
   
       if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
     }
@@ -258,7 +258,7 @@ test.describe('1. error - dd/mm/aaaa (Fecha CA/ES) ', () => {
   }, 240000); // Configuración del tiempo límite a 240 segundos
 });
 
-test.describe('2. mm/dd/aaaa (fecha EN)  ', () => {
+test.describe('2. mm/dd/aaaa (fecha EN)', () => {
     let page;
     let context;
     let Origin = ruteData.origin;
@@ -267,7 +267,7 @@ test.describe('2. mm/dd/aaaa (fecha EN)  ', () => {
     let DataCHD = []; 
     let DataINL = []; 
     let payCardData = paymentCards[0];
-    let lenguageLocal = Language.CA; 
+    let lenguageLocal = Language.EN; 
     let dayOffset = -1; // Default value
   
     const outboundFlightClass = CabinClass.ECONOMY;
@@ -285,7 +285,45 @@ test.describe('2. mm/dd/aaaa (fecha EN)  ', () => {
       while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
         executionAttempt++;
         console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
-        shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset);
+        shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset, null);
+    
+        if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
+      }
+    
+      if (!shouldContinueTests) {
+        throw new Error(`Pruebas fallidas después de ${MAX_RETRIES} intentos completos.`);
+      }
+    }, 240000); // Configuración del tiempo límite a 240 segundos
+  });
+
+  test.describe('3.  mm>12 -> NO ESTA BIEN ', () => {
+    let page;
+    let context;
+    let Origin = ruteData.origin;
+    let Destination = ruteData.destination;
+    let DataADT = [userDataADT[0]]; 
+    let DataCHD = []; 
+    let DataINL = []; 
+    let payCardData = paymentCards[0];
+    let lenguageLocal = Language.EN; 
+    let dayOffset = -1; // Default value
+  
+    const outboundFlightClass = CabinClass.ECONOMY;
+    const outboundFlightType = CabinType.LIGHT;
+  
+    const returnFlightClass = CabinClass.ECONOMY;
+    const returnFlightType = CabinType.LIGHT;
+  
+    test('Ejecución completa con reintentos', async ({ browser }) => {
+      let executionAttempt = 0; // Reset execution attempt counter
+      const MAX_RETRIES = 5; // Número máximo de intentos para la ejecución completa
+      const TEST_RETRIES = 3; // Número máximo de intentos para pruebas individuales
+      let shouldContinueTests = false; // Default value
+    
+      while (executionAttempt < MAX_RETRIES && !shouldContinueTests) {
+        executionAttempt++;
+        console.log(`Ejecución completa, intento ${executionAttempt} de ${MAX_RETRIES}`);
+        shouldContinueTests = await executeTests(browser, context, page, TEST_RETRIES, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType, lenguageLocal, dayOffset, '30/30/1988');
     
         if (shouldContinueTests) break; // Salir si todas las pruebas fueron exitosas
       }

@@ -50,13 +50,24 @@ export function extractPhoneWithoutPrefix(phone) {
   return phone.split(' ').slice(1).join(' ');
 }
 
-export function getDateOfBirth(age, locale, dayOffset = 0) {
-  const today = new Date();
-  const baseDate  = new Date(today.getFullYear() - age, today.getMonth(), today.getDate());
- // Ajusta la fecha con el offset de días
- const birthDate = new Date(baseDate);
- birthDate.setDate(baseDate.getDate() + dayOffset);
+export function getDateOfBirth(age, locale, dayOffset = 0, dateOfBirth = null) {
+  let birthDate;
 
+  // If a specific date of birth is provided, use it directly
+  if (dateOfBirth) {
+    const [day, month, year] = dateOfBirth.split('/'); // Split the string into day, month, and year
+    birthDate = new Date(year, month - 1, day); // JavaScript months are 0-indexed (January = 0)
+  } else {
+    // Calculate date of birth based on age
+    const today = new Date();
+    const baseDate = new Date(today.getFullYear() - age, today.getMonth(), today.getDate());
+    
+    // Adjust the date with the offset
+    birthDate = new Date(baseDate);
+    birthDate.setDate(baseDate.getDate() + dayOffset);
+  }
+
+  // Define the date format based on the locale
   let dateFormat;
   switch (locale) {
     case 'ES':
@@ -69,10 +80,14 @@ export function getDateOfBirth(age, locale, dayOffset = 0) {
       break;
   }
 
+  // Choose the locale object for formatting
   const localeObj = locale === 'ES' || locale === 'CA' ? es : enUS;
+
+  // Format the date
   const returnDate = format(birthDate, dateFormat, { locale: localeObj });
   return returnDate;
 }
+
 
 // export async function handleErrorWithScreenshot(page, error, testName) {
 //   console.error(`Error in ${testName}:`, error);
