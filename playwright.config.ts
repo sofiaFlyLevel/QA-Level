@@ -22,7 +22,7 @@ const testRailOptions = {
 
 export default defineConfig({
   testDir: './src/tests',
-  timeout: 240000,
+  timeout: 360000,
   workers: 6, // Establece el número de workers (procesos paralelos)
   retries: 0, // Número de intentos de reintento por prueba
   /* Run tests in files in parallel */

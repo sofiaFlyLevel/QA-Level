@@ -5,7 +5,7 @@ import {formatDate, getDateOfBirth} from './basePage'
 export async function fillPassengerFor(page, type, data, variable, i, lenguageLocal, dayOffset, dateOfBirth = null ) {
 
       await page.locator(`#${type}-${i}`).click();
-      await page.waitForTimeout(1000); //lo tenemos asi por el combox que falta que se distinga para cada usuario 
+      await page.waitForTimeout(3000); //lo tenemos asi por el combox que falta que se distinga para cada usuario 
 
       // Completar los datos del adulto correspondiente
       await page.locator(`#${type}-${i} [name="${variable}[${i}].name"]`).fill(data.name);
@@ -13,8 +13,9 @@ export async function fillPassengerFor(page, type, data, variable, i, lenguageLo
       await page.locator(`#${type}-${i} [name="${variable}[${i}].dateOfBirth"]`).fill(getDateOfBirth(data.dateOfBirth, lenguageLocal, dayOffset, dateOfBirth ));
 
       // Seleccionar la nacionalidad (suponiendo que esto es lo que debe hacerse para cada adulto)
-      await page.getByRole('combobox').click();
-      await page.getByRole('combobox').fill(data.nationality.substring(0, 3));
+      // await page.getByRole('combobox').nth(0).click();
+      await page.locator(`#${type}-${i}`).getByRole('combobox').click();
+      await page.locator(`#${type}-${i}`).getByRole('combobox').fill(data.nationality.substring(0, 3));
 
       await page.getByLabel(data.nationality).click();
 
@@ -23,6 +24,7 @@ export async function fillPassengerFor(page, type, data, variable, i, lenguageLo
         const gender = data.gender.toLowerCase(); // 'male' o 'female'
         await page.locator(`input[name="${variable}[${i}].gender"][value="${gender}"]`).check();
       }
+      await page.locator(`#${type}-${i}`).click();
 
 
         // Comprobamos si hay asistencia

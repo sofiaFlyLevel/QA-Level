@@ -182,6 +182,10 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
       shouldContinueTests = await runWithRetries(
         async () => {
           await page.locator('#contact').click();
+          await page.locator('input[name="contactDetails\\.name"]').fill(DataADT[0].name);;
+          await page.locator('input[name="contactDetails\\.surname"]').fill(DataADT[0].surname);
+          await page.getByPlaceholder('Prefix').click();
+          await page.getByLabel('Åland Islands (+358)').click();
           await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
           await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
           await page.getByRole('button', { name: 'Complete your purchase' }).click();

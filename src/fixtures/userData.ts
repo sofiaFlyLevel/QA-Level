@@ -369,7 +369,7 @@ export const userDataCHD = [
   { //[3]
     name: 'Daniel',
     surname: 'Cruz',
-    dateOfBirth: '12', // 3 years old
+    dateOfBirth: '10', // 3 years old
     language: 'Peru',
     nationality: 'Peru',
     phone: '+51 986543210', // Peru prefix

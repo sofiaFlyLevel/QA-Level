@@ -54,6 +54,55 @@ async function chooseDate(page, apiData, Origin, Destination, outboundFlightClas
   await selectRoundTripDates(page, apiData, Origin, Destination, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType,  DataADT, DataCHD, DataINL, oneTrip);
 }
 
+async function selectSeat(page, index, seatType, desiredType) {
+  const seats = await page.$$('.seat-icon__zoom img:not(.occupied)');
+  if (seats.length > 0) {
+    let randomIndex = Math.floor(Math.random() * seats.length);
+    await seats[randomIndex].click();
+    await page.waitForTimeout(500);
+ 
+    const seatClass = await page.locator('.selection-box__container').nth(index).getAttribute('class');
+    
+    // Si el asiento random no coincide con el tipo deseado, buscar otro
+    if (desiredType && !seatClass.includes(`seat--${desiredType}`)) {
+      for (let i = 0; i < seats.length; i++) {
+        if(index == 0){
+          // await page.locator('.selection-box__container').nth(index).click();
+          // await page.getByText('12H$').click();
+          // await page.getByText('12H$').click();
+          // await page.getByRole('img', { name: 'Clear segment seat selection' }).click();
+          // await page.getByText('12H').click();
+        }
+        if (i !== randomIndex) {
+            await seats[i].click(); 
+            await page.waitForTimeout(500);
+            const newSeatClass = await page.locator('.selection-box__container').nth(index).getAttribute('class');
+            if (newSeatClass.includes(`seat--${desiredType}`)) {
+              break;
+            }
+          }
+      
+      }
+    }
+ 
+    await page.waitForTimeout(1000);
+    const seatNumber = await page.locator('.selection-box__seat-number').nth(index).innerText();
+    console.log(`Asiento ${seatType}:`, seatNumber);
+  }
+ }
+
+ async function selectSeatsAndContinue(page) {
+  //await page.getByRole('button', { name: 'Complete your purchase' }).click();
+  await page.waitForTimeout(10000);
+  
+  await selectSeat(page, 0, 'ida', 'standard');
+  await page.waitForTimeout(3000);
+  
+  await selectSeat(page, 1, 'vuelta', 'front'); 
+  await page.waitForTimeout(5000);
+  
+  await page.getByRole('button', { name: 'Continue' }).click();
+ }
 // Function to adjust the number of passengers
 async function choosePassengers(page, DataADT, DataCHD, DataINL) {
   await adjustPassengerCount(page, DataADT, DataCHD, DataINL);
@@ -182,10 +231,17 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
       shouldContinueTests = await runWithRetries(
         async () => {
           await page.locator('#contact').click();
+          await page.locator('input[name="contactDetails\\.name"]').fill(DataADT[0].name);;
+          await page.locator('input[name="contactDetails\\.surname"]').fill(DataADT[0].surname);
+          
+          await page.locator(`#contact`).getByRole('combobox').click();
+          await page.locator(`#contact`).getByRole('combobox').fill(DataADT[0].nationality.substring(0, 3));
+    
+          await page.getByLabel(DataADT[0].nationality).click();
           await page.locator('input[name="contactDetails.phone"]').fill(DataADT[0].phone);
           await page.locator('input[name="contactDetails.email"]').fill(DataADT[0].email);
-          await page.getByRole('button', { name: 'Complete your purchase' }).click();
-          await page.waitForTimeout(1000);
+          await page.getByRole('button', { name: 'Customize your flight' }).click();
+         
         },
         'test-results/screenshots/fillcontact-error.png',
         'fillContact',
@@ -193,6 +249,25 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
         TEST_RETRIES
       );
     }
+
+      if (shouldContinueTests) {
+        shouldContinueTests = await runWithRetries(
+          () => selectSeatsAndContinue(page),
+          'test-results/screenshots/fillSeat-error.png',
+          'fillSeat',
+          page, 
+          TEST_RETRIES
+        );
+    }
+
+  //   if (shouldContinueTests) {
+  //     shouldContinueTests = await runWithRetries(
+  //       async () =>{
+  //       await page.getByRole('button', { name: 'Continue' }).click();
+  //      }
+  //     );
+  // }
+
 
     
     if (shouldContinueTests) {
