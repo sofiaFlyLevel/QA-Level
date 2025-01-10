@@ -6,12 +6,14 @@ import {fillPassengerFor} from '../page-objects/PassengerPage'
 import {selectRoundTripDates, adjustPassengerCount} from '../page-objects/searchPage'
 import {selectFlights} from '../page-objects/FlightPage'
 import {payWithCard} from '../page-objects/paymentPage'
+import {validationConfirmPage} from '../page-objects/confirmation'
 import {getDateOfBirth} from '../page-objects/basePage'
 import fs from 'fs';
 // C:\Users\sofiamartínezlópez\AppData\Roaming\Python\Python312\Scripts\trcli -y -h "https://leveltestautomation.testrail.io" -u "sofiainkoova@gmail.com" -p "TestRail1!" --project "Level" parse_junit -f "./test-results/junit-report.xml" --title "Playwright Automated Test Run"
 // C:\Users\sofiamartínezlópez\AppData\Roaming\Python\Python312\Scripts\trcli -y -h "https://leveltestautomation.testrail.io" -u "sofiainkoova@gmail.com" -p "TestRail1!" --project "Level" parse_junit -f "./test-results/processed-junit-report.xml" --title "Playwright Automated Test Run" --comment "Automated test execution steps attached. See details below."
 // npm run pro
 let ENTORNO = entornoData.pre.url; 
+const isProdEnvironment = ENTORNO === entornoData.prod.url;
 let oneTripBoll = false;
 // Helper functions for test steps
 
@@ -55,54 +57,113 @@ async function chooseDate(page, apiData, Origin, Destination, outboundFlightClas
 }
 
 async function selectSeat(page, index, seatType, desiredType) {
-  const seats = await page.$$('.seat-icon__zoom img:not(.occupied)');
-  if (seats.length > 0) {
+  let foundDesiredSeat = false;
+  let attempts = 0;
+  const maxAttempts = 10; // Límite de intentos para evitar bucles infinitos
+
+  while (!foundDesiredSeat && attempts < maxAttempts) {
+    // Obtener asientos disponibles
+    const seats = await page.$$('.seat-icon__zoom img:not(.occupied)');
+    
+    if (seats.length === 0) {
+      console.log(`No hay asientos disponibles para ${seatType}`);
+      return;
+    }
+
+    // Seleccionar un asiento aleatorio
     let randomIndex = Math.floor(Math.random() * seats.length);
     await seats[randomIndex].click();
     await page.waitForTimeout(500);
- 
+
+    // Verificar la clase del asiento seleccionado
     const seatClass = await page.locator('.selection-box__container').nth(index).getAttribute('class');
-    
-    // Si el asiento random no coincide con el tipo deseado, buscar otro
-    if (desiredType && !seatClass.includes(`seat--${desiredType}`)) {
-      for (let i = 0; i < seats.length; i++) {
-        if(index == 0){
-          // await page.locator('.selection-box__container').nth(index).click();
-          // await page.getByText('12H$').click();
-          // await page.getByText('12H$').click();
-          // await page.getByRole('img', { name: 'Clear segment seat selection' }).click();
-          // await page.getByText('12H').click();
-        }
-        if (i !== randomIndex) {
-            await seats[i].click(); 
+
+    // Si el asiento coincide con el tipo deseado, terminar la búsqueda
+    if (!desiredType || seatClass.includes(`seat--${desiredType}`)) {
+      foundDesiredSeat = true;
+    } else {
+      if (index === 0) {
+        // Para el asiento de ida: hacer click en el botón "Edit previous flight"
+        try {
+          await page.locator('button.selected-seats__button.button--link').click();
+          await page.waitForTimeout(500);
+        } catch (error) {
+          console.log('No se pudo hacer click en el botón Edit previous flight');
+          // Si falla, intentar con el selector por número de asiento
+          try {
+            const seatNumber = await page.locator('.selection-box__container.selected .selection-box__seat-number').innerText();
+            await page.click(`.selection-box__container:has(.selection-box__seat-number:text("${seatNumber}"))`);
             await page.waitForTimeout(500);
+          } catch (error2) {
+            // Si aún falla, intentar forzar el click por coordenadas
+            const element = await page.$('.selection-box__container.selected');
+            if (element) {
+              const box = await element.boundingBox();
+              if (box) {
+                await page.mouse.click(box.x + box.width/2, box.y + box.height/2);
+              }
+            }
+          }
+        }
+        
+        // Limpiar la selección actual
+        // try {
+        //   const clearButton = await page.$('img[alt="Clear segment seat selection"]');
+        //   if (clearButton) {
+        //     await clearButton.click();
+        //     await page.waitForTimeout(500);
+        //   }
+        // } catch (error) {
+        //   console.log('No se encontró el botón de limpiar selección');
+        // }
+      } else {
+        // Para el asiento de vuelta: probar con otros asientos disponibles
+        for (let i = 0; i < seats.length; i++) {
+          if (i !== randomIndex) {
+            await seats[i].click();
+            await page.waitForTimeout(500);
+            
             const newSeatClass = await page.locator('.selection-box__container').nth(index).getAttribute('class');
             if (newSeatClass.includes(`seat--${desiredType}`)) {
+              foundDesiredSeat = true;
               break;
             }
           }
-      
+        }
+        // Si no se encontró un asiento adecuado después de probar todos, incrementar el contador
+        if (!foundDesiredSeat) {
+          attempts++;
+        }
       }
     }
- 
-    await page.waitForTimeout(1000);
-    const seatNumber = await page.locator('.selection-box__seat-number').nth(index).innerText();
-    console.log(`Asiento ${seatType}:`, seatNumber);
-  }
- }
 
- async function selectSeatsAndContinue(page) {
-  //await page.getByRole('button', { name: 'Complete your purchase' }).click();
+    attempts++;
+  }
+
+  if (!foundDesiredSeat) {
+    console.log(`No se encontró un asiento del tipo ${desiredType} después de ${maxAttempts} intentos`);
+    return;
+  }
+
+  // Obtener y mostrar el número del asiento seleccionado
+  await page.waitForTimeout(1000);
+  const seatNumber = await page.locator('.selection-box__seat-number').nth(index).innerText();
+  console.log(`Asiento ${seatType}:`, seatNumber);
+}
+async function selectSeatsAndContinue(page) {
   await page.waitForTimeout(10000);
-  
-  await selectSeat(page, 0, 'ida', 'standard');
+
+  // Seleccionar asiento de ida
+  await selectSeat(page, 0, 'ida', 'front');
   await page.waitForTimeout(3000);
-  
-  await selectSeat(page, 1, 'vuelta', 'front'); 
+
+  // Seleccionar asiento de vuelta
+  await selectSeat(page, 1, 'vuelta', 'front');
   await page.waitForTimeout(5000);
-  
+
+  // Continuar al siguiente paso
   await page.getByRole('button', { name: 'Continue' }).click();
- }
+}
 // Function to adjust the number of passengers
 async function choosePassengers(page, DataADT, DataCHD, DataINL) {
   await adjustPassengerCount(page, DataADT, DataCHD, DataINL);
@@ -131,6 +192,11 @@ async function payWithCardInformation(page, payCardData) {
     await payWithCard(page, payCardData);
     await page.waitForTimeout(1000); // Wait for 10 seconds
   }
+
+async function validationConfirmationPage(page)  {
+  await validationConfirmPage(page);
+  await page.waitForTimeout(1000); // Wait for 10 seconds
+}
   
 
 async function global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType)
@@ -260,25 +326,38 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
         );
     }
 
-  //   if (shouldContinueTests) {
-  //     shouldContinueTests = await runWithRetries(
-  //       async () =>{
-  //       await page.getByRole('button', { name: 'Continue' }).click();
-  //      }
-  //     );
-  // }
-
-
-    
     if (shouldContinueTests) {
-        shouldContinueTests = await runWithRetries(
-          () => payWithCardInformation(page, payCardData),
-          'test-results/screenshots/payWithCard-error.png',
-          'payWithCard',
-          page, 
-          TEST_RETRIES
-        );
-      }
+      shouldContinueTests = await runWithRetries(
+        async () =>{
+          await page.waitForTimeout(5000);
+        await page.getByRole('button', { name: 'Continue' }).click();
+       },
+       'test-results/screenshots/extrabaggage-error.png',
+       'extraBaggage',
+       page, 
+       TEST_RETRIES
+      );
+  }
+
+  if (shouldContinueTests && !isProdEnvironment) {
+    shouldContinueTests = await runWithRetries(
+      () => payWithCardInformation(page, payCardData),
+      'test-results/screenshots/payWithCard-error.png',
+      'payWithCard',
+      page, 
+      TEST_RETRIES
+    );
+  }
+  
+  if (shouldContinueTests && !isProdEnvironment) {
+    shouldContinueTests = await runWithRetries(
+      () => validationConfirmationPage(page),
+      'test-results/screenshots/confirmation-error.png',
+      'payWithCard',
+      page, 
+      TEST_RETRIES
+    );
+  }
 
   } catch (error) {
     console.error('Error crítico durante la ejecución:', error);

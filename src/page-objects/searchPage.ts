@@ -1,6 +1,6 @@
 import { getApiResponse, transformApiResponse, postApiResponse} from '../utils/apiHelper';
 import { formatDateWithOrdinal } from './basePage';
-import {Money, CabinClass, CabinType} from '../fixtures/userData'
+import {Money, CabinClass, CabinType, rangeStartMonthsExport, rangeEndMonthsExport} from '../fixtures/userData'
 
 
 export async function selectCountryAndDate(page, apiData, origin, destination, calendarIndex = 0, startDate = null, rangeStartMonths, rangeEndMonths ) {
@@ -48,7 +48,7 @@ export async function selectCountryAndDate(page, apiData, origin, destination, c
 }
 
 export async function selectRoundTripDates(page, apiData, origin, destination, outboundFlightClass, outboundFlightType, returnFlightClass, returnFlightType, DataADT, DataCHD, DataINL, oneTrip = false, 
-    calendarIndex = 0, rangeStartMonths = 3, rangeEndMonths = 5) {
+    calendarIndex = 0, rangeStartMonths = rangeStartMonthsExport, rangeEndMonths = rangeEndMonthsExport) {
     let selectedDepartureDate, selectedReturnDate, transformedDates;
 
     const passengers = {};

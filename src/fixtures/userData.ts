@@ -13,6 +13,9 @@ const Money = {
 export const LenguageChoose = Language.EN; 
 export const MoneyChosee = Money.USD; 
 
+export const rangeStartMonthsExport = 7; 
+export const rangeEndMonthsExport = 10
+
 export enum CabinType {
   LIGHT = 'Light',
   COMFORT = 'Comfort',

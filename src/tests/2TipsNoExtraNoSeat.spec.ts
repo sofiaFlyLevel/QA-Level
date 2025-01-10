@@ -6,12 +6,14 @@ import {fillPassengerFor} from '../page-objects/PassengerPage'
 import {selectRoundTripDates, adjustPassengerCount} from '../page-objects/searchPage'
 import {selectFlights} from '../page-objects/FlightPage'
 import {payWithCard} from '../page-objects/paymentPage'
+import {validationConfirmPage} from '../page-objects/confirmation'
 import {getDateOfBirth} from '../page-objects/basePage'
 import fs from 'fs';
 // C:\Users\sofiamartínezlópez\AppData\Roaming\Python\Python312\Scripts\trcli -y -h "https://leveltestautomation.testrail.io" -u "sofiainkoova@gmail.com" -p "TestRail1!" --project "Level" parse_junit -f "./test-results/junit-report.xml" --title "Playwright Automated Test Run"
 // C:\Users\sofiamartínezlópez\AppData\Roaming\Python\Python312\Scripts\trcli -y -h "https://leveltestautomation.testrail.io" -u "sofiainkoova@gmail.com" -p "TestRail1!" --project "Level" parse_junit -f "./test-results/processed-junit-report.xml" --title "Playwright Automated Test Run" --comment "Automated test execution steps attached. See details below."
 // npm run pro
 let ENTORNO = entornoData.pre.url; 
+const isProdEnvironment = ENTORNO === entornoData.prod.url;
 let oneTripBoll = false;
 // Helper functions for test steps
 
@@ -81,8 +83,14 @@ async function fillPassengerInformation(page,type, data, variable, i, lenguageLo
 async function payWithCardInformation(page, payCardData) {
     await payWithCard(page, payCardData);
     await page.waitForTimeout(1000); // Wait for 10 seconds
-  }
-  
+}
+
+
+async function validationConfirmationPage(page)  {
+  await validationConfirmPage(page);
+  await page.waitForTimeout(1000); // Wait for 10 seconds
+}
+   
 
 async function global(page, Origin, Destination, DataADT, DataCHD, DataINL, outboundFlightClass, outboundFlightType, returnFlightClass, payCardData, returnFlightType)
 {
@@ -199,15 +207,25 @@ const executeTests = async (browser, context, page, TEST_RETRIES, Origin, Destin
     }
 
     
-    if (shouldContinueTests) {
-        shouldContinueTests = await runWithRetries(
-          () => payWithCardInformation(page, payCardData),
-          'test-results/screenshots/payWithCard-error.png',
-          'payWithCard',
-          page, 
-          TEST_RETRIES
-        );
-      }
+    if (shouldContinueTests && !isProdEnvironment) {
+      shouldContinueTests = await runWithRetries(
+        () => payWithCardInformation(page, payCardData),
+        'test-results/screenshots/payWithCard-error.png',
+        'payWithCard',
+        page, 
+        TEST_RETRIES
+      );
+    }
+    
+    if (shouldContinueTests && !isProdEnvironment) {
+      shouldContinueTests = await runWithRetries(
+        () => validationConfirmationPage(page),
+        'test-results/screenshots/confirmation-error.png',
+        'payWithCard',
+        page, 
+        TEST_RETRIES
+      );
+    }
 
   } catch (error) {
     console.error('Error crítico durante la ejecución:', error);
