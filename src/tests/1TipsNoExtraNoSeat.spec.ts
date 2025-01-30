@@ -13,6 +13,7 @@ import fs from 'fs';
 // C:\Users\sofiamartínezlópez\AppData\Roaming\Python\Python312\Scripts\trcli -y -h "https://leveltestautomation.testrail.io" -u "sofiainkoova@gmail.com" -p "TestRail1!" --project "Level" parse_junit -f "./test-results/processed-junit-report.xml" --title "Playwright Automated Test Run" --comment "Automated test execution steps attached. See details below."
 // npm run pro
 // npm run process-report
+
 let ENTORNO = entornoData.pre.url; 
 const isProdEnvironment = ENTORNO === entornoData.prod.url;
 let oneTripBoll = true;

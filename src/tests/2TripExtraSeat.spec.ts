@@ -1,3 +1,87 @@
+// import { test } from '@playwright/test';
+// import { BookingTest } from '../page-objects/globa';
+// import { 
+//   userDataADT, CabinClass, CabinType, 
+//   paymentCards, Language 
+// } from '../fixtures/userData';
+// import { ruteData } from '../fixtures/ruteData';
+// import { apiData } from '../fixtures/environmentData';
+
+// test.describe('Flight Booking Tests', () => {
+//   const testData = {
+//     apiData,
+//     origin: ruteData.origin,
+//     destination: ruteData.destination,
+//     passengers: {
+//       adults: [userDataADT[0]],
+//       children: [],
+//       infants: []
+//     },
+//     cabinClass: {
+//       outbound: CabinClass.ECONOMY,
+//       return: CabinClass.ECONOMY
+//     },
+//     cabinType: {
+//       outbound: CabinType.LIGHT,
+//       return: CabinType.LIGHT
+//     },
+//     language: Language.EN,
+//     dayOffset: -1, 
+//     payment: paymentCards[0]
+//   };
+
+//   const MAX_RETRIES = 3;
+//   const RETRY_DELAY = 5000;
+
+//   test('Complete booking flow with extra seat', async ({ browser }) => {
+//     let attempt = 0;
+//     let lastError = null;
+
+//     while (attempt < MAX_RETRIES) {
+//       const context = await browser.newContext({
+//         storageState: undefined
+//       });
+//       const page = await context.newPage();
+//       const bookingTest = new BookingTest(page, context);
+
+//       try {
+//         await bookingTest.executeWithRetry(
+//           async () => {
+//             await bookingTest.initializeTest();
+//             await bookingTest.selectFlight(testData);
+//             await bookingTest.fillPassengerDetails(testData);
+//             await bookingTest.fillContactDetails(testData, 'purchase');
+//             await bookingTest.processPayment(testData.payment);
+//           },
+//           'complete-booking-flow'
+//         );
+        
+//         await context.close();
+//         return;
+
+//       } catch (error) {
+//         lastError = error;
+//         console.error(`Test attempt ${attempt + 1} failed:`, error);
+        
+//         await context.close();
+        
+//         if (error.fatal || error.name === 'ValidationError') {
+//           throw error;
+//         }
+        
+//         if (attempt < MAX_RETRIES - 1) {
+//           console.log(`Retrying test in ${RETRY_DELAY/1000} seconds...`);
+//           await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+//         }
+//       }
+
+//       attempt++;
+//     }
+
+//     throw new Error(`Test failed after ${MAX_RETRIES} attempts. Last error: ${lastError}`);
+//   });
+// });
+
 import { test, expect , type Page} from '@playwright/test';
 import { userDataADT, userDataCHD, userDataINL, CabinClass, CabinType, paymentCards, Language, MoneyChosee, LenguageChoose} from '../fixtures/userData';
 import { entornoData, apiData } from '../fixtures/environmentData';
@@ -412,5 +496,3 @@ test.describe('1 Adt EcoLight - sin assitence', () => {
     }
   }, 240000); // Configuración del tiempo límite a 240 segundos
 });
-
-
