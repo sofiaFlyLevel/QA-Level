@@ -6,23 +6,30 @@ import * as XLSX from 'xlsx';
 let ENTORNO = entornoData.pre.url;
 const isProdEnvironment = ENTORNO === entornoData.prod.url;
 const FIXED_EMAIL = 'sofiainkoova@gmail.com';
+const EXCEL_FILE_NAME = 'booking_codes.xlsx';
 
-async function readBookingCodes(): Promise<string[]> {
+interface BookingCodeInfo {
+  code: string;
+  rowIndex: number;
+}
+
+async function readBookingCodes(): Promise<BookingCodeInfo[]> {
   try {
-    const fileName = 'booking_codes.xlsx';
-    const workbook = XLSX.readFile(fileName);
+    const workbook = XLSX.readFile(EXCEL_FILE_NAME);
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
     
-    // Get the range of data
     const range = XLSX.utils.decode_range(worksheet['!ref']);
-    const bookingCodes: string[] = [];
+    const bookingCodes: BookingCodeInfo[] = [];
     
-    // Read all booking codes from column A
-    for (let rowIndex = 1; rowIndex <= range.e.r; rowIndex++) { // Start from 1 to skip header
+    // Read all booking codes from column A and store their row indices
+    for (let rowIndex = 1; rowIndex <= range.e.r; rowIndex++) {
       const bookingCodeCell = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 0 })];
       
       if (bookingCodeCell?.v) {
-        bookingCodes.push(bookingCodeCell.v.toString());
+        bookingCodes.push({
+          code: bookingCodeCell.v.toString(),
+          rowIndex: rowIndex
+        });
       }
     }
     
@@ -62,23 +69,55 @@ async function chooseLengMoney(page: Page) {
   }
 }
 
-async function processBookingCode(page: Page, bookingCode: string) {
+async function deleteBookingCodeFromExcel(rowIndex: number): Promise<void> {
   try {
-    await chooseMMB(page, bookingCode);
+    const workbook = XLSX.readFile(EXCEL_FILE_NAME);
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    
+    // Convert worksheet to array of arrays
+    const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    
+    // Remove the row at the specified index
+    data.splice(rowIndex, 1);
+    
+    // Convert back to worksheet
+    const newWorksheet = XLSX.utils.aoa_to_sheet(data);
+    
+    // Replace worksheet in workbook
+    workbook.Sheets[workbook.SheetNames[0]] = newWorksheet;
+    
+    // Write back to file
+    XLSX.writeFile(workbook, EXCEL_FILE_NAME);
+    
+    console.log(`Successfully deleted row ${rowIndex} from Excel file`);
+  } catch (error) {
+    console.error('Error deleting from Excel:', error);
+    throw error;
+  }
+}
+
+// ... [Previous helper functions remain the same] ...
+
+async function processBookingCode(page: Page, bookingInfo: BookingCodeInfo) {
+  try {
+    await chooseMMB(page, bookingInfo.code);
     
     // Wait for navigation and verify URL
     await page.waitForURL((url) => url.pathname.includes('/nwe/mmb/'));
     
     // Verify booking code matches
     const displayedCode = await page.locator('div.booking-code__code').textContent();
-    if (displayedCode !== bookingCode) {
-      throw new Error(`Booking code mismatch: expected ${bookingCode}, got ${displayedCode}`);
+    if (displayedCode !== bookingInfo.code) {
+      throw new Error(`Booking code mismatch: expected ${bookingInfo.code}, got ${displayedCode}`);
     }
+    
+    // If verification successful, delete the row from Excel
+    await deleteBookingCodeFromExcel(bookingInfo.rowIndex);
     
     // Return to initial state for next booking
     await page.goto(ENTORNO);
   } catch (error) {
-    console.error(`Error processing booking code ${bookingCode}:`, error);
+    console.error(`Error processing booking code ${bookingInfo.code}:`, error);
     throw error;
   }
 }
@@ -88,9 +127,9 @@ async function global(page: Page) {
     const bookingCodes = await readBookingCodes();
     console.log(`Found ${bookingCodes.length} booking codes to process`);
     
-    for (const bookingCode of bookingCodes) {
-      console.log(`Processing booking code: ${bookingCode}`);
-      await processBookingCode(page, bookingCode);
+    for (const bookingInfo of bookingCodes) {
+      console.log(`Processing booking code: ${bookingInfo.code}`);
+      await processBookingCode(page, bookingInfo);
     }
   } catch (error) {
     console.error('Error in global function:', error);

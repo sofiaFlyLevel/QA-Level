@@ -31,12 +31,15 @@ export async function selectCountryAndDate(page, apiData, origin, destination, c
         }
 
         // Asegurarse de que el mes actual en el selector sea el correcto
-        const currentMonthLocator = page.locator('.react-datepicker__current-month').nth(calendarIndex);
+        const currentMonthLocator = page.locator('.react-datepicker__current-month').nth(13);
+
         let currentMonthLabel = await currentMonthLocator.textContent();
         const targetMonth = new Date(selectedDate.year, selectedDate.month - 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
         while (currentMonthLabel !== targetMonth) {
-            await page.locator('button.react-datepicker__navigation--next').nth(calendarIndex).click();
+            await page.getByRole('button', { name: 'Next Month' }).click();
+            //await page.locator('button.react-datepicker__navigation--next').nth(calendarIndex).click();
+            
             currentMonthLabel = await currentMonthLocator.textContent();
         }
 
@@ -88,7 +91,8 @@ export async function selectRoundTripDates(page, apiData, origin, destination, o
         validateCabinType(outboundResponse, outboundFlightClass, outboundFlightType);
 
         const formattedDepartureLabel = 'Choose ' + formatDateWithOrdinal(selectedDepartureDate) + ',';
-        await page.getByLabel(formattedDepartureLabel).click();
+        const elements = await page.getByLabel(formattedDepartureLabel).all();
+        await elements[elements.length - 1].click();
 
         if (!oneTrip) {
             // Selección de fecha de vuelta
@@ -122,9 +126,10 @@ export async function selectRoundTripDates(page, apiData, origin, destination, o
 
             const returnResponse = await postApiResponse('https://apis-dev.airpricing.net', returnBody);
             validateCabinType(returnResponse, returnFlightClass, returnFlightType);
-
+            await page.waitForTimeout(3000);
             const formattedReturnLabel = 'Choose ' + formatDateWithOrdinal(selectedReturnDate) + ',';
-            await page.getByLabel(formattedReturnLabel).click();
+            const elements2 = await page.getByLabel(formattedReturnLabel).all();
+            await elements2[elements.length - 1].click();
 
             console.log('Fecha de salida seleccionada:', selectedDepartureDate);
             console.log('Fecha de regreso seleccionada:', selectedReturnDate);
