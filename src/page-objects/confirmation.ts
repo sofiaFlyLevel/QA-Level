@@ -96,6 +96,8 @@ export async function validationConfirmPage(page) {
             throw error;
         }
 
+        await page.waitForTimeout(2000);
+
         await Promise.all([
             page.waitForSelector('.flight-info__journey-type', { timeout: 10000 }),
             page.waitForSelector('.flight-info__routes', { timeout: 10000 }),

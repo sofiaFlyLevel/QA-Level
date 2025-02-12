@@ -56,7 +56,7 @@ export async function selectRoundTripDates(page, apiData, origin, destination, o
 
     const passengers = {};
 
-    // Agregar datos de pasajeros
+    // Add passenger data
     if (DataADT.length > 0) {
         passengers.ADT = DataADT.length;
     }
@@ -68,11 +68,12 @@ export async function selectRoundTripDates(page, apiData, origin, destination, o
     }
 
     try {
-        // Selección de fecha de ida
+        // Select departure date
+        
         selectedDepartureDate = await selectCountryAndDate(page, apiData, origin, destination, 0, null, rangeStartMonths, rangeEndMonths);
         let formattedDepartureDate = `${selectedDepartureDate.year}-${String(selectedDepartureDate.month).padStart(2, '0')}-${String(selectedDepartureDate.value).padStart(2, '0')}`;
 
-        // Validar clase de cabina y tipo para la ida
+        // Validate cabin class and type for outbound flight
         const outboundBody = {
             "Passengers": passengers,
             "Preferences": {
@@ -95,17 +96,17 @@ export async function selectRoundTripDates(page, apiData, origin, destination, o
         await elements[elements.length - 1].click();
 
         if (!oneTrip) {
-            // Selección de fecha de vuelta
+            // Select return date
             const transformedReturnDates = transformApiResponse(await getApiResponse(apiData.baseUrl, destination, origin, apiData.definition));
 
             selectedReturnDate = transformedReturnDates.find(date => {
                 const dateObj = new Date(date.year, date.month - 1, date.value);
                 const departureDateObj = new Date(selectedDepartureDate.year, selectedDepartureDate.month - 1, selectedDepartureDate.value);
-                return dateObj > departureDateObj; // Asegurarse de que la vuelta sea posterior a la ida
+                return dateObj > departureDateObj;
             });
 
             if (!selectedReturnDate) {
-                throw new Error('No se encontró una fecha adecuada para la vuelta.');
+                throw new Error('No suitable return date found.');
             }
 
             let formattedReturnDate = `${selectedReturnDate.year}-${String(selectedReturnDate.month).padStart(2, '0')}-${String(selectedReturnDate.value).padStart(2, '0')}`;
@@ -126,21 +127,29 @@ export async function selectRoundTripDates(page, apiData, origin, destination, o
 
             const returnResponse = await postApiResponse('https://apis-dev.airpricing.net', returnBody);
             validateCabinType(returnResponse, returnFlightClass, returnFlightType);
-            await page.waitForTimeout(3000);
+            await page.waitForTimeout(2000);
+
+            // Check if departure and return dates are in different months
+            const isDifferentMonth = selectedDepartureDate.month !== selectedReturnDate.month;
+            
             const formattedReturnLabel = 'Choose ' + formatDateWithOrdinal(selectedReturnDate) + ',';
             const elements2 = await page.getByLabel(formattedReturnLabel).all();
-            await elements2[elements.length - 1].click();
+            
+            // Use different index based on whether months are different
+           
+            await elements2[elements2.length - 1].click();
+            
 
-            console.log('Fecha de salida seleccionada:', selectedDepartureDate);
-            console.log('Fecha de regreso seleccionada:', selectedReturnDate);
+            console.log('Selected departure date:', selectedDepartureDate);
+            console.log('Selected return date:', selectedReturnDate);
 
-            return { selectedDepartureDate, selectedReturnDate }; // Retornar ambas fechas seleccionadas
+            return { selectedDepartureDate, selectedReturnDate };
         } else {
-            console.log('Fecha de salida seleccionada:', selectedDepartureDate);
-            return selectedDepartureDate; // Retornar solo la fecha de ida
+            console.log('Selected departure date:', selectedDepartureDate);
+            return selectedDepartureDate;
         }
     } catch (error) {
-        console.error('Error al gestionar el flujo de ida y vuelta:', error.message);
+        console.error('Error managing round trip flow:', error.message);
         throw error;
     }
 }
