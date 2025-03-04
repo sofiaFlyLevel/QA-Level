@@ -4,7 +4,7 @@ import {formatDate, getDateOfBirth} from './basePage'
 
 export async function fillPassengerFor(page, type, data, variable, i, lenguageLocal, dayOffset, dateOfBirth = null ) {
 
-      await page.locator(`#${type}-${i}`).click();
+      //await page.locator(`#${type}-${i}`).click();
       await page.waitForTimeout(3000); //lo tenemos asi por el combox que falta que se distinga para cada usuario 
 
       // Completar los datos del adulto correspondiente
@@ -24,18 +24,18 @@ export async function fillPassengerFor(page, type, data, variable, i, lenguageLo
         const gender = data.gender.toLowerCase(); // 'male' o 'female'
         await page.locator(`input[name="${variable}[${i}].gender"][value="${gender}"]`).check();
       }
-      await page.locator(`#${type}-${i}`).click();
+      //await page.locator(`#${type}-${i}`).click();
 
 
-        // Comprobamos si hay asistencia
-      if (data.assistance.length > 0 && type != 'Infant') {
+      // Comprobamos si hay asistencia
+      if (data.assistance && data.assistance.length > 0 && type != 'Infant') {
         // Hacer clic en el elemento para expandir las opciones de asistencia
         await page.locator(`#${type}-${i} .assistant-label`).click();
-    
+        
         // Recorrer las opciones de asistencia y seleccionarlas
         for (let j = 0; j < data.assistance.length; j++) {
           const assistanceOption = data.assistance[j];
-    
+          
           // Buscar la opción de asistencia y marcarla si existe
           const checkboxLocator = page.locator(`#${type}-${i} .form-check-input + span:has-text("${assistanceOption}")`);
           if (await checkboxLocator.isVisible()) {

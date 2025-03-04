@@ -1,10 +1,688 @@
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="127.03619299999997">
-<testsuite name="1TipsNoExtraNoSeat.spec.ts" timestamp="2025-02-12T14:33:39.686Z" hostname="chromium" tests="1" failures="0" skipped="0" time="109.728" errors="0">
-<testcase name="1. 1 Adt EcoLight - sin assitence › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="109.728">
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites id="" name="" tests="14" failures="3" skipped="0" errors="0" time="370.3596439999994">
+<testsuite name="1TipsNoExtraNoSeat.spec.ts" timestamp="2025-02-28T09:59:33.936Z" hostname="chromium" tests="14" failures="3" skipped="0" time="1762.824" errors="0">
+<testcase name="2. Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre con caracteres especiales - sin assitence - sin asiento - sin extras › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="102.501">
 <system-out>
-<![CDATA[Ejecución completa, intento 1 de 5
+Ejecución completa, intento 1 de 5
 Ejecutando Booking, intento 1
-Selected departure date: { year: [32m'2025'[39m, month: [32m'9'[39m, index: [33m1[39m, value: [33m2[39m }
+Selected departure date: { year: [32m'2025'[39m, month: [32m'10'[39m, index: [33m2[39m, value: [33m3[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerAdult 2, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Successfully saved booking code NCPHX to Excel
+
+</system-out>
+<system-err>
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:313:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Not on confirmation page URL
+Intento 2 fallido en payWithCard: Error [ValidationError]: Not on confirmation page URL
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:94:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:313:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+
+</system-err>
+</testcase>
+<testcase name="3. Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre con caracteres especiales - Con assitence TODAS - sin asiento - sin extras › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="360.075">
+<failure message="1TipsNoExtraNoSeat.spec.ts:347:9 Ejecución completa con reintentos" type="FAILURE">
+  [chromium] › 1TipsNoExtraNoSeat.spec.ts:347:9 › 3. Compra 2 Adulto (Diferente) Economy Light - Economy Light - Nombre con caracteres especiales - Con assitence TODAS - sin asiento - sin extras › Ejecución completa con reintentos 
+
+    Test timeout of 360000ms exceeded.
+
+    Error: browserContext.close: Target page, context or browser has been closed
+
+      234 |   } finally {
+      235 |     if (page) await page.close();
+    &gt; 236 |     if (context) await context.close();
+          |                  ^
+      237 |   }
+      238 |
+      239 |   return shouldContinueTests; // Return the status of the test execution
+        at executeTests (C:\playwright-project\src\tests\1TipsNoExtraNoSeat.spec.ts:236:18)
+        at C:\playwright-project\src\tests\1TipsNoExtraNoSeat.spec.ts:359:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\1TipsNoExtraNoSeat-3-Compr-37b7a-ión-completa-con-reintentos-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+</failure>
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'8'[39m, index: [33m1[39m, value: [33m2[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerAdult 2, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Ejecución completa, intento 2 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'8'[39m, index: [33m11[39m, value: [33m12[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerAdult 2, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+
+</system-out>
+<system-err>
+Error while handling iframe payment: page.waitForSelector: Timeout 60000ms exceeded.
+Call log:
+[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible[22m
+
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:86:22[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:213:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:212:35[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:359:29 {
+  name: [32m'TimeoutError'[39m,
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@91'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\paymentPage.ts'[39m,
+      line: [33m4[39m,
+      column: [33m20[39m,
+      function: [32m'payWithCard'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m'page.waitForSelector(iframe[title="Iframe for expiry date"])'[39m,
+    apiName: [32m'page.waitForSelector'[39m,
+    params: {
+      selector: [32m'iframe[title="Iframe for expiry date"]'[39m,
+      timeout: [33m60000[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1740736929920[39m,
+    error: {
+      message: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m,
+      stack: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m +
+        [32m'\n'[39m +
+        [32m'    at payWithCard (C:\\playwright-project\\src\\page-objects\\paymentPage.ts:4:20)\n'[39m +
+        [32m'    at payWithCardInformation (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:86:22)\n'[39m +
+        [32m'    at fn (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:213:15)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:122:13)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:212:35)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:359:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Intento 1 fallido en payWithCard: page.waitForSelector: Timeout 60000ms exceeded.
+Call log:
+[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible[22m
+
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:86:22[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:213:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:212:35[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:359:29 {
+  name: [32m'TimeoutError'[39m,
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@91'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\paymentPage.ts'[39m,
+      line: [33m4[39m,
+      column: [33m20[39m,
+      function: [32m'payWithCard'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m'page.waitForSelector(iframe[title="Iframe for expiry date"])'[39m,
+    apiName: [32m'page.waitForSelector'[39m,
+    params: {
+      selector: [32m'iframe[title="Iframe for expiry date"]'[39m,
+      timeout: [33m60000[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1740736929920[39m,
+    error: {
+      message: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m,
+      stack: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m +
+        [32m'\n'[39m +
+        [32m'    at payWithCard (C:\\playwright-project\\src\\page-objects\\paymentPage.ts:4:20)\n'[39m +
+        [32m'    at payWithCardInformation (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:86:22)\n'[39m +
+        [32m'    at fn (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:213:15)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:122:13)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:212:35)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:359:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Error while handling iframe payment: page.waitForSelector: Timeout 60000ms exceeded.
+Call log:
+[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible[22m
+
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:86:22[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:213:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:212:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:359:29 {
+  name: [32m'TimeoutError'[39m,
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@92'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\paymentPage.ts'[39m,
+      line: [33m4[39m,
+      column: [33m20[39m,
+      function: [32m'payWithCard'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m'page.waitForSelector(iframe[title="Iframe for expiry date"])'[39m,
+    apiName: [32m'page.waitForSelector'[39m,
+    params: {
+      selector: [32m'iframe[title="Iframe for expiry date"]'[39m,
+      timeout: [33m60000[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1740736989945[39m,
+    error: {
+      message: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m,
+      stack: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m +
+        [32m'\n'[39m +
+        [32m'    at payWithCard (C:\\playwright-project\\src\\page-objects\\paymentPage.ts:4:20)\n'[39m +
+        [32m'    at payWithCardInformation (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:86:22)\n'[39m +
+        [32m'    at fn (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:213:15)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:122:13)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:212:29)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:359:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Intento 2 fallido en payWithCard: page.waitForSelector: Timeout 60000ms exceeded.
+Call log:
+[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible[22m
+
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:86:22[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:213:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:212:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:359:29 {
+  name: [32m'TimeoutError'[39m,
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@92'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\paymentPage.ts'[39m,
+      line: [33m4[39m,
+      column: [33m20[39m,
+      function: [32m'payWithCard'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m'page.waitForSelector(iframe[title="Iframe for expiry date"])'[39m,
+    apiName: [32m'page.waitForSelector'[39m,
+    params: {
+      selector: [32m'iframe[title="Iframe for expiry date"]'[39m,
+      timeout: [33m60000[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1740736989945[39m,
+    error: {
+      message: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m,
+      stack: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m +
+        [32m'\n'[39m +
+        [32m'    at payWithCard (C:\\playwright-project\\src\\page-objects\\paymentPage.ts:4:20)\n'[39m +
+        [32m'    at payWithCardInformation (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:86:22)\n'[39m +
+        [32m'    at fn (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:213:15)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:122:13)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:212:29)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:359:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Error while handling iframe payment: page.waitForSelector: Timeout 60000ms exceeded.
+Call log:
+[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible[22m
+
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:86:22[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:213:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:212:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:359:29 {
+  name: [32m'TimeoutError'[39m,
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@93'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\paymentPage.ts'[39m,
+      line: [33m4[39m,
+      column: [33m20[39m,
+      function: [32m'payWithCard'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m'page.waitForSelector(iframe[title="Iframe for expiry date"])'[39m,
+    apiName: [32m'page.waitForSelector'[39m,
+    params: {
+      selector: [32m'iframe[title="Iframe for expiry date"]'[39m,
+      timeout: [33m60000[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1740737049956[39m,
+    error: {
+      message: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m,
+      stack: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m +
+        [32m'\n'[39m +
+        [32m'    at payWithCard (C:\\playwright-project\\src\\page-objects\\paymentPage.ts:4:20)\n'[39m +
+        [32m'    at payWithCardInformation (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:86:22)\n'[39m +
+        [32m'    at fn (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:213:15)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:122:13)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:212:29)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:359:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Intento 3 fallido en payWithCard: page.waitForSelector: Timeout 60000ms exceeded.
+Call log:
+[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible[22m
+
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:86:22[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:213:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:212:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:359:29 {
+  name: [32m'TimeoutError'[39m,
+  [[32mSymbol(step)[39m]: {
+    stepId: [32m'pw:api@93'[39m,
+    location: {
+      file: [32m'C:\\playwright-project\\src\\page-objects\\paymentPage.ts'[39m,
+      line: [33m4[39m,
+      column: [33m20[39m,
+      function: [32m'payWithCard'[39m
+    },
+    category: [32m'pw:api'[39m,
+    title: [32m'page.waitForSelector(iframe[title="Iframe for expiry date"])'[39m,
+    apiName: [32m'page.waitForSelector'[39m,
+    params: {
+      selector: [32m'iframe[title="Iframe for expiry date"]'[39m,
+      timeout: [33m60000[39m
+    },
+    boxedStack: [90mundefined[39m,
+    steps: [],
+    complete: [36m[Function: complete][39m,
+    endWallTime: [33m1740737049956[39m,
+    error: {
+      message: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m,
+      stack: [32m'TimeoutError: page.waitForSelector: Timeout 60000ms exceeded.\n'[39m +
+        [32m'Call log:\n'[39m +
+        [32m`\x1B[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible\x1B[22m\n`[39m +
+        [32m'\n'[39m +
+        [32m'    at payWithCard (C:\\playwright-project\\src\\page-objects\\paymentPage.ts:4:20)\n'[39m +
+        [32m'    at payWithCardInformation (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:86:22)\n'[39m +
+        [32m'    at fn (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:213:15)\n'[39m +
+        [32m'    at runWithRetries (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:122:13)\n'[39m +
+        [32m'    at executeTests (C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:212:29)\n'[39m +
+        [32m'    at C:\\playwright-project\\src\\tests\\1TipsNoExtraNoSeat.spec.ts:359:29'[39m,
+      cause: [90mundefined[39m
+    }
+  }
+}
+Prueba payWithCard fallida después de 3 intentos.
+Error while handling iframe payment: page.waitForSelector: Test ended.
+Call log:
+[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible[22m
+
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:86:22[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:213:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:212:35[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:359:29
+Intento 1 fallido en payWithCard: page.waitForSelector: Test ended.
+Call log:
+[2m  - waiting for locator('iframe[title="Iframe for expiry date"]') to be visible[22m
+
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:86:22[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:213:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:212:35[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:359:29
+Error while handling iframe payment: page.waitForSelector: Target page, context or browser has been closed
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:86:22[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:213:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:212:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:359:29
+Intento 2 fallido en payWithCard: page.waitForSelector: Target page, context or browser has been closed
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:86:22[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:213:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:212:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:359:29
+Error while handling iframe payment: page.waitForSelector: Target page, context or browser has been closed
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:86:22[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:213:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:212:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:359:29
+Intento 3 fallido en payWithCard: page.waitForSelector: Target page, context or browser has been closed
+    at payWithCard [90m(C:\playwright-project\[39msrc\page-objects\paymentPage.ts:4:20[90m)[39m
+    at payWithCardInformation [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:86:22[90m)[39m
+    at fn [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:213:15[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:13[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:212:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:359:29
+Error crítico durante la ejecución: page.screenshot: Target page, context or browser has been closed
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:127:20[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:212:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:359:29
+
+Warning: attachment 1TipsNoExtraNoSeat-3-Compr-37b7a-ión-completa-con-reintentos-chromium\test-failed-1.png is missing
+</system-err>
+</testcase>
+<testcase name="4. Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre con caracteres especiales - sin asistencia - sin asiento - sin extras › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="84.957">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'10'[39m, index: [33m8[39m, value: [33m10[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerChild 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Successfully saved booking code NCPHQ to Excel
+
+</system-out>
+<system-err>
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:405:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Not on confirmation page URL
+Intento 2 fallido en payWithCard: Error [ValidationError]: Not on confirmation page URL
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:94:27[90m)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:405:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+
+</system-err>
+</testcase>
+<testcase name="5. Compra 1 Adulto - 1 niño - Economy Light - Economy Light - Nombre con caracteres especiales - con assitence - sin asiento - sin extras › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="86.399">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'8'[39m, index: [33m13[39m, value: [33m14[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerChild 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Successfully saved booking code NCPHP to Excel
+
+</system-out>
+<system-err>
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:450:29
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Not on confirmation page URL
+Intento 2 fallido en payWithCard: Error [ValidationError]: Not on confirmation page URL
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:94:27[90m)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:450:29
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+
+</system-err>
+</testcase>
+<testcase name="7. Compra 1 Adulto - 1 infante - Economy Light- Nombre con caracteres especiales - sin asiento - sin extras › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="53.14">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'8'[39m, index: [33m7[39m, value: [33m8[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerInfant 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Successfully saved booking code NCPJ3 to Excel
+
+</system-out>
+<system-err>
+Error while filling passenger data: TypeError: Cannot read properties of undefined (reading 'length')
+    at fillPassengerFor [90m(C:\playwright-project\[39msrc\page-objects\PassengerPage.ts:31:27[90m)[39m
+    at fillPassengerInformation [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:77:5[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:180:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:541:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:541:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Not on confirmation page URL
+Intento 2 fallido en payWithCard: Error [ValidationError]: Not on confirmation page URL
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:94:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:541:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+
+</system-err>
+</testcase>
+<testcase name="8. Compra 1 Adulto Economy Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="46.812">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'10'[39m, index: [33m22[39m, value: [33m26[39m }
 Ajustando número de pasajeros
 Successfully clicked the element: div.price-cabin:has-text("Economy")
 Ejecutando fillPassengerAdult 1, intento 1
@@ -14,13 +692,473 @@ Iframe encontrado.
 Ejecutando payWithCard, intento 1
 Ejecutando payWithCard, intento 2
 Ejecutando payWithCard, intento 3
-Successfully saved booking code L0NVJ to Excel
-]]>
+Successfully saved booking code NCPJ2 to Excel
+
 </system-out>
 <system-err>
-<![CDATA[Confirmation page validation failed: Flight Summary section not found on confirmation page
+Confirmation page validation failed: Flight Summary section not found on confirmation page
 Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
     at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:582:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Not on confirmation page URL
+Intento 2 fallido en payWithCard: Error [ValidationError]: Not on confirmation page URL
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:94:27[90m)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:582:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+
+</system-err>
+</testcase>
+<testcase name="9. Compra 1 Adulto Economy Comfort - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="47.338">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'11'[39m, index: [33m4[39m, value: [33m5[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Successfully saved booking code NCPJ8 to Excel
+
+</system-out>
+<system-err>
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:624:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Not on confirmation page URL
+Intento 2 fallido en payWithCard: Error [ValidationError]: Not on confirmation page URL
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:94:27[90m)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:624:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+
+</system-err>
+</testcase>
+<testcase name="10. Compra 1 Adulto Economy Extra - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="55.02">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'12'[39m, index: [33m13[39m, value: [33m14[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Successfully saved booking code NCPJM to Excel
+
+</system-out>
+<system-err>
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:667:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Not on confirmation page URL
+Intento 2 fallido en payWithCard: Error [ValidationError]: Not on confirmation page URL
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:94:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:667:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+
+</system-err>
+</testcase>
+<testcase name="11. Compra 1 Adulto Premium Light- Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="50.304">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'9'[39m, index: [33m22[39m, value: [33m23[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Successfully saved booking code NCPJN to Excel
+
+</system-out>
+<system-err>
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:709:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Not on confirmation page URL
+Intento 2 fallido en payWithCard: Error [ValidationError]: Not on confirmation page URL
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:94:27[90m)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:709:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+
+</system-err>
+</testcase>
+<testcase name="12. Compra 1 Adulto Premium Light - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="50.981">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'11'[39m, index: [33m13[39m, value: [33m14[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Successfully saved booking code NCPJP to Excel
+
+</system-out>
+<system-err>
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:751:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Not on confirmation page URL
+Intento 2 fallido en payWithCard: Error [ValidationError]: Not on confirmation page URL
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:94:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:751:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+
+</system-err>
+</testcase>
+<testcase name="13. Compra 1 Adulto Premium Comfort - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="52.51">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'10'[39m, index: [33m10[39m, value: [33m13[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Successfully saved booking code NCPJZ to Excel
+
+</system-out>
+<system-err>
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:794:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Not on confirmation page URL
+Intento 2 fallido en payWithCard: Error [ValidationError]: Not on confirmation page URL
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:94:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:794:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+
+</system-err>
+</testcase>
+<testcase name="14. Compra 1 Adulto Premium Extra - Nombre sin caracteres especiales - sin assitence - sin asiento - sin extras › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="52.508">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'8'[39m, index: [33m22[39m, value: [33m23[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Successfully saved booking code NCPJY to Excel
+
+</system-out>
+<system-err>
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:837:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Not on confirmation page URL
+Intento 2 fallido en payWithCard: Error [ValidationError]: Not on confirmation page URL
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:94:27[90m)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:837:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+
+</system-err>
+</testcase>
+<testcase name="1. 1 Adt EcoLight - sin assitence › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="44.954">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'11'[39m, index: [33m13[39m, value: [33m14[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Successfully saved booking code NCPLR to Excel
+
+</system-out>
+<system-err>
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
     at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
     at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
     at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
@@ -35,7 +1173,7 @@ Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary sectio
     at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
     at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
     at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
-    at process.<anonymous> [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
   fatal: [33mtrue[39m
 }
 Confirmation page validation failed: Not on confirmation page URL
@@ -55,10 +1193,363 @@ Intento 2 fallido en payWithCard: Error [ValidationError]: Not on confirmation p
     at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
     at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
     at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
-    at process.<anonymous> [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
   fatal: [33mtrue[39m
 }
-]]>
+
+</system-err>
+</testcase>
+<testcase name="6. Compra 1 Adulto - 3 niño - Economy Light - Economy Light - Nombre con caracteres especiales - con assitence - sin asiento - sin extras › Ejecución completa con reintentos" classname="1TipsNoExtraNoSeat.spec.ts" time="160.187">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'11'[39m, index: [33m12[39m, value: [33m13[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerChild 1, intento 1
+Ejecutando fillPassengerChild 2, intento 1
+Ejecutando fillPassengerChild 3, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Ejecución completa, intento 2 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'9'[39m, index: [33m10[39m, value: [33m11[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillPassengerChild 1, intento 1
+Ejecutando fillPassengerChild 2, intento 1
+Ejecutando fillPassengerChild 3, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Successfully saved booking code NCPMD to Excel
+
+</system-out>
+<system-err>
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:496:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 2 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:496:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 3 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:496:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Prueba payWithCard fallida después de 3 intentos.
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:496:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Not on confirmation page URL
+Intento 2 fallido en payWithCard: Error [ValidationError]: Not on confirmation page URL
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:94:27[90m)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:91:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:122:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:222:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\1TipsNoExtraNoSeat.spec.ts:496:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+
+</system-err>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › 1. Compra 1 adulto - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)" classname="1TipsNoExtraNoSeat.spec.ts" time="277.516">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › 2. Compra 2 adultos (Diferentes) - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › 3. Compra 2 adultos (Diferentes) - Economy Light - Con asistencia TODAS - sin asiento - sin extras (One-Way)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › 4. Compra 1 adulto - 1 niño - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › 5. Compra 1 adulto - 1 niño - Economy Light - con asistencia - sin asiento - sin extras (One-Way)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › 6. Compra 1 adulto - 3 niños - Economy Light - con asistencia - sin asiento - sin extras (One-Way)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › 7. Compra 1 adulto - 1 infante - Economy Light - sin asiento - sin extras (One-Way)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › Pruebas de cabinas Economy (One-Way) › 8. Compra 1 adulto - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › Pruebas de cabinas Economy (One-Way) › 9. Compra 1 adulto - Economy Comfort - sin asistencia - sin asiento - sin extras (One-Way)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › Pruebas de cabinas Economy (One-Way) › 10. Compra 1 adulto - Economy Extra - sin asistencia - sin asiento - sin extras (One-Way)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › Pruebas de cabinas Premium (One-Way) › 11. Compra 1 adulto - Premium Light - sin asistencia - sin asiento - sin extras (One-Way)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › Pruebas de cabinas Premium (One-Way) › 12. Compra 1 adulto - Premium Light - Economy Comfort - sin asistencia - sin asiento - sin extras (One-Way)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › Pruebas de cabinas Premium (One-Way) › 13. Compra 1 adulto - Premium Comfort - Economy Extra - sin asistencia - sin asiento - sin extras (One-Way)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › Pruebas de cabinas Premium (One-Way) › 14. Compra 1 adulto - Premium Extra - sin asistencia - sin asiento - sin extras (One-Way)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › Todas las pruebas de One-Way" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › 1. Compra 1 adulto - Economy Light - sin asistencia - sin asiento - sin extras (Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › 2. Compra 2 adultos (Diferentes) - Economy Light - sin asistencia - sin asiento - sin extras (Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › 3. Compra 2 adultos (Diferentes) - Economy Light - Con asistencia TODAS - sin asiento - sin extras (Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › 4. Compra 1 adulto - 1 niño - Economy Light - sin asistencia - sin asiento - sin extras (Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › 5. Compra 1 adulto - 1 niño - Economy Light - con asistencia - sin asiento - sin extras (Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › 6. Compra 1 adulto - 3 niños - Economy Light - con asistencia - sin asiento - sin extras (Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › 7. Compra 1 adulto - 1 infante - Economy Light - sin asiento - sin extras (Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › Pruebas de cabinas Economy (Round-Trip) › 8. Compra 1 adulto - Economy Light - sin asistencia - sin asiento - sin extras (Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › Pruebas de cabinas Economy (Round-Trip) › 9. Compra 1 adulto - Economy Comfort - sin asistencia - sin asiento - sin extras (Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › Pruebas de cabinas Economy (Round-Trip) › 10. Compra 1 adulto - Economy Extra - sin asistencia - sin asiento - sin extras (Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › Pruebas de cabinas Premium (Round-Trip) › 11. Compra 1 adulto - Premium Light - sin asistencia - sin asiento - sin extras (Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › Pruebas de cabinas Premium (Round-Trip) › 12. Compra 1 adulto - Premium Light - Economy Comfort - sin asistencia - sin asiento - sin extras (Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › Pruebas de cabinas Premium (Round-Trip) › 13. Compra 1 adulto - Premium Comfort - Economy Extra - sin asistencia - sin asiento - sin extras (Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › Pruebas de cabinas Premium (Round-Trip) › 14. Compra 1 adulto - Premium Extra - sin asistencia - sin asiento - sin extras (Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Pruebas de vuelos de ida y vuelta (Round-Trip) › Todas las pruebas de Round-Trip" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Ejecutar todas las pruebas › Todas las pruebas (One-Way y Round-Trip)" classname="1TipsNoExtraNoSeat.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="2TipsNoExtraNoSeat.spec.ts" timestamp="2025-02-28T10:52:19.727Z" hostname="chromium" tests="1" failures="0" skipped="0" time="59.974" errors="0">
+<testcase name="15. Compra 1 adt Eco Comfort - PremLight - sin assitence › Ejecución completa con reintentos" classname="2TipsNoExtraNoSeat.spec.ts" time="59.974">
+<system-out>
+Ejecución completa, intento 1 de 5
+Ejecutando Booking, intento 1
+Selected departure date: { year: [32m'2025'[39m, month: [32m'11'[39m, index: [33m9[39m, value: [33m10[39m }
+Selected return date: { year: [32m'2025'[39m, month: [32m'11'[39m, index: [33m10[39m, value: [33m11[39m }
+Ajustando número de pasajeros
+Successfully clicked the element: div.price-cabin:has-text("Economy")
+Successfully clicked the element: div.price-cabin:has-text("Premium")
+Ejecutando fillPassengerAdult 1, intento 1
+Ejecutando fillContact, intento 1
+Ejecutando payWithCard, intento 1
+Iframe encontrado.
+Ejecutando payWithCard, intento 1
+Ejecutando payWithCard, intento 2
+Ejecutando payWithCard, intento 3
+Successfully saved booking code NCPYB to Excel
+
+</system-out>
+<system-err>
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 1 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:90:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:121:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:221:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:870:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+Confirmation page validation failed: Flight Summary section not found on confirmation page
+Intento 2 fallido en payWithCard: Error [ValidationError]: Flight Summary section not found on confirmation page
+    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:86:27[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
+[90m    at processImmediate (node:internal/timers:459:9)[39m
+[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
+    at validationConfirmationPage [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:90:3[90m)[39m
+    at runWithRetries [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:121:7[90m)[39m
+    at executeTests [90m(C:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:221:29[90m)[39m
+    at [90mC:\playwright-project\[39msrc\tests\2TipsNoExtraNoSeat.spec.ts:870:30
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
+    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
+    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
+    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
+    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
+    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
+  fatal: [33mtrue[39m
+}
+
 </system-err>
 </testcase>
 </testsuite>
