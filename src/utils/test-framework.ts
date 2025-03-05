@@ -532,7 +532,7 @@ private async setLanguageAndCurrency() {
   /**
    * Verifica la confirmación de reserva
    */
-  async verifyBookingConfirmation() {
+  async verifyBookingConfirmation(testCase: TestCase) {
     if (TestConfig.isProd) {
       this.logger.info('Omitiendo verificación de confirmación en entorno de producción');
       return;
@@ -543,7 +543,8 @@ private async setLanguageAndCurrency() {
       
       await this.executeWithRetry(
         async () => {
-          await validationConfirmPage(this.page);
+          // Pass the testCase to validationConfirmPage
+          await validationConfirmPage(this.page, testCase);
           await this.page.waitForTimeout(1000);
         },
         'verifyBookingConfirmation'
@@ -638,7 +639,8 @@ private async setLanguageAndCurrency() {
       
       await this.processPayment(testCase.paymentInfo);
       
-      await this.verifyBookingConfirmation();
+      // Pass the testCase to verifyBookingConfirmation
+      await this.verifyBookingConfirmation(testCase);
       
       this.logger.info(`Prueba completada exitosamente: ${testCase.name}`);
       return true;

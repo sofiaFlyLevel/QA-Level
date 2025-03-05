@@ -13,8 +13,8 @@ export const Language = {
   export const LenguageChoose = Language.EN; 
   export const MoneyChosee = Money.USD; 
   
-  export const rangeStartMonthsExport = 3; 
-  export const rangeEndMonthsExport = 5
+  export const rangeStartMonthsExport = 4; 
+  export const rangeEndMonthsExport = 6;
   
   export enum CabinType {
     LIGHT = 'Light',
@@ -473,16 +473,115 @@ export const Language = {
   
   
   export const paymentCards = [
+    // 0. Mastercard - Commercial Debit (CA)
     {
       cardNumber: '2222 4000 7000 0005',
       expiryDate: '03/30',
       cvc: '737',
       nameOnCard: "Juan Pablo Antonio Maximiliano Alejandro Fernández de Córdoba Sánchez"
     },
+    
+    // 1. Mastercard - Consumer (PL)
     {
       cardNumber: '5577 0000 5577 0004',
       expiryDate: '03/30',
       cvc: '737',
       nameOnCard: "Sofia Martínez"
-    }
+    },
+    
+    // 2. Visa - Consumer (NL)
+    {
+      cardNumber: '4111 1111 1111 1111',
+      expiryDate: '03/30',
+      cvc: '737',
+      nameOnCard: "Test User"
+    },
+    
+    // 3. Visa - Corporate (GB)
+    {
+      cardNumber: '4444 3333 2222 1111',
+      expiryDate: '03/30',
+      cvc: '737',
+      nameOnCard: "Test Corporate"
+    },
+    
+    // 4. Mastercard - Consumer (GB)
+    {
+      cardNumber: '5555 4444 3333 1111',
+      expiryDate: '03/30',
+      cvc: '737',
+      nameOnCard: "Test Consumer"
+    },
+    
+    // 5. Mastercard - Corporate (NL)
+    {
+      cardNumber: '2222 4107 4036 0010',
+      expiryDate: '03/30',
+      cvc: '737',
+      nameOnCard: "Test Corporate"
+    },
+    
+    // 6. Discover - US
+    {
+      cardNumber: '6011 6011 6011 6611',
+      expiryDate: '03/30',
+      cvc: '737',
+      nameOnCard: "Test Discover"
+    },
+    
+    // 7. Discover - GB
+    {
+      cardNumber: '6445 6445 6445 6445',
+      expiryDate: '03/30',
+      cvc: '737',
+      nameOnCard: "Test Discover GB"
+    },
+    
+    // 8. Diners Club - US
+    {
+      cardNumber: '3600 6666 3333 44',
+      expiryDate: '03/30',
+      cvc: '737',
+      nameOnCard: "Test Diners"
+    },
+    
+    // 9. Diners Club - NL
+    {
+      cardNumber: '3607 0500 0010 20',
+      expiryDate: '03/30',
+      cvc: '737',
+      nameOnCard: "Test Diners NL"
+    },
+    
+    // // 10. American Express
+    // {
+    //   cardNumber: '3714 4963 5398 431',
+    //   expiryDate: '03/30',
+    //   cvc: '7373', // Note: Amex has 4-digit CVC
+    //   nameOnCard: "Test Amex"
+    // },
+    
+    // // JCB
+    // {
+    //   cardNumber: '3566 1111 1111 1113',
+    //   expiryDate: '03/30',
+    //   cvc: '737',
+    //   nameOnCard: "Test JCB"
+    // },
+    
+    // // China UnionPay - Credit
+    // {
+    //   cardNumber: '6250 9470 0000 0014',
+    //   expiryDate: '03/30',
+    //   cvc: '123',
+    //   nameOnCard: "Test UnionPay"
+    // },
+    
+    // // Maestro
+    // {
+    //   cardNumber: '5000 5500 0000 0029',
+    //   expiryDate: '03/30',
+    //   cvc: '', // Maestro sometimes has no CVC
+    //   nameOnCard: "Test Maestro"
+    // }
   ];

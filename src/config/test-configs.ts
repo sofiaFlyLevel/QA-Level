@@ -60,7 +60,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0]
+      paymentInfo: paymentCards[1]
     },
     // Test 3: 2 adultos con asistencia completa
     {
@@ -82,7 +82,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0]
+      paymentInfo: paymentCards[2]
     },
     // Test 4: 1 adulto + 1 niño
     {
@@ -104,7 +104,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0]
+      paymentInfo: paymentCards[3]
     },
     // Test 5: 1 adulto + 1 niño con asistencia
     {
@@ -126,7 +126,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0]
+      paymentInfo: paymentCards[4]
     },
     // Test 6: 1 adulto + 3 niños
     {
@@ -148,7 +148,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0]
+      paymentInfo: paymentCards[5]
     },
     // Test 7: 1 adulto + 1 infante
     {
@@ -170,7 +170,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0]
+      paymentInfo: paymentCards[6]
     },
     // Test 8: Economy Light
     {
@@ -192,7 +192,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0]
+      paymentInfo: paymentCards[7]
     },
     // Test 9: Economy Comfort
     {
@@ -214,7 +214,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0]
+      paymentInfo: paymentCards[8]
     },
     // Test 10: Economy Extra
     {
@@ -236,7 +236,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0]
+      paymentInfo: paymentCards[9]
     },
     // Test 11: Premium Light
     {
@@ -280,7 +280,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0]
+      paymentInfo: paymentCards[1]
     },
     // Test 13: Premium Comfort - Economy Extra
     {
@@ -302,7 +302,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0]
+      paymentInfo: paymentCards[2]
     },
     // Test 14: Premium Extra
     {
@@ -324,7 +324,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0]
+      paymentInfo: paymentCards[3]
     }
   ];
   
@@ -352,7 +352,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0],
+      paymentInfo: paymentCards[4],
       includeSeats: true
     },
     // Test 2: 2 adultos diferentes, Economy Light con asiento
@@ -375,7 +375,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0],
+      paymentInfo: paymentCards[5],
       includeSeats: true
     },
     // Test 3: 2 adultos con asistencia completa con asiento
@@ -398,7 +398,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0],
+      paymentInfo: paymentCards[6],
       includeSeats: true
     }
     // Puedes agregar más configuraciones según sea necesario
@@ -428,7 +428,7 @@ import {
         language: Language.EN,
         dayOffset: -1
       },
-      paymentInfo: paymentCards[0]
+      paymentInfo: paymentCards[7]
     }
     // Puedes agregar más configuraciones según sea necesario
   ];
@@ -467,7 +467,7 @@ import {
                 language: Language.EN,
                 dayOffset: -1
               },
-              paymentInfo: paymentCards[0]
+              paymentInfo: paymentCards[8]
             });
           }
         }
