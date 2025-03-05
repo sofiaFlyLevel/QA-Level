@@ -72,6 +72,24 @@ export interface TestCase {
   includeSeats?: boolean; 
   skip?: boolean;
   only?: boolean;
+  flightDetails?: {
+    outbound?: {
+      flightNumber?: string;
+      departureTime?: string;
+      arrivalTime?: string;
+      departureDate?: string;
+      arrivalDate?: string;
+      duration?: string;
+    };
+    return?: {
+      flightNumber?: string;
+      departureTime?: string;
+      arrivalTime?: string;
+      departureDate?: string;
+      arrivalDate?: string;
+      duration?: string;
+    };
+  };
 }
 
 /**
@@ -247,16 +265,19 @@ private async setLanguageAndCurrency() {
   /**
    * Selecciona las clases y tipos de vuelo
    */
-  async selectFlightClasses(flightConfig: FlightConfig) {
+  async selectFlightClasses(flightConfig: FlightConfig, testCase: TestCase) {
     try {
       this.logger.info('Seleccionando clases y tipos de vuelo');
       
       const { outboundFlightClass, outboundFlightType, 
               returnFlightClass, returnFlightType, isOneWay } = flightConfig;
       
+      let flightInformation;
+      
       await this.executeWithRetry(
         async () => {
-          await selectFlights(
+          // Guarda la información de vuelo retornada por selectFlights
+          flightInformation = await selectFlights(
             this.page, 
             outboundFlightClass, 
             outboundFlightType, 
@@ -264,10 +285,23 @@ private async setLanguageAndCurrency() {
             returnFlightType, 
             isOneWay
           );
+          
           await this.page.getByRole('button', { name: 'Continue' }).click();
         },
         'selectFlightClasses'
       );
+      
+      // Almacenar la información del vuelo en el objeto testCase para uso posterior
+      if (flightInformation) {
+        if (!testCase.flightDetails) {
+          testCase.flightDetails = {};
+        }
+        testCase.flightDetails = {
+          ...testCase.flightDetails,
+          ...flightInformation
+        };
+        this.logger.info('Información de vuelo capturada y almacenada', flightInformation);
+      }
       
       this.logger.info('Clases y tipos de vuelo seleccionados correctamente');
     } catch (error) {
@@ -276,44 +310,77 @@ private async setLanguageAndCurrency() {
     }
   }
 
-  /**
-   * Completa los datos de los pasajeros
+ /**
+   * Completa los datos de los pasajeros con mejor manejo de esperas
    */
-  async fillPassengerDetails(passengerConfig: PassengerConfig) {
-    const { adults, children, infants, language, dayOffset } = passengerConfig;
-    
-    // Completar datos de adultos
-    for (let i = 0; i < adults.length; i++) {
-      await this.executeWithRetry(
-        async () => {
-          await fillPassengerFor(this.page, 'Adult', adults[i], 'adults', i, language, dayOffset);
-        },
-        `fillPassengerAdult-${i + 1}`
-      );
-    }
-    
-    // Completar datos de niños
-    for (let i = 0; i < children.length; i++) {
-      await this.executeWithRetry(
-        async () => {
-          await fillPassengerFor(this.page, 'Child', children[i], 'children', i, language, dayOffset);
-        },
-        `fillPassengerChild-${i + 1}`
-      );
-    }
-    
-    // Completar datos de infantes
-    for (let i = 0; i < infants.length; i++) {
-      await this.executeWithRetry(
-        async () => {
-          await fillPassengerFor(this.page, 'Infant', infants[i], 'infants', i, language, dayOffset);
-        },
-        `fillPassengerInfant-${i + 1}`
-      );
-    }
-    
-    this.logger.info('Datos de todos los pasajeros completados correctamente');
+ async fillPassengerDetails(passengerConfig: PassengerConfig) {
+  const { adults, children, infants, language, dayOffset } = passengerConfig;
+  
+  // Esperar a que la página esté completamente cargada
+  await this.page.waitForLoadState('networkidle', { timeout: 30000 });
+  await this.page.waitForTimeout(2000); // Pausa adicional para estabilidad
+  
+  this.logger.info(`Completando datos para ${adults.length} adultos, ${children.length} niños, ${infants.length} infantes`);
+  
+  // Completar datos de adultos
+  for (let i = 0; i < adults.length; i++) {
+    await this.executeWithRetry(
+      async () => {
+        this.logger.info(`Completando datos para adulto ${i + 1} de ${adults.length}: ${adults[i].name} ${adults[i].surname}`);
+        
+        // Espera explícita a que el formulario esté visible antes de continuar
+        await this.page.waitForSelector(`#Adult-${i}`, { timeout: 10000, state: 'visible' });
+        
+        await fillPassengerFor(this.page, 'Adult', adults[i], 'adults', i, language, dayOffset);
+        
+        // Esperar un momento después de completar cada pasajero para evitar condiciones de carrera
+        await this.page.waitForTimeout(2000);
+      },
+      `fillPassengerAdult-${i + 1}`,
+      5 // Aumentar el número de reintentos para este paso crítico
+    );
   }
+  
+  // Completar datos de niños
+  for (let i = 0; i < children.length; i++) {
+    await this.executeWithRetry(
+      async () => {
+        this.logger.info(`Completando datos para niño ${i + 1} de ${children.length}: ${children[i].name} ${children[i].surname}`);
+        
+        // Espera explícita a que el formulario esté visible antes de continuar
+        await this.page.waitForSelector(`#Child-${i}`, { timeout: 10000, state: 'visible' });
+        
+        await fillPassengerFor(this.page, 'Child', children[i], 'children', i, language, dayOffset);
+        
+        // Esperar un momento después de completar cada pasajero para evitar condiciones de carrera
+        await this.page.waitForTimeout(2000);
+      },
+      `fillPassengerChild-${i + 1}`,
+      5 // Aumentar el número de reintentos para este paso crítico
+    );
+  }
+  
+  // Completar datos de infantes
+  for (let i = 0; i < infants.length; i++) {
+    await this.executeWithRetry(
+      async () => {
+        this.logger.info(`Completando datos para infante ${i + 1} de ${infants.length}: ${infants[i].name} ${infants[i].surname}`);
+        
+        // Espera explícita a que el formulario esté visible antes de continuar
+        await this.page.waitForSelector(`#Infant-${i}`, { timeout: 10000, state: 'visible' });
+        
+        await fillPassengerFor(this.page, 'Infant', infants[i], 'infants', i, language, dayOffset);
+        
+        // Esperar un momento después de completar cada pasajero para evitar condiciones de carrera
+        await this.page.waitForTimeout(2000);
+      },
+      `fillPassengerInfant-${i + 1}`,
+      5 // Aumentar el número de reintentos para este paso crítico
+    );
+  }
+  
+  this.logger.info('Datos de todos los pasajeros completados correctamente');
+}
 
   /**
    * Completa los datos de contacto
@@ -530,7 +597,7 @@ private async setLanguageAndCurrency() {
   }
 
   /**
-   * Verifica la confirmación de reserva
+   * Verifica la confirmación de reserva con mejor manejo de transición de página
    */
   async verifyBookingConfirmation(testCase: TestCase) {
     if (TestConfig.isProd) {
@@ -541,13 +608,44 @@ private async setLanguageAndCurrency() {
     try {
       this.logger.info('Verificando confirmación de reserva');
       
+      // Esperar explícitamente a que la navegación a la página de confirmación se complete
+      this.logger.info('Esperando a que la navegación a la página de confirmación se complete...');
+      
+      // Primero, esperar a que cualquier navegación activa se complete
+      await this.page.waitForNavigation({ timeout: 30000 }).catch(() => {
+        this.logger.info('No se detectó navegación activa o ya se completó');
+      });
+      
+      // Esperar a que la carga básica se complete
+      await this.page.waitForLoadState('load', { timeout: 30000 }).catch((err) => {
+        this.logger.warn(`Espera de estado 'load' excedió el tiempo límite: ${err.message}`);
+      });
+      
+      // Esperar a que la actividad de red se detenga
+      await this.page.waitForLoadState('networkidle', { timeout: 30000 }).catch((err) => {
+        this.logger.warn(`Espera de estado 'networkidle' excedió el tiempo límite: ${err.message}`);
+      });
+      
+      // Comprobar la URL actual para ver si ya estamos en la página de confirmación
+      const currentUrl = this.page.url();
+      this.logger.info(`URL actual: ${currentUrl}`);
+      
+      // Esperar un momento adicional para asegurar que la transición se complete
+      await this.page.waitForTimeout(5000);
+      
       await this.executeWithRetry(
         async () => {
           // Pass the testCase to validationConfirmPage
           await validationConfirmPage(this.page, testCase);
-          await this.page.waitForTimeout(1000);
         },
-        'verifyBookingConfirmation'
+        'verifyBookingConfirmation',
+        // Aumentar el número de reintentos y el tiempo entre reintentos para este paso crítico
+        5,
+        {
+          exponentialBackoff: true,
+          initialDelay: 5000,
+          stabilizePageBeforeRetry: true
+        }
       );
       
       this.logger.info('Reserva confirmada correctamente');
@@ -557,28 +655,72 @@ private async setLanguageAndCurrency() {
     }
   }
 
-  /**
-   * Ejecuta un paso con reintentos automáticos
+/**
+   * Ejecuta un paso con reintentos automáticos y manejo de errores mejorado
    */
-  private async executeWithRetry<T>(
-    action: () => Promise<T>,
-    actionName: string,
-    maxRetries: number = TestConfig.retries.maxStepRetries
-  ): Promise<T> {
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        this.logger.info(`Intentando ${actionName} (${attempt}/${maxRetries})`);
-        return await action();
-      } catch (error) {
-        if (attempt === maxRetries) {
-          await this.takeErrorScreenshot(actionName);
-          throw error;
-        }
-        this.logger.warn(`${actionName} falló, reintentando...`, error);
+private async executeWithRetry<T>(
+  action: () => Promise<T>,
+  actionName: string,
+  maxRetries: number = TestConfig.retries.maxStepRetries,
+  options: {
+    exponentialBackoff?: boolean,
+    initialDelay?: number,
+    stabilizePageBeforeRetry?: boolean
+  } = {}
+): Promise<T> {
+  const { 
+    exponentialBackoff = true, 
+    initialDelay = 1000,
+    stabilizePageBeforeRetry = true
+  } = options;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      this.logger.info(`Ejecutando ${actionName} (intento ${attempt}/${maxRetries})`);
+      return await action();
+    } catch (error) {
+      const isLastAttempt = attempt === maxRetries;
+      
+      if (isLastAttempt) {
+        this.logger.error(`Falló ${actionName} después de ${maxRetries} intentos: ${error.message}`);
+        await this.takeErrorScreenshot(actionName);
+        throw error;
       }
+      
+      this.logger.warn(`Error en ${actionName} (intento ${attempt}/${maxRetries}): ${error.message}`);
+      
+      // Calcular tiempo de espera (con backoff exponencial si está habilitado)
+      const delay = exponentialBackoff 
+        ? initialDelay * Math.pow(2, attempt - 1) 
+        : initialDelay;
+      
+      this.logger.info(`Esperando ${delay}ms antes del siguiente intento...`);
+      
+      // Intentar estabilizar la página si está configurado
+      if (stabilizePageBeforeRetry) {
+        try {
+          this.logger.info(`Estabilizando página antes del reintento ${attempt + 1}...`);
+          
+          // Esperar a que la carga básica de la página termine
+          await this.page.waitForLoadState('domcontentloaded', { timeout: 10000 }).catch(() => {});
+          
+          // Esperar a que la actividad de red se detenga
+          await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+          
+          // Pequeña pausa adicional
+          await this.page.waitForTimeout(500);
+        } catch (stabilizeError) {
+          this.logger.warn(`Error al estabilizar página: ${stabilizeError.message}`);
+        }
+      }
+      
+      // Esperar antes del siguiente intento
+      await this.page.waitForTimeout(delay);
     }
-    throw new Error(`Error al ejecutar ${actionName} después de ${maxRetries} intentos`);
   }
+  
+  throw new Error(`Error al ejecutar ${actionName} después de ${maxRetries} intentos`);
+}
 
   /**
    * Toma una captura de pantalla cuando ocurre un error
@@ -620,7 +762,8 @@ private async setLanguageAndCurrency() {
         testCase.passengerConfig.infants
       );
       
-      await this.selectFlightClasses(testCase.flightConfig);
+      // Pasar testCase a selectFlightClasses para guardar la información de vuelo
+      await this.selectFlightClasses(testCase.flightConfig, testCase);
       
       await this.fillPassengerDetails(testCase.passengerConfig);
       

@@ -18,14 +18,18 @@ export async function retryAction<T>(
     name?: string,
     retries?: number,
     delay?: number,
-    logger?: Logger
+    exponentialBackoff?: boolean,
+    logger?: any,
+    onRetry?: (error: Error, attempt: number) => Promise<void> | void
   } = {}
 ): Promise<T> {
   const {
     name = 'action',
     retries = 3,
     delay = 1000,
-    logger = new Logger()
+    exponentialBackoff = true,
+    logger = console,
+    onRetry = null
   } = options;
 
   for (let attempt = 1; attempt <= retries; attempt++) {
@@ -33,15 +37,30 @@ export async function retryAction<T>(
       logger.info(`Intentando ${name} (${attempt}/${retries})`);
       return await action();
     } catch (error) {
-      logger.warn(`Error en ${name} (intento ${attempt}/${retries}):`, error);
+      const isLastAttempt = attempt === retries;
       
-      if (attempt === retries) {
-        logger.error(`Falló ${name} después de ${retries} intentos`);
+      if (isLastAttempt) {
+        logger.error(`Falló ${name} después de ${retries} intentos: ${error.message}`);
         throw error;
       }
       
+      logger.warn(`Error en ${name} (intento ${attempt}/${retries}): ${error.message}`);
+      
+      // Ejecutar función de callback si está definida
+      if (onRetry) {
+        try {
+          await onRetry(error, attempt);
+        } catch (retryError) {
+          logger.warn(`Error en onRetry para ${name}: ${retryError.message}`);
+        }
+      }
+      
+      // Calcular tiempo de espera (con backoff exponencial si está habilitado)
+      const waitTime = exponentialBackoff ? delay * Math.pow(2, attempt - 1) : delay;
+      logger.info(`Esperando ${waitTime}ms antes del siguiente intento...`);
+      
       // Esperar antes del siguiente intento
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise(resolve => setTimeout(resolve, waitTime));
     }
   }
   
@@ -111,32 +130,45 @@ export async function logPageContext(page: Page, logger?: Logger) {
 }
 
 /**
- * Espera a que la página esté en un estado estable (sin cargas ni animaciones)
+ * Espera a que la página esté en un estado estable
+ * @param page - Instancia de Page de Playwright
+ * @param options - Opciones de configuración
  */
-export async function waitForPageStability(page: Page, options: {
-  timeout?: number,
-  stabilityDelay?: number,
-  logger?: Logger
-} = {}) {
+export async function waitForPageStability(page, options = {}) {
   const {
     timeout = 30000,
     stabilityDelay = 1000,
-    logger = new Logger()
+    checkNetworkIdle = true,
+    checkDomContentLoaded = true,
+    checkNoAnimation = true,
+    logger = console
   } = options;
   
   logger.info('Esperando estabilidad de página...');
   
   try {
+    // Esperar a que la navegación básica se complete
+    await page.waitForLoadState('load', { timeout });
+    
     // Esperar a que no haya peticiones de red en vuelo
-    await page.waitForLoadState('networkidle', { timeout });
+    if (checkNetworkIdle) {
+      await page.waitForLoadState('networkidle', { timeout });
+    }
     
     // Esperar a que el DOM esté completamente cargado
-    await page.waitForLoadState('domcontentloaded', { timeout });
+    if (checkDomContentLoaded) {
+      await page.waitForLoadState('domcontentloaded', { timeout });
+    }
     
     // Esperar a que no haya animaciones o loaders visibles
-    const loaderSelector = '.loader, .loading, .spinner, [role="progressbar"]';
-    if (await page.locator(loaderSelector).count() > 0) {
-      await page.waitForSelector(`${loaderSelector}:not(:visible)`, { timeout });
+    if (checkNoAnimation) {
+      const loaderSelector = '.loader, .loading, .spinner, [role="progressbar"]';
+      const loaderCount = await page.locator(loaderSelector).count();
+      
+      if (loaderCount > 0) {
+        logger.info(`Encontrados ${loaderCount} elementos de carga, esperando a que desaparezcan...`);
+        await page.waitForSelector(`${loaderSelector}:not(:visible)`, { timeout });
+      }
     }
     
     // Esperar un tiempo adicional para asegurar estabilidad
@@ -145,7 +177,92 @@ export async function waitForPageStability(page: Page, options: {
     logger.info('Página estable');
     return true;
   } catch (error) {
-    logger.warn('Tiempo de espera agotado para estabilidad de página:', error);
+    logger.warn(`Tiempo de espera agotado para estabilidad de página: ${error.message}`);
     return false;
   }
+}
+
+/**
+ * Verifica si un elemento está verdaderamente clickeable
+ * (visible, habilitado y no obscurecido por otros elementos)
+ */
+export async function isElementClickable(page, selector, timeout = 5000) {
+  try {
+    const element = page.locator(selector);
+    
+    // Comprobar si el elemento existe y es visible
+    await element.waitFor({ state: 'visible', timeout });
+    
+    // Comprobar si está habilitado
+    const isDisabled = await element.evaluate(el => {
+      return el.disabled || el.getAttribute('aria-disabled') === 'true' || 
+             getComputedStyle(el).pointerEvents === 'none';
+    }).catch(() => true);
+    
+    if (isDisabled) {
+      return false;
+    }
+    
+    // Verificar si está cubierto por algún otro elemento
+    const isCovered = await element.evaluate(el => {
+      const rect = el.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      const elementAtPoint = document.elementFromPoint(x, y);
+      return !el.contains(elementAtPoint) && elementAtPoint !== el;
+    }).catch(() => true);
+    
+    return !isCovered;
+  } catch (error) {
+    return false;
+  }
+}
+
+/**
+ * Intenta hacer click en un elemento con estrategias avanzadas
+ */
+export async function safeClick(page, selector, options = {}) {
+  const { 
+    timeout = 5000, 
+    retries = 3, 
+    delay = 1000,
+    logger = console,
+    force = false
+  } = options;
+  
+  return retryAction(
+    async () => {
+      // Esperar a que el elemento sea clickeable
+      const clickable = await isElementClickable(page, selector, timeout);
+      
+      if (clickable || force) {
+        await page.click(selector, { timeout, force });
+      } else {
+        // Si no es clickeable, intentar estrategias alternativas
+        logger.info(`Elemento ${selector} no es clickeable naturalmente, probando alternativas`);
+        
+        // Estrategia 1: JavaScript click
+        try {
+          await page.evaluate((sel) => {
+            const element = document.querySelector(sel);
+            if (element) element.click();
+          }, selector);
+          logger.info(`Click vía JavaScript en ${selector}`);
+          return;
+        } catch (e) {
+          logger.warn(`Error en JavaScript click: ${e.message}`);
+        }
+        
+        // Estrategia 2: Click forzado como último recurso
+        await page.click(selector, { force: true });
+        logger.info(`Click forzado en ${selector}`);
+      }
+    },
+    {
+      name: `click en ${selector}`,
+      retries,
+      delay,
+      logger
+    }
+  );
 }
