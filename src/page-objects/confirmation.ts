@@ -76,7 +76,7 @@ async function saveBookingCodeToExcel(bookingCode, testCase) {
         const bookingData = {
             'Booking Code': bookingCode,
             'Date Created': now,
-            // Flight information
+            // Flight configuration from test case
             'Origin': flightConfig.origin,
             'Destination': flightConfig.destination,
             'Trip Type': flightConfig.isOneWay ? 'One Way' : 'Round Trip',
@@ -99,24 +99,106 @@ async function saveBookingCodeToExcel(bookingCode, testCase) {
             'Payment Name': paymentInfo.nameOnCard
         };
 
-        // Add detailed flight information if available
+        // Add detailed flight information
         if (flightDetails && flightDetails.outbound) {
-            // Outbound flight details
-            bookingData['Outbound Flight Number'] = flightDetails.outbound.flightNumber || '';
-            bookingData['Outbound Departure Date'] = flightDetails.outbound.departureDate || '';
-            bookingData['Outbound Departure Time'] = flightDetails.outbound.departureTime || '';
-            bookingData['Outbound Arrival Date'] = flightDetails.outbound.arrivalDate || '';
-            bookingData['Outbound Arrival Time'] = flightDetails.outbound.arrivalTime || '';
-            bookingData['Outbound Duration'] = flightDetails.outbound.duration || '';
-
-            // Return flight details (if not one-way)
-            if (!flightConfig.isOneWay && flightDetails.return) {
-                bookingData['Return Flight Number'] = flightDetails.return.flightNumber || '';
-                bookingData['Return Departure Date'] = flightDetails.return.departureDate || '';
-                bookingData['Return Departure Time'] = flightDetails.return.departureTime || '';
-                bookingData['Return Arrival Date'] = flightDetails.return.arrivalDate || '';
-                bookingData['Return Arrival Time'] = flightDetails.return.arrivalTime || '';
-                bookingData['Return Duration'] = flightDetails.return.duration || '';
+            // Outbound flight details from flight selection page
+            const outbound = flightDetails.outbound;
+            
+            // Detailed flight information
+            if (outbound.direction) bookingData['Outbound Direction'] = outbound.direction;
+            if (outbound.date) bookingData['Outbound Flight Date'] = outbound.date;
+            
+            // Selected cabin information (corrected)
+            if (outbound.selectedCabin) {
+                if (outbound.selectedCabin.class) bookingData['Outbound Selected Class'] = outbound.selectedCabin.class;
+                if (outbound.selectedCabin.type) bookingData['Outbound Selected Type'] = outbound.selectedCabin.type;
+                if (outbound.selectedCabin.fullName) bookingData['Outbound Cabin'] = outbound.selectedCabin.fullName;
+            }
+            
+            // Origin and destination
+            if (outbound.origin) {
+                if (outbound.origin.code) bookingData['Outbound Origin Code'] = outbound.origin.code;
+                if (outbound.origin.name) bookingData['Outbound Origin Name'] = outbound.origin.name;
+            }
+            
+            if (outbound.destination) {
+                if (outbound.destination.code) bookingData['Outbound Destination Code'] = outbound.destination.code;
+                if (outbound.destination.name) bookingData['Outbound Destination Name'] = outbound.destination.name;
+            }
+            
+            // Times
+            if (outbound.times) {
+                if (outbound.times.departure) bookingData['Outbound Departure Time'] = outbound.times.departure;
+                if (outbound.times.arrival) bookingData['Outbound Arrival Time'] = outbound.times.arrival;
+                if (outbound.times.duration) bookingData['Outbound Duration'] = outbound.times.duration;
+                if (outbound.times.nextDay) bookingData['Outbound Arrival Next Day'] = outbound.times.nextDay ? 'Yes' : 'No';
+            }
+            
+            // Airline and price
+            if (outbound.airline) bookingData['Outbound Airline'] = outbound.airline;
+            if (outbound.flightNumber) bookingData['Outbound Flight Number'] = outbound.flightNumber;
+            
+            // Cabin options with prices
+            if (outbound.cabinOptions) {
+                if (outbound.cabinOptions.economy) {
+                    bookingData['Outbound Economy Option'] = outbound.cabinOptions.economy.name;
+                    bookingData['Outbound Economy Price'] = outbound.cabinOptions.economy.price;
+                }
+                if (outbound.cabinOptions.premium) {
+                    bookingData['Outbound Premium Option'] = outbound.cabinOptions.premium.name;
+                    bookingData['Outbound Premium Price'] = outbound.cabinOptions.premium.price;
+                }
+            }
+        }
+        
+        // Return flight details
+        if (!flightConfig.isOneWay && flightDetails && flightDetails.return) {
+            const returnFlight = flightDetails.return;
+            
+            // Detailed flight information
+            if (returnFlight.direction) bookingData['Return Direction'] = returnFlight.direction;
+            if (returnFlight.date) bookingData['Return Flight Date'] = returnFlight.date;
+            
+            // Selected cabin information (corrected)
+            if (returnFlight.selectedCabin) {
+                if (returnFlight.selectedCabin.class) bookingData['Return Selected Class'] = returnFlight.selectedCabin.class;
+                if (returnFlight.selectedCabin.type) bookingData['Return Selected Type'] = returnFlight.selectedCabin.type;
+                if (returnFlight.selectedCabin.fullName) bookingData['Return Cabin'] = returnFlight.selectedCabin.fullName;
+            }
+            
+            // Origin and destination
+            if (returnFlight.origin) {
+                if (returnFlight.origin.code) bookingData['Return Origin Code'] = returnFlight.origin.code;
+                if (returnFlight.origin.name) bookingData['Return Origin Name'] = returnFlight.origin.name;
+            }
+            
+            if (returnFlight.destination) {
+                if (returnFlight.destination.code) bookingData['Return Destination Code'] = returnFlight.destination.code;
+                if (returnFlight.destination.name) bookingData['Return Destination Name'] = returnFlight.destination.name;
+            }
+            
+            // Times
+            if (returnFlight.times) {
+                if (returnFlight.times.departure) bookingData['Return Departure Time'] = returnFlight.times.departure;
+                if (returnFlight.times.arrival) bookingData['Return Arrival Time'] = returnFlight.times.arrival;
+                if (returnFlight.times.duration) bookingData['Return Duration'] = returnFlight.times.duration;
+                if (returnFlight.times.nextDay) bookingData['Return Arrival Next Day'] = returnFlight.times.nextDay ? 'Yes' : 'No';
+            }
+            
+            // Airline and flight number
+            if (returnFlight.airline) bookingData['Return Airline'] = returnFlight.airline;
+            if (returnFlight.flightNumber) bookingData['Return Flight Number'] = returnFlight.flightNumber;
+            
+            // Cabin options with prices
+            if (returnFlight.cabinOptions) {
+                if (returnFlight.cabinOptions.economy) {
+                    bookingData['Return Economy Option'] = returnFlight.cabinOptions.economy.name;
+                    bookingData['Return Economy Price'] = returnFlight.cabinOptions.economy.price;
+                }
+                if (returnFlight.cabinOptions.premium) {
+                    bookingData['Return Premium Option'] = returnFlight.cabinOptions.premium.name;
+                    bookingData['Return Premium Price'] = returnFlight.cabinOptions.premium.price;
+                }
             }
         }
 
@@ -148,6 +230,7 @@ async function saveBookingCodeToExcel(bookingCode, testCase) {
             bookingData[`${prefix} Nationality`] = infant.nationality;
         });
 
+        // Create or update the Excel file
         if (existsSync(fileName)) {
             // Read the existing file
             wb = XLSX.readFile(fileName);
