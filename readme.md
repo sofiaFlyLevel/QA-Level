@@ -237,10 +237,10 @@ npx playwright test
 npx playwright test NoExtraNoSeat.spec.ts
 ```
 
-### Ejecutar una Prueba Específica
+### Ejecutar una Prueba Específica en un Archivo Específico
 
 ```bash
-npx playwright test -g "Compra 1 adulto - Economy Light"
+npx browserstack-node-sdk playwright test --grep "10. Compra 1 adulto - Economy Extra - sin asiento - sin extras" src/tests/NoExtraNoSeat.spec.ts
 ```
 
 ### Ejecutar Tests con UI
@@ -299,6 +299,371 @@ El framework incluye varias estrategias para manejar errores:
 ### Reintentos Automáticos
 - Nivel de paso: Cada acción individual puede reintentarse
 - Nivel de prueba: Una prueba completa puede reintentarse
+
+# Configuración y Uso de BrowserStack con Playwright
+
+Este documento explica cómo configurar y utilizar BrowserStack Automate para ejecutar pruebas de Playwright en múltiples navegadores y dispositivos en la nube.
+
+## Índice
+
+- [Instalación](#instalación)
+- [Configuración](#configuración)
+- [Modificación de Archivos de Prueba](#modificación-de-archivos-de-prueba)
+- [Ejecución de Pruebas](#ejecución-de-pruebas)
+- [Visualización de Resultados](#visualización-de-resultados)
+- [Configuración de Dispositivos](#configuración-de-dispositivos)
+- [Solución de Problemas](#solución-de-problemas)
+- [Buenas Prácticas](#buenas-prácticas)
+
+## Instalación
+
+1. Instala el SDK de BrowserStack para Node.js:
+
+```bash
+npm install -D browserstack-node-sdk
+```
+
+2. Actualiza los scripts en tu `package.json`:
+
+```json
+"scripts": {
+  "test": "playwright test",
+  "process-report": "python process_junit.py",
+  "postinstall": "npm update browserstack-node-sdk",
+  "test-browserstack": "browserstack-node-sdk playwright test"
+}
+```
+
+## Configuración
+
+### 1. Crear archivo browserstack.yml
+
+Crea un archivo `browserstack.yml` en la raíz del proyecto:
+
+```yaml
+# Credenciales de BrowserStack
+userName: tu_username
+accessKey: tu_access_key
+
+# Configuración del proyecto
+projectName: "LEVEL Booking Automated Tests"
+buildName: "LEVEL Booking Tests"
+buildIdentifier: "#${BUILD_NUMBER}"
+
+# Plataformas a probar (navegadores/dispositivos)
+platforms:
+  - os: Windows
+    osVersion: 11
+    browserName: chrome
+    browserVersion: latest
+  - os: OS X
+    osVersion: Ventura
+    browserName: safari
+    browserVersion: latest
+  - deviceName: Samsung Galaxy S23 Ultra
+    browserName: chrome
+    osVersion: 13.0
+  - deviceName: iPhone 14 Pro
+    browserName: safari
+    osVersion: 16
+
+# Paralelismo
+parallelsPerPlatform: 1
+
+# Configuración de BrowserStack Local (para sitios locales o privados)
+browserstackLocal: true
+
+# Características de depuración
+debug: false
+networkLogs: true
+consoleLogs: info
+
+# Observabilidad de prueba
+testObservability: true
+```
+
+### 2. Crear archivo browserstack.config.js
+
+Crea un archivo `browserstack.config.js` en la raíz del proyecto:
+
+```javascript
+const base = require('./playwright.config');
+
+// Sobrescribe las opciones necesarias para BrowserStack
+const browserStackConfig = {
+  ...base,
+  // Modificamos la configuración para BrowserStack
+  use: {
+    ...base.use,
+    // No usar headless porque queremos ver las pruebas en BrowserStack
+    headless: false,
+    // No estamos usando trace en BrowserStack
+    trace: 'off',
+    // Capturas de pantalla en caso de fallos
+    screenshot: 'only-on-failure'
+  },
+  // Solo usamos un proyecto para BrowserStack
+  projects: [
+    {
+      name: 'browserstack',
+      use: {
+        ...base.use,
+        // No es necesario especificar el dispositivo aquí, ya que BrowserStack lo hará
+      },
+    }
+  ],
+  // Aumentar timeouts para BrowserStack
+  timeout: 120000,
+};
+
+module.exports = browserStackConfig;
+```
+
+## Modificación de Archivos de Prueba
+
+Para que tus pruebas funcionen correctamente en BrowserStack, debes modificar tus archivos de prueba para incluir detección y configuración específica para BrowserStack.
+
+### Pasos generales para modificar archivos:
+
+1. Añadir detección de BrowserStack:
+
+```typescript
+// Al principio del archivo
+const isBrowserStack = process.env.BROWSERSTACK_RUN_ON === 'true';
+```
+
+2. Ajustar timeouts para BrowserStack:
+
+```typescript
+const TEST_TIMEOUT = isBrowserStack ? TestConfig.timeouts.test * 2 : TestConfig.timeouts.test;
+```
+
+3. Añadir funciones de soporte para BrowserStack:
+
+```typescript
+// Función auxiliar para configurar pruebas de BrowserStack
+const setupBrowserStackTest = async (browser, testName) => {
+  if (isBrowserStack) {
+    console.log(`Ejecutando prueba en BrowserStack: ${testName}`);
+    // Si necesitas hacer configuraciones adicionales específicas para BrowserStack
+  }
+};
+
+// Función para manejar errores de BrowserStack
+const handleBrowserStackError = (error, testName) => {
+  if (isBrowserStack) {
+    console.error(`Error en prueba BrowserStack: ${testName}`, error);
+    // Aquí podrías añadir código para marcar la prueba en BrowserStack si es necesario
+  }
+  throw error; // Re-lanzar el error para que Playwright lo registre
+};
+```
+
+4. Modificar cada test para usar las funciones de soporte:
+
+```typescript
+test('Nombre del test', async ({ browser }) => {
+  try {
+    await setupBrowserStackTest(browser, testName);
+    // Código de la prueba
+    await runSingleTest(browser, config);
+  } catch (error) {
+    handleBrowserStackError(error, testName);
+  }
+}, TEST_TIMEOUT);
+```
+## Abrir el programa de BrowserStackLocal y conectar con la web 
+
+## Ejecución de Pruebas
+
+### Ejecutar todas las pruebas en BrowserStack
+
+```bash
+npm run test-browserstack
+```
+
+### Ejecutar un archivo específico
+
+```bash
+npx browserstack-node-sdk playwright test src/tests/NoExtraNoSeat.spec.ts
+```
+
+### Ejecutar un test específico
+
+```bash
+npx browserstack-node-sdk playwright test -g "Compra 1 adulto - Economy Light" src/tests/NoExtraNoSeat.spec.ts
+```
+
+### Ejecutar en un navegador específico
+
+Para ejecutar en un navegador específico, debes modificar el archivo `browserstack.yml`:
+
+```yaml
+platforms:
+  - os: Windows
+    osVersion: 11
+    browserName: chrome
+    browserVersion: latest
+```
+
+Y luego ejecutar:
+
+```bash
+npm run test-browserstack
+```
+
+## Visualización de Resultados
+
+Para ver los resultados de tus pruebas en BrowserStack:
+
+1. Inicia sesión en tu cuenta de BrowserStack (https://automate.browserstack.com/)
+2. Ve a la sección "Builds" para ver tus ejecuciones recientes
+3. Haz clic en la ejecución actual para ver detalles de las pruebas
+4. Podrás ver:
+   - Lista de pruebas ejecutadas
+   - Estado de cada prueba (aprobada/fallida)
+   - Videos de las ejecuciones
+   - Capturas de pantalla
+   - Registros de consola
+   - Información de red
+
+## Configuración de Dispositivos
+
+BrowserStack te permite probar en una amplia variedad de combinaciones de dispositivos y navegadores.
+
+### Navegadores de Escritorio
+
+```yaml
+platforms:
+  - os: Windows
+    osVersion: 11
+    browserName: chrome
+    browserVersion: latest
+  - os: Windows
+    osVersion: 11
+    browserName: firefox
+    browserVersion: latest
+  - os: OS X
+    osVersion: Ventura
+    browserName: safari
+    browserVersion: latest
+  - os: OS X
+    osVersion: Monterey
+    browserName: chrome
+    browserVersion: latest
+```
+
+### Dispositivos Móviles
+
+```yaml
+platforms:
+  - deviceName: iPhone 14 Pro
+    browserName: safari
+    osVersion: 16
+  - deviceName: iPhone 13
+    browserName: safari
+    osVersion: 15
+  - deviceName: Samsung Galaxy S23 Ultra
+    browserName: chrome
+    osVersion: 13.0
+  - deviceName: Google Pixel 7
+    browserName: chrome
+    osVersion: 13.0
+```
+
+### Sistemas Operativos Disponibles
+
+**Windows:** 11, 10, 8.1, 8, 7
+**macOS:** Ventura, Monterey, Big Sur, Catalina, Mojave
+**iOS:** 16, 15, 14, 13
+**Android:** 13.0, 12.0, 11.0, 10.0, 9.0
+
+### Navegadores Disponibles
+
+**Windows/macOS:** Chrome, Firefox, Edge, Safari (solo macOS)
+**iOS:** Safari
+**Android:** Chrome, Samsung Browser
+
+## Solución de Problemas
+
+### Problemas de autenticación
+
+Si tienes problemas con las credenciales, prueba configurando variables de entorno:
+
+```bash
+export BROWSERSTACK_USERNAME='tu_username'
+export BROWSERSTACK_ACCESS_KEY='tu_access_key'
+npm run test-browserstack
+```
+
+### Timeouts
+
+Si las pruebas fallan por timeouts en BrowserStack:
+
+1. Aumenta los timeouts en browserstack.config.js:
+```javascript
+timeout: 180000, // 3 minutos
+```
+
+2. Configura timeouts específicos dentro de tus pruebas:
+```typescript
+if (isBrowserStack) {
+  page.setDefaultNavigationTimeout(120000);
+  page.setDefaultTimeout(60000);
+}
+```
+
+### Selectores que no funcionan
+
+Si algunos selectores funcionan localmente pero no en BrowserStack:
+
+1. Usa selectores más robustos (IDs, atributos de datos)
+2. Implementa múltiples estrategias de selección:
+
+```typescript
+async function clickElement(page, selectors) {
+  for (const selector of selectors) {
+    try {
+      await page.click(selector, { timeout: 5000 });
+      console.log(`Selector exitoso: ${selector}`);
+      return;
+    } catch (error) {
+      console.log(`Selector falló: ${selector}`);
+    }
+  }
+  throw new Error('Ningún selector funcionó');
+}
+
+// Uso:
+await clickElement(page, [
+  '#button-id',
+  '.button-class',
+  'text=Texto del botón'
+]);
+```
+
+## Buenas Prácticas
+
+1. **Marca claramente las pruebas en BrowserStack**
+   - Usa nombres descriptivos en el buildName y projectName
+   - Incluye información de la versión/commit
+
+2. **Optimiza las pruebas para entornos en la nube**
+   - Reduce la cantidad de acciones en cada prueba
+   - Prioriza pruebas críticas sobre pruebas exhaustivas
+
+3. **Maneja adecuadamente los recursos**
+   - Cierra correctamente las sesiones del navegador
+   - No ejecutes más pruebas paralelas de las necesarias
+
+4. **Monitorea y optimiza los costos**
+   - BrowserStack cobra por minuto de prueba paralela
+   - Usa pruebas paralelas sabiamente
+
+5. **Mejora continuamente la estabilidad**
+   - Analiza patrones de falla en BrowserStack
+   - Implementa esperas más inteligentes para diferentes entornos
+
 
 ### Capturas de Pantalla
 Se generan capturas automáticas

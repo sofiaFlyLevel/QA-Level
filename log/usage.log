@@ -1,3 +1,78 @@
 2025-03-03 17:13:09 - [32minfo[39m: Creating configuration file...
 2025-03-03 17:13:09 - [32minfo[39m: Adding new script(s) in package.json...
 2025-03-03 17:13:09 - [32minfo[39m: Setup completed
+2025-03-06 12:41:26 - [32minfo[39m: Running SDK with args C:\Program Files\nodejs\node.exe C:\playwright-project\node_modules\browserstack-node-sdk\src\bin\runner.js playwright test
+2025-03-06 12:41:26 - [32minfo[39m: Reading configs from C:\playwright-project\browserstack.yml
+2025-03-06 12:41:26 - [32minfo[39m: SDK run started with id: 22de6edc-c644-482b-bccd-878df4e9c1a2
+2025-03-06 12:41:26 - [32minfo[39m: Project and debug logs are captured by default. To disable, set disableAutoCaptureLogs: true in config.
+2025-03-06 12:41:31 - [32minfo[39m: Local binary started successfully
+2025-03-06 12:41:33 - [32minfo[39m: Testhub started with id: khczh971wbqcmx8hgnjedrptri6h7rmiu5jpm5gy
+2025-03-06 12:42:00 - [32minfo[39m: Shutdown triggered by SIGINT
+2025-03-06 12:44:25 - [32minfo[39m: Running SDK with args C:\Program Files\nodejs\node.exe C:\playwright-project\node_modules\browserstack-node-sdk\src\bin\runner.js playwright test src/tests/NoExtraNoSeat.spec.ts
+2025-03-06 12:44:25 - [32minfo[39m: Reading configs from C:\playwright-project\browserstack.yml
+2025-03-06 12:44:25 - [32minfo[39m: SDK run started with id: b8c60fb2-ed13-4d8d-bc4d-84a969554bd0
+2025-03-06 12:44:25 - [32minfo[39m: Project and debug logs are captured by default. To disable, set disableAutoCaptureLogs: true in config.
+2025-03-06 12:44:29 - [32minfo[39m: Local binary started successfully
+2025-03-06 12:44:31 - [32minfo[39m: Testhub started with id: qttk5grw5pguh9neml58yy2xyq5zmamj24jhcee3
+2025-03-06 12:45:15 - [32minfo[39m: Shutdown triggered by SIGINT
+2025-03-06 12:46:15 - [32minfo[39m: Running SDK with args C:\Program Files\nodejs\node.exe C:\playwright-project\node_modules\browserstack-node-sdk\src\bin\runner.js playwright test src/tests/NoExtraNoSeat.spec.ts
+2025-03-06 12:46:15 - [32minfo[39m: Reading configs from C:\playwright-project\browserstack.yml
+2025-03-06 12:46:15 - [32minfo[39m: SDK run started with id: 9fe73390-4720-470c-9d0a-5e545b6a1cf1
+2025-03-06 12:46:15 - [32minfo[39m: Project and debug logs are captured by default. To disable, set disableAutoCaptureLogs: true in config.
+2025-03-06 12:46:20 - [32minfo[39m: Local binary started successfully
+2025-03-06 12:46:22 - [32minfo[39m: Testhub started with id: xrq2wo5tbfewomrwcvksh994oa9zalcat89vnaf6
+2025-03-06 12:51:07 - [32minfo[39m: Visit https://observability.browserstack.com/builds/xrq2wo5tbfewomrwcvksh994oa9zalcat89vnaf6 to view build report, insights, and many more debugging information all at one place!
+
+2025-03-06 12:51:07 - [32minfo[39m: View build on BrowserStack dashboard: https://automate.browserstack.com/dashboard/v2/builds/48d16ee155a146fb566fa218bff9a88759ac6be4
+2025-03-06 12:51:08 - [32minfo[39m: SDK run ended for id: 9fe73390-4720-470c-9d0a-5e545b6a1cf1, testhub id: xrq2wo5tbfewomrwcvksh994oa9zalcat89vnaf6
+2025-03-06 12:51:09 - [32minfo[39m: Deleting C:\playwright-project\playwright-browserstack-sdk.config.ts
+2025-03-06 12:51:13 - [32minfo[39m: Local binary stopped
+2025-03-06 12:57:35 - [32minfo[39m: Running SDK with args C:\Program Files\nodejs\node.exe C:\playwright-project\node_modules\browserstack-node-sdk\src\bin\runner.js playwright test src/tests/NoExtraNoSeat.spec.ts
+2025-03-06 12:57:35 - [32minfo[39m: Reading configs from C:\playwright-project\browserstack.yml
+2025-03-06 12:57:35 - [32minfo[39m: SDK run started with id: 436600b1-be28-47fe-ad8d-91fc52c7004c
+2025-03-06 12:57:35 - [32minfo[39m: Project and debug logs are captured by default. To disable, set disableAutoCaptureLogs: true in config.
+2025-03-06 12:57:40 - [32minfo[39m: Local binary started successfully
+2025-03-06 12:57:42 - [32minfo[39m: Testhub started with id: z581szrarwd0wh8kfs1jshqzutiztawv23cxhnns
+2025-03-06 12:59:36 - [32minfo[39m: Visit https://observability.browserstack.com/builds/z581szrarwd0wh8kfs1jshqzutiztawv23cxhnns to view build report, insights, and many more debugging information all at one place!
+
+2025-03-06 12:59:37 - [32minfo[39m: View build on BrowserStack dashboard: https://automate.browserstack.com/dashboard/v2/builds/d3cdfb1cd484b0a58dbac6ef30a470d2f4e7b6f9
+2025-03-06 12:59:37 - [32minfo[39m: SDK run ended for id: 436600b1-be28-47fe-ad8d-91fc52c7004c, testhub id: z581szrarwd0wh8kfs1jshqzutiztawv23cxhnns
+2025-03-06 12:59:39 - [32minfo[39m: Deleting C:\playwright-project\playwright-browserstack-sdk.config.ts
+2025-03-06 12:59:43 - [32minfo[39m: Local binary stopped
+2025-03-06 13:06:40 - [32minfo[39m: Running SDK with args C:\Program Files\nodejs\node.exe C:\playwright-project\node_modules\browserstack-node-sdk\src\bin\runner.js playwright test -g Compra 1 adulto - Economy Light src/tests/NoExtraNoSeat.spec.ts
+2025-03-06 13:06:40 - [32minfo[39m: Reading configs from C:\playwright-project\browserstack.yml
+2025-03-06 13:06:40 - [32minfo[39m: SDK run started with id: 600195b9-18e1-4471-b487-ef5082d2195d
+2025-03-06 13:06:41 - [32minfo[39m: Project and debug logs are captured by default. To disable, set disableAutoCaptureLogs: true in config.
+2025-03-06 13:06:47 - [32minfo[39m: Local binary started successfully
+2025-03-06 13:06:49 - [32minfo[39m: Testhub started with id: ovx4je9kx6k3kuwglqnuhp0zhpor4vlj2g9ci2lg
+2025-03-06 13:11:41 - [32minfo[39m: Shutdown triggered by SIGINT
+2025-03-06 13:12:38 - [32minfo[39m: Running SDK with args C:\Program Files\nodejs\node.exe C:\playwright-project\node_modules\browserstack-node-sdk\src\bin\runner.js playwright test -g Compra 1 adulto - Economy Extra - sin asistencia - sin asiento - sin extras (One-Way) src/tests/NoExtraNoSeat.spec.ts
+2025-03-06 13:12:38 - [32minfo[39m: Reading configs from C:\playwright-project\browserstack.yml
+2025-03-06 13:12:38 - [32minfo[39m: SDK run started with id: 1191c5b8-bdff-4661-b98e-691c541912dd
+2025-03-06 13:12:38 - [32minfo[39m: Project and debug logs are captured by default. To disable, set disableAutoCaptureLogs: true in config.
+2025-03-06 13:12:43 - [32minfo[39m: Local binary started successfully
+2025-03-06 13:12:44 - [32minfo[39m: Testhub started with id: uufz0mfrjsn2wnn7w1wxrrfb96qwrn762ybglb3l
+2025-03-06 13:18:15 - [32minfo[39m: Shutdown triggered by SIGINT
+2025-03-06 13:18:46 - [32minfo[39m: Running SDK with args C:\Program Files\nodejs\node.exe C:\playwright-project\node_modules\browserstack-node-sdk\src\bin\runner.js playwright test -g ^10\\. Compra 1 adulto - Economy Extra - sin asistencia - sin asiento - sin extras \\(One-Way\\)$ src/tests/NoExtraNoSeat.spec.ts
+2025-03-06 13:18:46 - [32minfo[39m: Reading configs from C:\playwright-project\browserstack.yml
+2025-03-06 13:18:46 - [32minfo[39m: SDK run started with id: bb5da4c1-7724-4cc3-873c-cca268913851
+2025-03-06 13:18:46 - [32minfo[39m: Project and debug logs are captured by default. To disable, set disableAutoCaptureLogs: true in config.
+2025-03-06 13:18:51 - [32minfo[39m: Local binary started successfully
+2025-03-06 13:18:53 - [32minfo[39m: Testhub started with id: 5qz7b2ypolfi9j81o42iitpeqg64azewrqdxzhph
+2025-03-06 13:19:01 - [32minfo[39m: Visit https://observability.browserstack.com/builds/5qz7b2ypolfi9j81o42iitpeqg64azewrqdxzhph to view build report, insights, and many more debugging information all at one place!
+
+2025-03-06 13:19:02 - [32minfo[39m: SDK run ended for id: bb5da4c1-7724-4cc3-873c-cca268913851, testhub id: 5qz7b2ypolfi9j81o42iitpeqg64azewrqdxzhph
+2025-03-06 13:19:04 - [32minfo[39m: Deleting C:\playwright-project\playwright-browserstack-sdk.config.ts
+2025-03-06 13:19:07 - [32minfo[39m: Local binary stopped
+2025-03-06 13:19:59 - [32minfo[39m: Running SDK with args C:\Program Files\nodejs\node.exe C:\playwright-project\node_modules\browserstack-node-sdk\src\bin\runner.js playwright test --grep 10. Compra 1 adulto - Economy Extra - sin asiento - sin extras src/tests/NoExtraNoSeat.spec.ts
+2025-03-06 13:19:59 - [32minfo[39m: Reading configs from C:\playwright-project\browserstack.yml
+2025-03-06 13:19:59 - [32minfo[39m: SDK run started with id: 354321b4-3705-4300-ac64-69d093a37c2a
+2025-03-06 13:19:59 - [32minfo[39m: Project and debug logs are captured by default. To disable, set disableAutoCaptureLogs: true in config.
+2025-03-06 13:20:03 - [32minfo[39m: Local binary started successfully
+2025-03-06 13:20:05 - [32minfo[39m: Testhub started with id: mivwkns9x4h7dzn8xn1dxcm5ovlls2jdq5sxmw2k
+2025-03-06 13:22:07 - [32minfo[39m: Visit https://observability.browserstack.com/builds/mivwkns9x4h7dzn8xn1dxcm5ovlls2jdq5sxmw2k to view build report, insights, and many more debugging information all at one place!
+
+2025-03-06 13:22:08 - [32minfo[39m: View build on BrowserStack dashboard: https://automate.browserstack.com/dashboard/v2/builds/9ef55f9baa27496afa400fc71e562242d65b5c18
+2025-03-06 13:22:08 - [32minfo[39m: SDK run ended for id: 354321b4-3705-4300-ac64-69d093a37c2a, testhub id: mivwkns9x4h7dzn8xn1dxcm5ovlls2jdq5sxmw2k
+2025-03-06 13:22:09 - [32minfo[39m: Deleting C:\playwright-project\playwright-browserstack-sdk.config.ts
+2025-03-06 13:22:12 - [32minfo[39m: Local binary stopped

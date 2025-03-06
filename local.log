@@ -1,0 +1,13 @@
+"" 
+
+Thu Mar 06 2025 13:20:01:282 GMT+0100 (Hora estándar romance) -- Binary semantic version is v8.9.13
+Thu Mar 06 2025 13:20:01:282 GMT+0100 (Hora estándar romance) -- Setting output as extra verbose with request parsing
+Thu Mar 06 2025 13:20:02:166 GMT+0100 (Hora estándar romance) -- [WARNING] Skipping initialisation of configuration console because: port already in use by another Binary
+Thu Mar 06 2025 13:20:03:58 GMT+0100 (Hora estándar romance) -- [SUCCESS] You can now access your local server(s) in our remote browser
+
+Thu Mar 06 2025 13:20:03:230 GMT+0100 (Hora estándar romance) -- Connecting to BrowserStack using WebSocket protocol...
+Thu Mar 06 2025 13:20:03:230 GMT+0100 (Hora estándar romance) -- Platform supports WebSocket connections.
+
+Thu Mar 06 2025 13:20:03:336 GMT+0100 (Hora estándar romance) -- Press Ctrl-C to exit
+
+

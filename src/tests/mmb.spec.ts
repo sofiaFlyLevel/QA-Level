@@ -1,17 +1,29 @@
+// Importaciones
+import { test, expect, type Page } from '@playwright/test';
+import { MoneyChosee, LenguageChoose } from '../fixtures/userData';
+import { entornoData } from '../fixtures/environmentData';
+import { Logger } from '../utils/Logger';
+import * as XLSX from 'xlsx';
+
+// Detectar si estamos ejecutando en BrowserStack
+const isBrowserStack = process.env.BROWSERSTACK_RUN_ON === 'true';
+
 // Implementación del test principal
 
-  /**
-   * Test para verificación de reservas en My Booking
-   */
-  
-  // Configuración
-  const ENTORNO = entornoData.pre.url;
-  const IS_PROD = ENTORNO === entornoData.prod.url;
-  const FIXED_EMAIL = 'sofiainkoova@gmail.com';
-  const EXCEL_FILE_NAME = 'booking_codes.xlsx';
-  const MAX_RETRIES = 5;
-  const STEP_RETRIES = 3;
-  const TEST_TIMEOUT = 240000;
+/**
+ * Test para verificación de reservas en My Booking
+ */
+
+// Configuración
+const ENTORNO = entornoData.pre.url;
+const IS_PROD = ENTORNO === entornoData.prod.url;
+const FIXED_EMAIL = 'sofiainkoova@gmail.com';
+const EXCEL_FILE_NAME = 'booking_codes.xlsx';
+const MAX_RETRIES = 5;
+const STEP_RETRIES = 3;
+// Ajustar timeout para BrowserStack
+const TEST_TIMEOUT = isBrowserStack ? 360000 : 240000; // 6 minutos en BrowserStack, 4 minutos normal
+
   
   // Interfaces para tipar los datos
   interface BookingCodeInfo {
@@ -35,6 +47,8 @@
      */
     async readBookingCodes(): Promise<BookingCodeInfo[]> {
       try {
+        this.logger.info('Leyendo códigos de reserva del archivo Excel');
+        
         const workbook = XLSX.readFile(EXCEL_FILE_NAME);
         const worksheet = workbook.Sheets[workbook.SheetNames[0]];
         
@@ -270,22 +284,46 @@ private async setLanguageAndCurrency() {
      * Toma una captura de pantalla cuando ocurre un error
      */
     private async takeErrorScreenshot(actionName: string) {
-      const screenshotPath = `test-results/screenshots/${actionName}-error-${Date.now()}.png`;
+      const timestamp = Date.now();
+      const screenshotPath = `test-results/screenshots/${actionName}-error-${timestamp}.png`;
       try {
         await this.page.screenshot({ path: screenshotPath });
         this.logger.info(`Captura de pantalla guardada en: ${screenshotPath}`);
+        
+        // Información adicional para BrowserStack
+        if (isBrowserStack) {
+          this.logger.info(`BrowserStack error en '${actionName}' a las ${new Date(timestamp).toISOString()}`);
+        }
       } catch (error) {
         this.logger.error(`Error al tomar captura de pantalla para ${actionName}`, error);
       }
     }
   }
-test.describe('Comprobar reservas en My Booking', () => {
+  test.describe('Comprobar reservas en My Booking', () => {
     let manager: MyBookingManager;
+  
+    // Configuración específica para BrowserStack
+    if (isBrowserStack) {
+      test.beforeEach(async ({ page }) => {
+        console.log('Configurando prueba para BrowserStack - My Booking Test');
+      });
+      
+      test.afterEach(async ({ page }, testInfo) => {
+        if (testInfo.status !== 'passed') {
+          console.log(`Prueba BrowserStack fallida: ${testInfo.title}`);
+        }
+      });
+    }
   
     test('Verificar todos los códigos de reserva', async ({ page, browser }) => {
       let executionAttempt = 0;
       let success = false;
       const logger = new Logger();
+      
+      // Log específico para BrowserStack
+      if (isBrowserStack) {
+        logger.info('Ejecutando verificación de reservas en BrowserStack');
+      }
       
       // Reintentar la ejecución completa hasta el límite configurado
       while (executionAttempt < MAX_RETRIES && !success) {
@@ -314,6 +352,12 @@ test.describe('Comprobar reservas en My Booking', () => {
           }
         } catch (error) {
           logger.error(`Error crítico en el intento ${executionAttempt}:`, error);
+          
+          // Información adicional para BrowserStack
+          if (isBrowserStack) {
+            logger.error(`BrowserStack - Error en intento ${executionAttempt}: ${error.message}`);
+            await page.screenshot({ path: `test-results/browserstack-error-${Date.now()}.png` });
+          }
         }
       }
       
@@ -325,9 +369,3 @@ test.describe('Comprobar reservas en My Booking', () => {
       expect(success).toBeTruthy();
     }, TEST_TIMEOUT);
   });
-  import { test, expect, type Page } from '@playwright/test';
-  import { MoneyChosee, LenguageChoose } from '../fixtures/userData';
-  import { entornoData } from '../fixtures/environmentData';
-  import { Logger } from '../utils/Logger';
-  import * as XLSX from 'xlsx';
-  
