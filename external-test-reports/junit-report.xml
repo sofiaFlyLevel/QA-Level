@@ -1,159 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <testsuites id="" name="" tests="28" failures="16" skipped="0" errors="0" time="1435.8448059999998">
 <testsuite name="NoExtraNoSeat.spec.ts" timestamp="2025-03-05T07:50:44.514Z" hostname="chromium" tests="28" failures="16" skipped="0" time="7495.675" errors="0">
-<testcase name="Pruebas de vuelos de solo ida (One-Way) › 1. Compra 1 adulto - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)" classname="NoExtraNoSeat.spec.ts" time="179.26">
-<system-out>
-[INFO] Ejecutando prueba: ONE-WAY: 1. Compra 1 adulto - Economy Light - sin asistencia
-[INFO] Intento 1/5
-[INFO] Iniciando prueba: ONE-WAY: 1. Compra 1 adulto - Economy Light - sin asistencia
-[INFO] Inicializando test
-[INFO] Cookies aceptadas
-[INFO] Configurando idioma y moneda
-[INFO] Intentando setLanguageAndCurrency (1/3)
-[INFO] Idioma configurado a EN, Moneda configurada a USD
-[INFO] Test inicializado correctamente
-[INFO] Seleccionando origen: SCL, destino: BCN
-[INFO] Origen y destino seleccionados correctamente
-[INFO] Tipo de viaje configurado a solo ida
-[INFO] Seleccionando fechas de vuelo
-[INFO] Intentando selectFlightDates (1/3)
-Selected departure date: { year: [32m'2025'[39m, month: [32m'8'[39m, index: [33m5[39m, value: [33m12[39m }
-[INFO] Fechas de vuelo seleccionadas correctamente
-[INFO] Seleccionando pasajeros: 1 adultos, 0 niños, 0 infantes
-[INFO] Intentando selectPassengers (1/3)
-Ajustando número de pasajeros
-[INFO] Pasajeros seleccionados correctamente
-[INFO] Seleccionando clases y tipos de vuelo
-[INFO] Intentando selectFlightClasses (1/3)
-Successfully clicked the element: div.price-cabin:has-text("Economy")
-[INFO] Clases y tipos de vuelo seleccionados correctamente
-[INFO] Intentando fillPassengerAdult-1 (1/3)
-[INFO] Datos de todos los pasajeros completados correctamente
-[INFO] Completando datos de contacto para purchase
-[INFO] Intentando fillContactDetails (1/3)
-[INFO] Haciendo clic en "Complete your purchase"
-[INFO] ¿Botón "Complete your purchase" visible? true
-[INFO] Datos de contacto completados correctamente
-[INFO] Prueba no incluye selección de asientos
-[INFO] Procesando pago
-[INFO] Intentando processPayment (1/3)
-Iframe encontrado.
-[INFO] Pago procesado correctamente
-[INFO] Verificando confirmación de reserva
-[INFO] Intentando verifyBookingConfirmation (1/3)
-[INFO] Intentando verifyBookingConfirmation (2/3)
-Successfully saved booking code MEHL9 to Excel
-[INFO] Reserva confirmada correctamente
-[INFO] Prueba completada exitosamente: ONE-WAY: 1. Compra 1 adulto - Economy Light - sin asistencia
-[INFO] Prueba "ONE-WAY: 1. Compra 1 adulto - Economy Light - sin asistencia" exitosa
-
-</system-out>
-<system-err>
-Confirmation page validation failed: Flight Summary section not found on confirmation page
-[WARN] verifyBookingConfirmation falló, reintentando... Error [ValidationError]: Flight Summary section not found on confirmation page
-    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:98:27[90m)[39m
-[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
-[90m    at processImmediate (node:internal/timers:459:9)[39m
-[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
-    at [90mC:\playwright-project\[39msrc\utils\test-framework.ts:546:11
-    at LevelTestRunner.executeWithRetry [90m(C:\playwright-project\[39msrc\utils\test-framework.ts:570:16[90m)[39m
-    at LevelTestRunner.verifyBookingConfirmation [90m(C:\playwright-project\[39msrc\utils\test-framework.ts:544:7[90m)[39m
-    at LevelTestRunner.runCompleteTest [90m(C:\playwright-project\[39msrc\utils\test-framework.ts:641:7[90m)[39m
-    at runSingleTest [90m(C:\playwright-project\[39msrc\utils\test-framework.ts:675:17[90m)[39m
-    at [90mC:\playwright-project\[39msrc\tests\NoExtraNoSeat.spec.ts:36:5
-    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
-    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
-    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
-    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
-    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
-    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
-    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
-    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
-    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
-    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
-    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
-  fatal: [33mtrue[39m
-}
-
-</system-err>
-</testcase>
-<testcase name="Pruebas de vuelos de solo ida (One-Way) › 2. Compra 2 adultos (Diferentes) - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)" classname="NoExtraNoSeat.spec.ts" time="169.962">
-<system-out>
-[INFO] Ejecutando prueba: ONE-WAY: 2. Compra 2 adultos (Diferentes) - Economy Light
-[INFO] Intento 1/5
-[INFO] Iniciando prueba: ONE-WAY: 2. Compra 2 adultos (Diferentes) - Economy Light
-[INFO] Inicializando test
-[INFO] Cookies aceptadas
-[INFO] Configurando idioma y moneda
-[INFO] Intentando setLanguageAndCurrency (1/3)
-[INFO] Idioma configurado a EN, Moneda configurada a USD
-[INFO] Test inicializado correctamente
-[INFO] Seleccionando origen: SCL, destino: BCN
-[INFO] Origen y destino seleccionados correctamente
-[INFO] Tipo de viaje configurado a solo ida
-[INFO] Seleccionando fechas de vuelo
-[INFO] Intentando selectFlightDates (1/3)
-Selected departure date: { year: [32m'2025'[39m, month: [32m'8'[39m, index: [33m8[39m, value: [33m16[39m }
-[INFO] Fechas de vuelo seleccionadas correctamente
-[INFO] Seleccionando pasajeros: 2 adultos, 0 niños, 0 infantes
-[INFO] Intentando selectPassengers (1/3)
-Ajustando número de pasajeros
-[INFO] Pasajeros seleccionados correctamente
-[INFO] Seleccionando clases y tipos de vuelo
-[INFO] Intentando selectFlightClasses (1/3)
-Successfully clicked the element: div.price-cabin:has-text("Economy")
-[INFO] Clases y tipos de vuelo seleccionados correctamente
-[INFO] Intentando fillPassengerAdult-1 (1/3)
-[INFO] Intentando fillPassengerAdult-2 (1/3)
-[INFO] Datos de todos los pasajeros completados correctamente
-[INFO] Completando datos de contacto para purchase
-[INFO] Intentando fillContactDetails (1/3)
-[INFO] Haciendo clic en "Complete your purchase"
-[INFO] ¿Botón "Complete your purchase" visible? true
-[INFO] Datos de contacto completados correctamente
-[INFO] Prueba no incluye selección de asientos
-[INFO] Procesando pago
-[INFO] Intentando processPayment (1/3)
-Iframe encontrado.
-[INFO] Pago procesado correctamente
-[INFO] Verificando confirmación de reserva
-[INFO] Intentando verifyBookingConfirmation (1/3)
-[INFO] Intentando verifyBookingConfirmation (2/3)
-Successfully saved booking code MEHLB to Excel
-[INFO] Reserva confirmada correctamente
-[INFO] Prueba completada exitosamente: ONE-WAY: 2. Compra 2 adultos (Diferentes) - Economy Light
-[INFO] Prueba "ONE-WAY: 2. Compra 2 adultos (Diferentes) - Economy Light" exitosa
-
-</system-out>
-<system-err>
-Confirmation page validation failed: Flight Summary section not found on confirmation page
-[WARN] verifyBookingConfirmation falló, reintentando... Error [ValidationError]: Flight Summary section not found on confirmation page
-    at validationConfirmPage [90m(C:\playwright-project\[39msrc\page-objects\confirmation.ts:98:27[90m)[39m
-[90m    at runNextTicks (node:internal/process/task_queues:65:5)[39m
-[90m    at processImmediate (node:internal/timers:459:9)[39m
-[90m    at process.callbackTrampoline (node:internal/async_hooks:130:17)[39m
-    at [90mC:\playwright-project\[39msrc\utils\test-framework.ts:546:11
-    at LevelTestRunner.executeWithRetry [90m(C:\playwright-project\[39msrc\utils\test-framework.ts:570:16[90m)[39m
-    at LevelTestRunner.verifyBookingConfirmation [90m(C:\playwright-project\[39msrc\utils\test-framework.ts:544:7[90m)[39m
-    at LevelTestRunner.runCompleteTest [90m(C:\playwright-project\[39msrc\utils\test-framework.ts:641:7[90m)[39m
-    at runSingleTest [90m(C:\playwright-project\[39msrc\utils\test-framework.ts:675:17[90m)[39m
-    at [90mC:\playwright-project\[39msrc\tests\NoExtraNoSeat.spec.ts:41:5
-    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:339:9
-    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
-    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:64:14[90m)[39m
-    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
-    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:331:7
-    at [90mC:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:286:11
-    at TimeoutManager.withRunnable [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:52:27[90m)[39m
-    at TestInfoImpl._runAsStage [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:284:7[90m)[39m
-    at WorkerMain._runTest [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:281:5[90m)[39m
-    at WorkerMain.runTestGroup [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:205:11[90m)[39m
-    at process.&lt;anonymous&gt; [90m(C:\playwright-project\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:95:22[90m)[39m {
-  fatal: [33mtrue[39m
-}
-
-</system-err>
-</testcase>
 <testcase name="Pruebas de vuelos de solo ida (One-Way) › 3. Compra 2 adultos (Diferentes) - Economy Light - Con asistencia TODAS - sin asiento - sin extras (One-Way)" classname="NoExtraNoSeat.spec.ts" time="361.049">
 <failure message="NoExtraNoSeat.spec.ts:45:7 3. Compra 2 adultos (Diferentes) - Economy Light - Con asistencia TODAS - sin asiento - sin extras (One-Way)" type="FAILURE">
   [chromium] › NoExtraNoSeat.spec.ts:45:7 › Pruebas de vuelos de solo ida (One-Way) › 3. Compra 2 adultos (Diferentes) - Economy Light - Con asistencia TODAS - sin asiento - sin extras (One-Way) 
@@ -4415,6 +4262,274 @@ Error while handling iframe payment: page.waitForSelector: Target page, context 
 
 Warning: attachment NoExtraNoSeat-Pruebas-de-v-303f7-iento---sin-extras-One-Way--chromium\test-failed-1.png is missing
 </system-err>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › 1. Compra 1 adulto - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)" classname="NoExtraNoSeat.spec.ts" time="69.465">
+<system-out>
+[INFO] Ejecutando prueba: ONE-WAY: 1. Compra 1 adulto - Economy Light - sin asistencia
+[INFO] Intento 1/5
+[INFO] Iniciando prueba: ONE-WAY: 1. Compra 1 adulto - Economy Light - sin asistencia
+[INFO] Inicializando test
+[INFO] Cookies aceptadas
+[INFO] Configurando idioma y moneda
+[INFO] Ejecutando setLanguageAndCurrency (intento 1/3)
+[INFO] Idioma configurado a EN, Moneda configurada a USD
+[INFO] Test inicializado correctamente
+[INFO] Seleccionando origen: SCL, destino: BCN
+[INFO] Origen y destino seleccionados correctamente
+[INFO] Tipo de viaje configurado a solo ida
+[INFO] Seleccionando fechas de vuelo
+[INFO] Ejecutando selectFlightDates (intento 1/3)
+Selected departure date: { year: [32m'2025'[39m, month: [32m'8'[39m, index: [33m0[39m, value: [33m2[39m }
+[INFO] Fechas de vuelo seleccionadas correctamente
+[INFO] Seleccionando pasajeros: 1 adultos, 0 niños, 0 infantes
+[INFO] Ejecutando selectPassengers (intento 1/3)
+Ajustando número de pasajeros
+[INFO] Pasajeros seleccionados correctamente
+[INFO] Seleccionando clases y tipos de vuelo
+[INFO] Ejecutando selectFlightClasses (intento 1/3)
+[INFO] Capturando información del vuelo de ida
+[INFO] Extrayendo información de vuelo OUTBOUND, tarjeta #0
+[INFO] Información del vuelo de ida capturada con éxito {
+  direction: [32m'OUTBOUND'[39m,
+  date: [32m'Sat, Aug 2'[39m,
+  origin: { code: [32m'SCL'[39m, name: [32m'Santiago'[39m },
+  destination: { code: [32m'BCN'[39m, name: [32m'Barcelona'[39m },
+  times: {
+    departure: [32m'10:25'[39m,
+    arrival: [32m'06:10'[39m,
+    duration: [32m'13h 45m'[39m,
+    nextDay: [33mtrue[39m
+  },
+  airline: [32m'IB'[39m,
+  flightNumber: [32m''[39m,
+  cabinOptions: {
+    economy: { name: [32m'ECONOMY'[39m, price: [32m'$565'[39m },
+    premium: { name: [32m'PREMIUM'[39m, price: [32m'$751'[39m }
+  },
+  cardSelector: [32m'.outbound-flight-container .card-flight:nth-child(1)'[39m,
+  selectedCabin: { class: [32m'Economy'[39m, type: [32m'Light'[39m, fullName: [32m'Economy Light'[39m }
+}
+[INFO] Seleccionando cabina para vuelo de ida: Economy
+[INFO] Successfully clicked the element: .outbound-flight-container .card-flight:nth-child(1) .btn-economy
+[INFO] Información de vuelo capturada y almacenada {
+  outbound: {
+    direction: [32m'OUTBOUND'[39m,
+    date: [32m'Sat, Aug 2'[39m,
+    origin: { code: [32m'SCL'[39m, name: [32m'Santiago'[39m },
+    destination: { code: [32m'BCN'[39m, name: [32m'Barcelona'[39m },
+    times: {
+      departure: [32m'10:25'[39m,
+      arrival: [32m'06:10'[39m,
+      duration: [32m'13h 45m'[39m,
+      nextDay: [33mtrue[39m
+    },
+    airline: [32m'IB'[39m,
+    flightNumber: [32m''[39m,
+    cabinOptions: { economy: [36m[Object][39m, premium: [36m[Object][39m },
+    cardSelector: [32m'.outbound-flight-container .card-flight:nth-child(1)'[39m,
+    selectedCabin: { class: [32m'Economy'[39m, type: [32m'Light'[39m, fullName: [32m'Economy Light'[39m }
+  },
+  return: {}
+}
+[INFO] Clases y tipos de vuelo seleccionados correctamente
+[INFO] Completando datos para 1 adultos, 0 niños, 0 infantes
+[INFO] Ejecutando fillPassengerAdult-1 (intento 1/5)
+[INFO] Completando datos para adulto 1 de 1: Juan Perez
+[INFO] Empezando a completar datos para Adult 1: Juan Perez
+[INFO] Formulario para Adult-0 encontrado y visible
+[INFO] Intentando completar nombre (1/3)
+[INFO] Campo nombre completado con: Juan
+[INFO] Intentando completar apellido (1/3)
+[INFO] Campo apellido completado con: Perez
+[INFO] Intentando completar fecha de nacimiento (1/3)
+[INFO] Campo fecha de nacimiento completado con: 03/06/2010
+[INFO] Intentando seleccionar país Afghanistan (1/4)
+[INFO] Combobox de nacionalidad abierto
+[INFO] Filtrado países con: Afg
+[INFO] País seleccionado: Afghanistan
+[INFO] Selección de país completada: Afghanistan
+[INFO] Intentando seleccionar género (1/3)
+[INFO] Género seleccionado: female
+[INFO] Completados todos los datos para Adult 1: Juan Perez
+[INFO] Datos de todos los pasajeros completados correctamente
+[INFO] Completando datos de contacto para purchase
+[INFO] Ejecutando fillContactDetails (intento 1/3)
+[INFO] Haciendo clic en "Complete your purchase"
+[INFO] ¿Botón "Complete your purchase" visible? true
+[INFO] Datos de contacto completados correctamente
+[INFO] Prueba no incluye selección de asientos
+[INFO] Procesando pago
+[INFO] Ejecutando processPayment (intento 1/3)
+Iframe encontrado.
+[INFO] Pago procesado correctamente
+[INFO] Verificando confirmación de reserva
+[INFO] Esperando a que la navegación a la página de confirmación se complete...
+[INFO] URL actual: https://lv-fndoor-ecommerce-sbx-ghdubdbgdtcsane6.a01.azurefd.net/nwe/confirmation/?forcedCulture=en
+[INFO] Ejecutando verifyBookingConfirmation (intento 1/5)
+[INFO] Iniciando validación de la página de confirmación
+[INFO] Esperando a que la navegación a la página de confirmación se complete (máximo 60000ms)...
+[INFO] URL actual: https://lv-fndoor-ecommerce-sbx-ghdubdbgdtcsane6.a01.azurefd.net/nwe/confirmation/?forcedCulture=en
+[INFO] URL de confirmación detectada después de 7ms
+[INFO] Navegación a la página de confirmación completada
+[INFO] Buscando sección "Flight Summary" en la página
+[INFO] Sección "Flight Summary" encontrada mediante estrategia: exact
+[INFO] Esperando a elementos adicionales de la página de confirmación
+[INFO] Elemento .flight-info__journey-type encontrado correctamente
+[INFO] Elemento .flight-info__routes encontrado correctamente
+[INFO] Elemento .flight-card__footer encontrado correctamente
+[INFO] Extrayendo código de reserva
+[INFO] Código de reserva extraído: NEKCF
+[INFO] Detalles de vuelo extraídos de la página de confirmación: {}
+Successfully saved booking code NEKCF and all details to Excel
+[INFO] Información guardada exitosamente en Excel
+[INFO] Reserva confirmada correctamente
+[INFO] Prueba completada exitosamente: ONE-WAY: 1. Compra 1 adulto - Economy Light - sin asistencia
+[INFO] Prueba "ONE-WAY: 1. Compra 1 adulto - Economy Light - sin asistencia" exitosa
+
+</system-out>
+</testcase>
+<testcase name="Pruebas de vuelos de solo ida (One-Way) › 2. Compra 2 adultos (Diferentes) - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)" classname="NoExtraNoSeat.spec.ts" time="88.858">
+<system-out>
+[INFO] Ejecutando prueba: ONE-WAY: 2. Compra 2 adultos (Diferentes) - Economy Light
+[INFO] Intento 1/5
+[INFO] Iniciando prueba: ONE-WAY: 2. Compra 2 adultos (Diferentes) - Economy Light
+[INFO] Inicializando test
+[INFO] Cookies aceptadas
+[INFO] Configurando idioma y moneda
+[INFO] Ejecutando setLanguageAndCurrency (intento 1/3)
+[INFO] Idioma configurado a EN, Moneda configurada a USD
+[INFO] Test inicializado correctamente
+[INFO] Seleccionando origen: SCL, destino: BCN
+[INFO] Origen y destino seleccionados correctamente
+[INFO] Tipo de viaje configurado a solo ida
+[INFO] Seleccionando fechas de vuelo
+[INFO] Ejecutando selectFlightDates (intento 1/3)
+Selected departure date: { year: [32m'2025'[39m, month: [32m'7'[39m, index: [33m18[39m, value: [33m31[39m }
+[INFO] Fechas de vuelo seleccionadas correctamente
+[INFO] Seleccionando pasajeros: 2 adultos, 0 niños, 0 infantes
+[INFO] Ejecutando selectPassengers (intento 1/3)
+Ajustando número de pasajeros
+[INFO] Pasajeros seleccionados correctamente
+[INFO] Seleccionando clases y tipos de vuelo
+[INFO] Ejecutando selectFlightClasses (intento 1/3)
+[INFO] Capturando información del vuelo de ida
+[INFO] Extrayendo información de vuelo OUTBOUND, tarjeta #0
+[INFO] Información del vuelo de ida capturada con éxito {
+  direction: [32m'OUTBOUND'[39m,
+  date: [32m'Thu, Jul 31'[39m,
+  origin: { code: [32m'SCL'[39m, name: [32m'Santiago'[39m },
+  destination: { code: [32m'BCN'[39m, name: [32m'Barcelona'[39m },
+  times: {
+    departure: [32m'10:25'[39m,
+    arrival: [32m'06:10'[39m,
+    duration: [32m'13h 45m'[39m,
+    nextDay: [33mtrue[39m
+  },
+  airline: [32m'IB'[39m,
+  flightNumber: [32m''[39m,
+  cabinOptions: {
+    economy: { name: [32m'ECONOMY'[39m, price: [32m'$565'[39m },
+    premium: { name: [32m'PREMIUM'[39m, price: [32m'$751'[39m }
+  },
+  cardSelector: [32m'.outbound-flight-container .card-flight:nth-child(1)'[39m,
+  selectedCabin: { class: [32m'Economy'[39m, type: [32m'Light'[39m, fullName: [32m'Economy Light'[39m }
+}
+[INFO] Seleccionando cabina para vuelo de ida: Economy
+[INFO] Successfully clicked the element: .outbound-flight-container .card-flight:nth-child(1) .btn-economy
+[INFO] Información de vuelo capturada y almacenada {
+  outbound: {
+    direction: [32m'OUTBOUND'[39m,
+    date: [32m'Thu, Jul 31'[39m,
+    origin: { code: [32m'SCL'[39m, name: [32m'Santiago'[39m },
+    destination: { code: [32m'BCN'[39m, name: [32m'Barcelona'[39m },
+    times: {
+      departure: [32m'10:25'[39m,
+      arrival: [32m'06:10'[39m,
+      duration: [32m'13h 45m'[39m,
+      nextDay: [33mtrue[39m
+    },
+    airline: [32m'IB'[39m,
+    flightNumber: [32m''[39m,
+    cabinOptions: { economy: [36m[Object][39m, premium: [36m[Object][39m },
+    cardSelector: [32m'.outbound-flight-container .card-flight:nth-child(1)'[39m,
+    selectedCabin: { class: [32m'Economy'[39m, type: [32m'Light'[39m, fullName: [32m'Economy Light'[39m }
+  },
+  return: {}
+}
+[INFO] Clases y tipos de vuelo seleccionados correctamente
+[INFO] Completando datos para 2 adultos, 0 niños, 0 infantes
+[INFO] Ejecutando fillPassengerAdult-1 (intento 1/5)
+[INFO] Completando datos para adulto 1 de 2: Prueba Hola
+[INFO] Empezando a completar datos para Adult 1: Prueba Hola
+[INFO] Formulario para Adult-0 encontrado y visible
+[INFO] Intentando completar nombre (1/3)
+[INFO] Campo nombre completado con: Prueba
+[INFO] Intentando completar apellido (1/3)
+[INFO] Campo apellido completado con: Hola
+[INFO] Intentando completar fecha de nacimiento (1/3)
+[INFO] Campo fecha de nacimiento completado con: 03/06/2000
+[INFO] Intentando seleccionar país Afghanistan (1/4)
+[INFO] Combobox de nacionalidad abierto
+[INFO] Filtrado países con: Afg
+[INFO] País seleccionado: Afghanistan
+[INFO] Selección de país completada: Afghanistan
+[INFO] Intentando seleccionar género (1/3)
+[INFO] Género seleccionado: female
+[INFO] Completados todos los datos para Adult 1: Prueba Hola
+[INFO] Ejecutando fillPassengerAdult-2 (intento 1/5)
+[INFO] Completando datos para adulto 2 de 2: Sofía Pérez
+[INFO] Empezando a completar datos para Adult 2: Sofía Pérez
+[INFO] Formulario para Adult-1 encontrado y visible
+[INFO] Intentando completar nombre (1/3)
+[INFO] Campo nombre completado con: Sofía
+[INFO] Intentando completar apellido (1/3)
+[INFO] Campo apellido completado con: Pérez
+[INFO] Intentando completar fecha de nacimiento (1/3)
+[INFO] Campo fecha de nacimiento completado con: 03/06/1991
+[INFO] Intentando seleccionar país Afghanistan (1/4)
+[INFO] Combobox de nacionalidad abierto
+[INFO] Filtrado países con: Afg
+[INFO] País seleccionado: Afghanistan
+[INFO] Selección de país completada: Afghanistan
+[INFO] Intentando seleccionar género (1/3)
+[INFO] Género seleccionado: female
+[INFO] Completados todos los datos para Adult 2: Sofía Pérez
+[INFO] Datos de todos los pasajeros completados correctamente
+[INFO] Completando datos de contacto para purchase
+[INFO] Ejecutando fillContactDetails (intento 1/3)
+[INFO] Haciendo clic en "Complete your purchase"
+[INFO] ¿Botón "Complete your purchase" visible? true
+[INFO] Datos de contacto completados correctamente
+[INFO] Prueba no incluye selección de asientos
+[INFO] Procesando pago
+[INFO] Ejecutando processPayment (intento 1/3)
+Iframe encontrado.
+[INFO] Pago procesado correctamente
+[INFO] Verificando confirmación de reserva
+[INFO] Esperando a que la navegación a la página de confirmación se complete...
+[INFO] URL actual: https://lv-fndoor-ecommerce-sbx-ghdubdbgdtcsane6.a01.azurefd.net/nwe/confirmation/?forcedCulture=en
+[INFO] Ejecutando verifyBookingConfirmation (intento 1/5)
+[INFO] Iniciando validación de la página de confirmación
+[INFO] Esperando a que la navegación a la página de confirmación se complete (máximo 60000ms)...
+[INFO] URL actual: https://lv-fndoor-ecommerce-sbx-ghdubdbgdtcsane6.a01.azurefd.net/nwe/confirmation/?forcedCulture=en
+[INFO] URL de confirmación detectada después de 5ms
+[INFO] Navegación a la página de confirmación completada
+[INFO] Buscando sección "Flight Summary" en la página
+[INFO] Sección "Flight Summary" encontrada mediante estrategia: exact
+[INFO] Esperando a elementos adicionales de la página de confirmación
+[INFO] Elemento .flight-info__journey-type encontrado correctamente
+[INFO] Elemento .flight-info__routes encontrado correctamente
+[INFO] Elemento .flight-card__footer encontrado correctamente
+[INFO] Extrayendo código de reserva
+[INFO] Código de reserva extraído: NEKEV
+[INFO] Detalles de vuelo extraídos de la página de confirmación: {}
+Successfully saved booking code NEKEV and all details to Excel
+[INFO] Información guardada exitosamente en Excel
+[INFO] Reserva confirmada correctamente
+[INFO] Prueba completada exitosamente: ONE-WAY: 2. Compra 2 adultos (Diferentes) - Economy Light
+[INFO] Prueba "ONE-WAY: 2. Compra 2 adultos (Diferentes) - Economy Light" exitosa
+
+</system-out>
 </testcase>
 </testsuite>
 </testsuites>
