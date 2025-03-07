@@ -81,25 +81,17 @@
         
         a.btn {
             display: inline-block;
-            padding: 6px 12px;
+            padding: 8px 16px;
             background-color: var(--primary-color);
             color: white;
             text-decoration: none;
             border-radius: 4px;
             transition: background-color 0.3s;
+            font-weight: 500;
         }
         
         a.btn:hover {
             background-color: #1c3867;
-        }
-        
-        a.btn-secondary {
-            background-color: #6c757d;
-            margin-left: 5px;
-        }
-        
-        a.btn-secondary:hover {
-            background-color: #5a6268;
         }
         
         footer {
@@ -108,6 +100,13 @@
             background-color: var(--primary-color);
             color: white;
             margin-top: 2rem;
+        }
+        
+        .last-updated {
+            font-style: italic;
+            color: var(--light-text);
+            text-align: right;
+            margin-top: 1rem;
         }
     </style>
 </head>
@@ -118,7 +117,7 @@
     
     <div class="container">
         <div class="info-panel">
-            <p>Última actualización: 07/03/2025 11:25:55</p>
+            <p>Última actualización: 07/03/2025 11:42:36</p>
             <p>Repositorio: QA-Level</p>
         </div>
         
@@ -133,12 +132,18 @@
             <tbody>
 
                 <tr>
+                    <td>prueba2</td>
+                    <td>2025/03/07 11/42/35</td>
+                    <td>
+                        <a href="reports/report-2025-03-07_11-42-35/junit/junit-report.html" class="btn">Ver Informe</a>
+                    </td>
+                </tr>
+
+                <tr>
                     <td>prueba</td>
                     <td>2025/03/07 11/25/55</td>
                     <td>
-                        <a href="reports/report-2025-03-07_11-25-55/html/index.html" class="btn">Playwright HTML</a>
-                        <a href="reports/report-2025-03-07_11-25-55/junit/junit-report.html" class="btn">JUnit HTML</a>
-                        <a href="reports/report-2025-03-07_11-25-55/junit/processed-report.xml" class="btn btn-secondary">XML</a>
+                        <a href="reports/report-2025-03-07_11-25-55/junit/junit-report.html" class="btn">Ver Informe</a>
                     </td>
                 </tr>
 
@@ -146,14 +151,16 @@
                     <td>jo</td>
                     <td>2025/03/07 11/07/25</td>
                     <td>
-                        <a href="reports/report-2025-03-07_11-07-25/html/index.html" class="btn">Playwright HTML</a>
-                        <a href="#" class="btn">JUnit HTML</a>
-                        <a href="reports/report-2025-03-07_11-07-25/junit/processed-report.xml" class="btn btn-secondary">XML</a>
+                        <a href="#" class="btn">Ver Informe</a>
                     </td>
                 </tr>
 
             </tbody>
         </table>
+        
+        <div class="last-updated">
+            Generado automáticamente - 07/03/2025 11:42:36
+        </div>
     </div>
     
     <footer>
