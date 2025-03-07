@@ -1,0 +1,10 @@
+{
+  "reports": [
+    {
+      "title": "jo",
+      "date": "2025-03-07_11-07-25",
+      "htmlPath": "reports/report-2025-03-07_11-07-25/html/index.html",
+      "junitPath": "reports/report-2025-03-07_11-07-25/junit/processed-report.xml"
+    }
+  ]
+}

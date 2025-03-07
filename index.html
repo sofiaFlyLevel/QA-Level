@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEVEL Booking Test Reports</title>
+    <style>
+        :root {
+            --primary-color: #2f5496;
+            --secondary-color: #f0f4f8;
+            --accent-color: #f39200;
+            --text-color: #333;
+            --light-text: #666;
+            --border-color: #ddd;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f9f9f9;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .info-panel {
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .info-panel p {
+            color: var(--light-text);
+            margin-bottom: 0.5rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        a.btn {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        a.btn:hover {
+            background-color: #1c3867;
+        }
+        
+        a.btn-secondary {
+            background-color: #6c757d;
+            margin-left: 5px;
+        }
+        
+        a.btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>LEVEL Booking Automated Test Reports</h1>
+    </header>
+    
+    <div class="container">
+        <div class="info-panel">
+            <p>Última actualización: 07/03/2025 11:07:25</p>
+            <p>Repositorio: QA-Level-report</p>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td>jo</td>
+                    <td>2025/03/07 11/07/25</td>
+                    <td>
+                        <a href="reports/report-2025-03-07_11-07-25/html/index.html" class="btn">Ver Informe HTML</a>
+                        <a href="reports/report-2025-03-07_11-07-25/junit/processed-report.xml" class="btn btn-secondary">XML</a>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 LEVEL Booking Test Automation</p>
+    </footer>
+</body>
+</html>
