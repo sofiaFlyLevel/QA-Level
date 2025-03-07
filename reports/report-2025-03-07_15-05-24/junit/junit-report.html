@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEVEL Booking - Informe de Pruebas</title>
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #2f5496;
+            --secondary-color: #f0f4f8;
+            --accent-color: #f39200;
+            --text-color: #333;
+            --light-text: #666;
+            --border-color: #ddd;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
+            --skipped-color: #9e9e9e;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(135deg, transparent 33.33%, white 33.33%, white 66.66%, transparent 66.66%);
+            background-size: 20px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .stat-card.total {
+            background-color: #e9ecef;
+        }
+        
+        .stat-card.passed {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .stat-card.failed {
+            background-color: var(--error-color);
+            color: white;
+        }
+        
+        .stat-card.skipped {
+            background-color: var(--skipped-color);
+            color: white;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            background-color: #e9ecef;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+        
+        .filter-btn:hover {
+            background-color: #dee2e6;
+        }
+        
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .filter-btn.passed {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .filter-btn.failed {
+            background-color: var(--error-color);
+            color: white;
+        }
+        
+        .filter-btn.skipped {
+            background-color: var(--skipped-color);
+            color: white;
+        }
+        
+        .testsuite-list {
+            margin-top: 2rem;
+        }
+        
+        .testsuite {
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .testsuite-header {
+            background-color: #f8f9fa;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .testsuite-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .testsuite-name::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .testsuite-name.passed::before {
+            background-color: var(--success-color);
+        }
+        
+        .testsuite-name.has-failures::before {
+            background-color: var(--error-color);
+        }
+        
+        .testsuite-name.skipped::before {
+            background-color: var(--skipped-color);
+        }
+        
+        .testsuite-meta {
+            font-size: 0.875rem;
+            color: var(--light-text);
+        }
+        
+        .testsuite-content {
+            display: none;
+            padding: 0;
+        }
+        
+        .testcase {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s;
+        }
+        
+        .testcase:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .testcase:last-child {
+            border-bottom: none;
+        }
+        
+        .testcase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .testcase-name {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .status-icon.passed {
+            background-color: var(--success-color);
+        }
+        
+        .status-icon.failed {
+            background-color: var(--error-color);
+        }
+        
+        .status-icon.error {
+            background-color: var(--error-color);
+        }
+        
+        .status-icon.skipped {
+            background-color: var(--skipped-color);
+        }
+        
+        .testcase-duration {
+            font-size: 0.875rem;
+            color: var(--light-text);
+        }
+        
+        .testcase-details {
+            display: none;
+            padding: 1rem 0 0 2rem;
+            font-size: 0.875rem;
+        }
+        
+        .testcase-classname {
+            margin-bottom: 0.5rem;
+            color: var(--light-text);
+        }
+        
+        .testcase-failure, .testcase-error {
+            margin-top: 0.5rem;
+            padding: 1rem;
+            background-color: #fff5f5;
+            border-left: 4px solid var(--error-color);
+            border-radius: 4px;
+        }
+        
+        .testcase-skipped {
+            margin-top: 0.5rem;
+            padding: 1rem;
+            background-color: #f5f5f5;
+            border-left: 4px solid var(--skipped-color);
+            border-radius: 4px;
+        }
+        
+        .failure-message, .error-message, .skipped-message {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .step-list {
+            margin-top: 1rem;
+        }
+        
+        .step {
+            padding: 0.5rem;
+            border-left: 2px solid #e9ecef;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .expand-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            text-align: center;
+            line-height: 16px;
+            transition: transform 0.2s;
+        }
+        
+        .expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+            background-color: #e9ecef;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            display: flex;
+        }
+        
+        .progress-segment {
+            height: 100%;
+        }
+        
+        .progress-segment.passed {
+            background-color: var(--success-color);
+        }
+        
+        .progress-segment.failed {
+            background-color: var(--error-color);
+        }
+        
+        .progress-segment.error {
+            background-color: var(--error-color);
+        }
+        
+        .progress-segment.skipped {
+            background-color: var(--skipped-color);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            margin-top: 3rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .badge.passed {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .badge.failed {
+            background-color: var(--error-color);
+            color: white;
+        }
+        
+        .badge.skipped {
+            background-color: var(--skipped-color);
+            color: white;
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>LEVEL Booking - Informe de Pruebas</h1>
+        <p>Resumen de resultados de las pruebas automatizadas</p>
+    </div>
+    
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                Resumen General
+            </div>
+            <div class="card-body">
+                <div class="summary-stats">
+                    <div class="stat-card total">
+                        <div class="stat-number">${total_testcases}</div>
+                        <div class="stat-label">Total de Pruebas</div>
+                    </div>
+                    <div class="stat-card passed">
+                        <div class="stat-number">${total_passed}</div>
+                        <div class="stat-label">Pruebas Exitosas</div>
+                    </div>
+                    <div class="stat-card failed">
+                        <div class="stat-number">${total_failures + total_errors}</div>
+                        <div class="stat-label">Pruebas Fallidas</div>
+                    </div>
+                    <div class="stat-card skipped">
+                        <div class="stat-number">${total_skipped}</div>
+                        <div class="stat-label">Pruebas Omitidas</div>
+                    </div>
+                </div>
+                
+                <div class="charts-container">
+                    <div class="chart-container">
+                        <canvas id="overallResultsChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="testsuiteResultsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                Resultados Detallados
+            </div>
+            <div class="card-body">
+                <div class="filter-controls">
+                    <button class="filter-btn active" data-filter="all">Todos</button>
+                    <button class="filter-btn passed" data-filter="passed">Exitosos</button>
+                    <button class="filter-btn failed" data-filter="failed">Fallidos</button>
+                    <button class="filter-btn skipped" data-filter="skipped">Omitidos</button>
+                </div>
+<div class="testsuite-list">
+                <div class="testsuite" data-passed="3" data-failed="0" data-skipped="25">
+                    <div class="testsuite-header">
+                        <div class="testsuite-name passed">
+                            NoExtraNoSeat.spec.ts
+                            <span class="badge passed">3</span>
+                            
+                            <span class="badge skipped">25</span>
+                        </div>
+                        <div class="testsuite-meta">
+                            654.71s <span class="expand-icon">›</span>
+                        </div>
+                    </div>
+                    <div class="testsuite-content">
+                        <div class="progress-bar">
+                            <div class="progress-fill">
+                                <div class="progress-segment passed" style="width: 10.714285714285714%;"></div>
+                                
+                                <div class="progress-segment skipped" style="width: 89.28571428571429%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-passed" data-status="passed">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon passed"></span>
+                                    Pruebas de vuelos de solo ida (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    91.616s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Exitoso</strong></div>
+<div class="step-list"><div class="step">1. Compra 1 adulto - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)</div><div class="step">2. Compra 2 adultos (Diferentes) - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)</div><div class="step">3. Compra 2 adultos (Diferentes) - Economy Light - Con asistencia TODAS - sin asiento - sin extras (One-Way)</div><div class="step">4. Compra 1 adulto - 1 niño - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)</div><div class="step">5. Compra 1 adulto - 1 niño - Economy Light - con asistencia - sin asiento - sin extras (One-Way)</div><div class="step">6. Compra 1 adulto - 3 niños - Economy Light - con asistencia - sin asiento - sin extras (One-Way)</div><div class="step">7. Compra 1 adulto - 1 infante - Economy Light - sin asiento - sin extras (One-Way)</div><div class="step">Pruebas de cabinas Economy (One-Way) 8. Compra 1 adulto - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)</div><div class="step">Pruebas de cabinas Economy (One-Way) 9. Compra 1 adulto - Economy Comfort - sin asistencia - sin asiento - sin extras (One-Way)</div><div class="step">Pruebas de cabinas Economy (One-Way) 10. Compra 1 adulto - Economy Extra - sin asistencia - sin asiento - sin extras (One-Way)</div><div class="step">Pruebas de cabinas Premium (One-Way) 11. Compra 1 adulto - Premium Light - sin asistencia - sin asiento - sin extras (One-Way)</div><div class="step">Pruebas de cabinas Premium (One-Way) 12. Compra 1 adulto - Premium Light - Economy Comfort - sin asistencia - sin asiento - sin extras (One-Way)</div><div class="step">Pruebas de cabinas Premium (One-Way) 13. Compra 1 adulto - Premium Comfort - Economy Extra - sin asistencia - sin asiento - sin extras (One-Way)</div><div class="step">Pruebas de cabinas Premium (One-Way) 14. Compra 1 adulto - Premium Extra - sin asistencia - sin asiento - sin extras (One-Way)</div></div>
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-passed" data-status="passed">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon passed"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Exitoso</strong></div>
+<div class="step-list"><div class="step">1. Compra 1 adulto - Economy Light - sin asistencia - sin asiento - sin extras (Round-Trip)</div><div class="step">2. Compra 2 adultos (Diferentes) - Economy Light - sin asistencia - sin asiento - sin extras (Round-Trip)</div><div class="step">3. Compra 2 adultos (Diferentes) - Economy Light - Con asistencia TODAS - sin asiento - sin extras (Round-Trip)</div><div class="step">4. Compra 1 adulto - 1 niño - Economy Light - sin asistencia - sin asiento - sin extras (Round-Trip)</div><div class="step">5. Compra 1 adulto - 1 niño - Economy Light - con asistencia - sin asiento - sin extras (Round-Trip)</div><div class="step">6. Compra 1 adulto - 3 niños - Economy Light - con asistencia - sin asiento - sin extras (Round-Trip)</div><div class="step">7. Compra 1 adulto - 1 infante - Economy Light - sin asiento - sin extras (Round-Trip)</div><div class="step">Pruebas de cabinas Economy (Round-Trip) 8. Compra 1 adulto - Economy Light - sin asistencia - sin asiento - sin extras (Round-Trip)</div><div class="step">Pruebas de cabinas Economy (Round-Trip) 9. Compra 1 adulto - Economy Comfort - sin asistencia - sin asiento - sin extras (Round-Trip)</div><div class="step">Pruebas de cabinas Economy (Round-Trip) 10. Compra 1 adulto - Economy Extra - sin asistencia - sin asiento - sin extras (Round-Trip)</div><div class="step">Pruebas de cabinas Premium (Round-Trip) 11. Compra 1 adulto - Premium Light - sin asistencia - sin asiento - sin extras (Round-Trip)</div><div class="step">Pruebas de cabinas Premium (Round-Trip) 12. Compra 1 adulto - Premium Light - Economy Comfort - sin asistencia - sin asiento - sin extras (Round-Trip)</div><div class="step">Pruebas de cabinas Premium (Round-Trip) 13. Compra 1 adulto - Premium Comfort - Economy Extra - sin asistencia - sin asiento - sin extras (Round-Trip)</div><div class="step">Pruebas de cabinas Premium (Round-Trip) 14. Compra 1 adulto - Premium Extra - sin asistencia - sin asiento - sin extras (Round-Trip)</div></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <p>LEVEL Booking - Informe de Pruebas Automatizadas</p>
+        <p>Generado el 07/03/2025 15:05:24</p>
+    </footer>
+    
+    <script>
+        // Datos para gráficos
+        const overallData = {
+            labels: ['Exitosos', 'Fallidos', 'Omitidos'],
+            datasets: [{
+                data: [2, 0, 0],
+                backgroundColor: ['#4caf50', '#f44336', '#9e9e9e'],
+                hoverOffset: 4
+            }]
+        };
+        
+        const suitesData = {
+            labels: ['NoExtraNoSeat.spec.ts'],
+            datasets: [
+                {
+                    label: 'Exitosos',
+                    data: [2],
+                    backgroundColor: '#4caf50',
+                    barPercentage: 0.8
+                },
+                {
+                    label: 'Fallidos',
+                    data: [0],
+                    backgroundColor: '#f44336',
+                    barPercentage: 0.8
+                },
+                {
+                    label: 'Omitidos',
+                    data: [0],
+                    backgroundColor: '#9e9e9e',
+                    barPercentage: 0.8
+                }
+            ]
+        };
+        
+        // Configurar gráficos
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gráfico de resultados generales
+            const overallCtx = document.getElementById('overallResultsChart').getContext('2d');
+            const overallChart = new Chart(overallCtx, {
+                type: 'doughnut',
+                data: overallData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Resumen de Resultados',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico de resultados por testsuite
+            const suitesCtx = document.getElementById('testsuiteResultsChart').getContext('2d');
+            const suitesChart = new Chart(suitesCtx, {
+                type: 'bar',
+                data: suitesData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Resultados por Test Suite',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Toggle para expandir/colapsar testsuites
+            document.querySelectorAll('.testsuite-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const content = this.nextElementSibling;
+                    const isExpanded = content.style.display === 'block';
+                    
+                    if (isExpanded) {
+                        content.style.display = 'none';
+                        this.classList.remove('expanded');
+                    } else {
+                        content.style.display = 'block';
+                        this.classList.add('expanded');
+                    }
+                });
+            });
+            
+            // Toggle para expandir/colapsar testcases
+            document.querySelectorAll('.testcase-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const details = this.nextElementSibling;
+                    const isExpanded = details.style.display === 'block';
+                    
+                    if (isExpanded) {
+                        details.style.display = 'none';
+                        this.classList.remove('expanded');
+                    } else {
+                        details.style.display = 'block';
+                        this.classList.add('expanded');
+                        details.classList.add('fade-in');
+                    }
+                });
+            });
+            
+            // Filtrado de testcases
+            document.querySelectorAll('.filter-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Actualizar estado activo de los botones
+                    document.querySelectorAll('.filter-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Filtrar testcases
+                    document.querySelectorAll('.testcase').forEach(testcase => {
+                        const status = testcase.getAttribute('data-status');
+                        
+                        if (filter === 'all' || status === filter ||
+                            (filter === 'failed' && (status === 'failed' || status === 'error'))) {
+                            testcase.style.display = 'block';
+                        } else {
+                            testcase.style.display = 'none';
+                        }
+                    });
+                    
+                    // Mostrar/ocultar testsuites según si tienen testcases visibles
+                    document.querySelectorAll('.testsuite').forEach(testsuite => {
+                        const visibleTestcases = testsuite.querySelectorAll('.testcase[style="display: block"]').length;
+                        
+                        if (filter === 'all') {
+                            testsuite.style.display = 'block';
+                        } else if (filter === 'passed' && parseInt(testsuite.getAttribute('data-passed')) > 0) {
+                            testsuite.style.display = 'block';
+                        } else if (filter === 'failed' && parseInt(testsuite.getAttribute('data-failed')) > 0) {
+                            testsuite.style.display = 'block';
+                        } else if (filter === 'skipped' && parseInt(testsuite.getAttribute('data-skipped')) > 0) {
+                            testsuite.style.display = 'block';
+                        } else {
+                            testsuite.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Expandir automáticamente los test suites con fallos
+            if (0 > 0) {
+                document.querySelectorAll('.testsuite').forEach(testsuite => {
+                    if (parseInt(testsuite.getAttribute('data-failed')) > 0) {
+                        const header = testsuite.querySelector('.testsuite-header');
+                        const content = testsuite.querySelector('.testsuite-content');
+                        
+                        content.style.display = 'block';
+                        header.classList.add('expanded');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

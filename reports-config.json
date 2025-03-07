@@ -2,6 +2,13 @@
   "reports": [
     {
       "title": "prueba4",
+      "date": "2025-03-07_15-05-24",
+      "htmlPath": "reports/report-2025-03-07_15-05-24/html/index.html",
+      "junitPath": "reports/report-2025-03-07_15-05-24/junit/processed-report.xml",
+      "junitHtmlPath": "reports/report-2025-03-07_15-05-24/junit/junit-report.html"
+    },
+    {
+      "title": "prueba4",
       "date": "2025-03-07_14-52-51",
       "htmlPath": "reports/report-2025-03-07_14-52-51/html/index.html",
       "junitPath": "reports/report-2025-03-07_14-52-51/junit/processed-report.xml",
