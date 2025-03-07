@@ -1,6 +1,13 @@
 {
   "reports": [
     {
+      "title": "prueba4",
+      "date": "2025-03-07_14-52-51",
+      "htmlPath": "reports/report-2025-03-07_14-52-51/html/index.html",
+      "junitPath": "reports/report-2025-03-07_14-52-51/junit/processed-report.xml",
+      "junitHtmlPath": "reports/report-2025-03-07_14-52-51/junit/junit-report.html"
+    },
+    {
       "title": "sinExtras",
       "date": "2025-03-07_14-05-44",
       "htmlPath": "reports/report-2025-03-07_14-05-44/html/index.html",
