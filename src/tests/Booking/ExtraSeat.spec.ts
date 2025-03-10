@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
-import { runSingleTest, runTestSuite, TestConfig } from '../utils/test-framework';
-import { ExtraSeatTestConfigs } from '../config/test-configs';
+import { runSingleTest, runTestSuite, TestConfig } from '../../utils/test-framework';
+import { ExtraSeatTestConfigs } from '../../config/test-configs';
 
 /**
  * Suite de pruebas para reservas de vuelo con selección de asiento
@@ -61,7 +61,7 @@ test('3. Compra 2 adultos (Diferentes) - Economy Light - Economy Light - Con asi
 }, TEST_TIMEOUT);
 
 // Importación necesaria para las pruebas personalizadas
-import { CabinType } from '../fixtures/userData';
+import { CabinType } from '../../fixtures/userData';
 
 // Diferentes combinaciones de cabina con selección de asiento
 test.describe('Pruebas de cabinas con selección de asiento', () => {

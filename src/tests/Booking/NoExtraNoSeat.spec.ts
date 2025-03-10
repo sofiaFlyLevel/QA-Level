@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
-import { runSingleTest, runTestSuite, TestConfig } from '../utils/test-framework';
-import { NoExtraNoSeatTestConfigs } from '../config/test-configs';
+import { runSingleTest, runTestSuite, TestConfig } from '../../utils/test-framework';
+import { NoExtraNoSeatTestConfigs } from '../../config/test-configs';
 
 /**
  * Suite de pruebas para reservas de vuelo sin asientos ni extras

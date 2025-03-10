@@ -1,8 +1,8 @@
 // Importaciones
 import { test, expect, type Page } from '@playwright/test';
-import { MoneyChosee, LenguageChoose } from '../fixtures/userData';
-import { entornoData } from '../fixtures/environmentData';
-import { Logger } from '../utils/Logger';
+import { MoneyChosee, LenguageChoose } from '../../fixtures/userData';
+import { entornoData } from '../../fixtures/environmentData';
+import { Logger } from '../../utils/Logger';
 import * as XLSX from 'xlsx';
 
 // Detectar si estamos ejecutando en BrowserStack

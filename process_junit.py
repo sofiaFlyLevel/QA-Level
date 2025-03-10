@@ -8,108 +8,151 @@ import tempfile
 import time
 
 def update_junit_report(input_path, external_dir):
+    print(f"\nDEBUG: Starting update_junit_report")
+    print(f"DEBUG: Input path: {input_path}")
+    print(f"DEBUG: External directory: {external_dir}")
+    
     if not os.path.exists(input_path):
+        print(f"DEBUG: Input file does not exist")
         raise FileNotFoundError(f"Input file {input_path} does not exist.")
 
-    # Crear el directorio externo si no existe
+    # Create external directory if it doesn't exist
     if not os.path.exists(external_dir):
+        print(f"DEBUG: Creating external directory: {external_dir}")
         os.makedirs(external_dir)
+    else:
+        print(f"DEBUG: External directory already exists")
 
-    # Definir la ruta del archivo de destino
+    # Define output path
     output_path = os.path.join(external_dir, "junit-report.xml")
+    print(f"DEBUG: Output path: {output_path}")
 
-    # Si el archivo de destino no existe o está vacío, copiar el archivo de entrada
+    # If output file doesn't exist or is empty, copy input file directly
     if not os.path.exists(output_path) or os.path.getsize(output_path) == 0:
+        print(f"DEBUG: Output file doesn't exist or is empty, copying directly")
         shutil.copy(input_path, output_path)
         print(f"El archivo {output_path} no existía o estaba vacío. Se copió directamente desde {input_path}.")
         return output_path
 
-    # Intentar analizar el archivo existente
+    print(f"DEBUG: Output file exists and is not empty, checking content")
+    
+    # Try to parse existing file
     try:
+        print(f"DEBUG: Parsing existing report")
         existing_tree = ET.parse(output_path)
         existing_root = existing_tree.getroot()
-    except ET.ParseError:
+        print(f"DEBUG: Existing root tag: {existing_root.tag}")
+        print(f"DEBUG: Number of test suites in existing report: {len(existing_root.findall('testsuite'))}")
+    except ET.ParseError as e:
+        print(f"DEBUG: Parse error on existing file: {e}")
         print(f"El archivo {output_path} no es un XML válido. Se reemplazará con {input_path}.")
         shutil.copy(input_path, output_path)
         return output_path
 
-    # Analizar el nuevo reporte JUnit
-    new_tree = ET.parse(input_path)
-    new_root = new_tree.getroot()
+    # Parse new JUnit report
+    try:
+        print(f"DEBUG: Parsing new report")
+        new_tree = ET.parse(input_path)
+        new_root = new_tree.getroot()
+        print(f"DEBUG: New root tag: {new_root.tag}")
+        print(f"DEBUG: Number of test suites in new report: {len(new_root.findall('testsuite'))}")
+    except ET.ParseError as e:
+        print(f"DEBUG: Parse error on new file: {e}")
+        print(f"El archivo de entrada {input_path} no es un XML válido.")
+        return output_path
 
-    # Bandera para rastrear si se hicieron actualizaciones
+    # Flag to track updates
     updated = False
+    print(f"DEBUG: Starting merge process")
 
-    # Fusionar o actualizar los casos de prueba
+    # Merge or update test cases
     for new_testsuite in new_root.findall("testsuite"):
-        existing_testsuite = existing_root.find(f".//testsuite[@name='{new_testsuite.attrib['name']}']")
+        print(f"DEBUG: Processing testsuite: {new_testsuite.attrib.get('name', 'unnamed')}")
+        existing_testsuite = existing_root.find(f".//testsuite[@name='{new_testsuite.attrib.get('name', '')}']")
         if existing_testsuite is None:
+            print(f"DEBUG: Testsuite not found in existing report, adding it")
             existing_root.append(new_testsuite)
             updated = True
         else:
+            print(f"DEBUG: Testsuite exists, checking testcases")
             for new_testcase in new_testsuite.findall("testcase"):
-                existing_testcase = existing_testsuite.find(f".//testcase[@name='{new_testcase.attrib['name']}']")
+                print(f"DEBUG: Processing testcase: {new_testcase.attrib.get('name', 'unnamed')}")
+                existing_testcase = existing_testsuite.find(f".//testcase[@name='{new_testcase.attrib.get('name', '')}']")
                 if existing_testcase is None:
+                    print(f"DEBUG: Testcase not found in existing testsuite, adding it")
                     existing_testsuite.append(new_testcase)
                     updated = True
                 else:
+                    print(f"DEBUG: Testcase exists, checking for changes")
                     if not ET.tostring(existing_testcase, encoding='utf-8') == ET.tostring(new_testcase, encoding='utf-8'):
+                        print(f"DEBUG: Testcase has changed, updating it")
                         existing_testsuite.remove(existing_testcase)
                         existing_testsuite.append(new_testcase)
                         updated = True
+                    else:
+                        print(f"DEBUG: Testcase is identical, no update needed")
 
-    # Guardar el contenido actualizado si hubo cambios
+    # Save updated content if there were changes
     if updated:
+        print(f"DEBUG: Updates detected, saving changes")
         existing_tree.write(output_path, encoding="utf-8", xml_declaration=True)
         print(f"Reporte JUnit actualizado guardado en {output_path}")
     else:
+        print(f"DEBUG: No updates detected")
         print("No se detectaron actualizaciones. El reporte JUnit ya estaba al día.")
 
     return output_path
 
 
 def process_junit_report(input_path, output_path):
+    print(f"\nDEBUG: Starting process_junit_report")
+    print(f"DEBUG: Input path: {input_path}")
+    print(f"DEBUG: Output path: {output_path}")
+    
     if not os.path.exists(input_path):
+        print(f"DEBUG: Input file does not exist")
         raise FileNotFoundError(f"Input file {input_path} does not exist.")
+    
+    # Print file content for debugging
+    try:
+        with open(input_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+            print(f"DEBUG: First 500 chars of input file: {content[:500]}")
+    except Exception as e:
+        print(f"DEBUG: Error reading file: {e}")
     
     tree = ET.parse(input_path)
     root = tree.getroot()
-
-    # Crear un nuevo reporte con `test.describe` como casos principales
+    print(f"DEBUG: Root element tag: {root.tag}")
+    
+    # Create a new report structure
     new_root = ET.Element('testsuites')
-
+    
+    # Keep all testcases directly under their testsuite
     for testsuite in root.findall('testsuite'):
+        print(f"DEBUG: Processing testsuite: {testsuite.attrib.get('name', 'unnamed')}")
         new_testsuite = ET.SubElement(new_root, 'testsuite', attrib=testsuite.attrib)
-        test_describe_cases = {}
-
+        
+        # Print all testcase names for debugging
         for testcase in testsuite.findall('testcase'):
-            # Separar el nombre en `test.describe` y el nombre del paso
-            name_parts = testcase.attrib['name'].split(' › ')  # Separador usado en Playwright
-            if len(name_parts) > 1:
-                describe_name = name_parts[0].strip()
-                step_name = name_parts[1].strip()
+            case_name = testcase.attrib.get('name', 'Unnamed Test Case')
+            print(f"DEBUG: Found testcase: {case_name}")
+            
+            # Copy the testcase directly
+            new_testcase = ET.SubElement(new_testsuite, 'testcase', attrib=testcase.attrib)
+            
+            # Copy all child elements of the testcase
+            for child in testcase:
+                new_testcase.append(child)
+            
+            # Check if there's a system-out element, if not create an empty one
+            system_out = testcase.find('system-out')
+            if system_out is None:
+                # Add an empty system-out element if it doesn't exist
+                ET.SubElement(new_testcase, 'system-out')
 
-                # Crear o reutilizar un caso basado en `test.describe`
-                if describe_name not in test_describe_cases:
-                    test_describe = ET.SubElement(new_testsuite, 'testcase', {
-                        'name': describe_name,
-                        'classname': testcase.attrib.get('classname', ''),
-                        'time': testcase.attrib.get('time', '0')
-                    })
-                    steps = ET.SubElement(test_describe, 'steps')
-                    test_describe_cases[describe_name] = steps
-                
-                # Agregar el paso dentro de `test.describe`
-                steps = test_describe_cases[describe_name]
-                step = ET.SubElement(steps, 'step', {'name': step_name})
-                for child in testcase:
-                    step.append(child)  # Copiar contenido del paso (errores, salidas, etc.)
-                
-            else:
-                # Si no contiene " › ", mantener el caso de prueba tal como está
-                new_testsuite.append(testcase)
-
-    # Guardar el nuevo archivo procesado
+    # Save the new processed file
+    print(f"DEBUG: Writing processed output to: {output_path}")
     new_tree = ET.ElementTree(new_root)
     new_tree.write(output_path, encoding='utf-8', xml_declaration=True)
     print(f"Reporte JUnit procesado guardado en {output_path}")
@@ -117,29 +160,32 @@ def process_junit_report(input_path, output_path):
 
 def create_junit_html_report(xml_path, html_output_path):
     """
-    Convierte un archivo JUnit XML en un informe HTML avanzado con gráficos y desglose interactivo.
+    Converts a JUnit XML file into an advanced HTML report with charts and interactive breakdown.
+    Shows each testcase in a dropdown with system-out information.
     """
     if not os.path.exists(xml_path):
-        raise FileNotFoundError(f"Archivo XML no encontrado: {xml_path}")
+        raise FileNotFoundError(f"XML file not found: {xml_path}")
     
-    # Parsear el XML
+    # Parse the XML
     tree = ET.parse(xml_path)
     root = tree.getroot()
     
-    # Calcular estadísticas generales
+    # Calculate general statistics
     total_testsuites = len(root.findall('testsuite'))
     total_testcases = 0
     total_failures = 0
     total_errors = 0
     total_skipped = 0
     
-    # Recopilar datos para el gráfico
+    # Collect data for the chart
     suite_data = []
     
+    # First pass - recalculate all test counts for each suite
     for testsuite in root.findall('testsuite'):
         suite_name = testsuite.get('name', 'Unnamed Test Suite')
         testcases = testsuite.findall('testcase')
-        total_testcases += len(testcases)
+        suite_tests = len(testcases)
+        total_testcases += suite_tests
         
         suite_passed = 0
         suite_failed = 0
@@ -159,18 +205,24 @@ def create_junit_html_report(xml_path, html_output_path):
             else:
                 suite_passed += 1
         
+        # Update testsuite attributes with accurate counts
+        testsuite.set('tests', str(suite_tests))
+        testsuite.set('failures', str(suite_failed))
+        testsuite.set('errors', str(suite_error))
+        testsuite.set('skipped', str(suite_skipped))
+        
         suite_data.append({
             'name': suite_name,
             'passed': suite_passed,
             'failed': suite_failed,
             'error': suite_error,
             'skipped': suite_skipped,
-            'total': len(testcases)
+            'total': suite_tests
         })
     
     total_passed = total_testcases - total_failures - total_errors - total_skipped
     
-    # Iniciar la estructura HTML
+    # Create the HTML structure
     html = """<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -181,13 +233,13 @@ def create_junit_html_report(xml_path, html_output_path):
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primary-color: #2f5496;
+            --primary-color: #04acd9;
             --secondary-color: #f0f4f8;
             --accent-color: #f39200;
             --text-color: #333;
             --light-text: #666;
             --border-color: #ddd;
-            --success-color: #4caf50;
+            --success-color: #3ca44c;
             --warning-color: #ff9800;
             --error-color: #f44336;
             --skipped-color: #9e9e9e;
@@ -497,6 +549,25 @@ def create_junit_html_report(xml_path, html_output_path):
             margin-bottom: 0.5rem;
             font-weight: 600;
         }
+
+        .system-out {
+            margin-top: 0.5rem;
+            padding: 1rem;
+            background-color: #f0f4f8;
+            border-left: 4px solid #6c757d;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .system-out-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
         
         .step-list {
             margin-top: 1rem;
@@ -615,19 +686,19 @@ def create_junit_html_report(xml_path, html_output_path):
             <div class="card-body">
                 <div class="summary-stats">
                     <div class="stat-card total">
-                        <div class="stat-number">${total_testcases}</div>
+                        <div class="stat-number">""" + str(total_testcases) + """</div>
                         <div class="stat-label">Total de Pruebas</div>
                     </div>
                     <div class="stat-card passed">
-                        <div class="stat-number">${total_passed}</div>
+                        <div class="stat-number">""" + str(total_passed) + """</div>
                         <div class="stat-label">Pruebas Exitosas</div>
                     </div>
                     <div class="stat-card failed">
-                        <div class="stat-number">${total_failures + total_errors}</div>
+                        <div class="stat-number">""" + str(total_failures + total_errors) + """</div>
                         <div class="stat-label">Pruebas Fallidas</div>
                     </div>
                     <div class="stat-card skipped">
-                        <div class="stat-number">${total_skipped}</div>
+                        <div class="stat-number">""" + str(total_skipped) + """</div>
                         <div class="stat-label">Pruebas Omitidas</div>
                     </div>
                 </div>
@@ -656,20 +727,45 @@ def create_junit_html_report(xml_path, html_output_path):
                 </div>
 """
     
-    # Añadir cada testsuite
+    # Add each testsuite
     html += '<div class="testsuite-list">'
     
     for testsuite in root.findall('testsuite'):
         suite_name = testsuite.get('name', 'Unnamed Test Suite')
-        suite_tests = int(testsuite.get('tests', '0'))
-        suite_failures = int(testsuite.get('failures', '0'))
-        suite_errors = int(testsuite.get('errors', '0'))
-        suite_skipped = int(testsuite.get('skipped', '0'))
+        
+        # Count test cases directly in this loop to ensure accuracy
+        suite_tests = 0
+        suite_passed = 0
+        suite_failures = 0
+        suite_errors = 0  
+        suite_skipped = 0
+        
+        # Analyze all testcases in this suite
+        for testcase in testsuite.findall('testcase'):
+            suite_tests += 1
+            
+            has_failure = testcase.find('failure') is not None
+            has_error = testcase.find('error') is not None
+            has_skipped = testcase.find('skipped') is not None
+            
+            if has_failure:
+                suite_failures += 1
+            elif has_error:
+                suite_errors += 1
+            elif has_skipped:
+                suite_skipped += 1
+            else:
+                suite_passed += 1
+        
+        # Update the testsuite attribute with recalculated values
+        testsuite.set('tests', str(suite_tests))
+        testsuite.set('failures', str(suite_failures))
+        testsuite.set('errors', str(suite_errors))
+        testsuite.set('skipped', str(suite_skipped))
+        
         suite_time = float(testsuite.get('time', '0'))
         
-        suite_passed = suite_tests - suite_failures - suite_errors - suite_skipped
-        
-        # Determinar el estado del testsuite
+        # Determine the testsuite status
         suite_status = "passed"
         if suite_failures > 0 or suite_errors > 0:
             suite_status = "has-failures"
@@ -690,6 +786,11 @@ def create_junit_html_report(xml_path, html_output_path):
                         </div>
                     </div>
                     <div class="testsuite-content">
+"""
+        
+        # Only add the progress bar if there are tests
+        if suite_tests > 0:
+            html += f"""
                         <div class="progress-bar">
                             <div class="progress-fill">
                                 {f'<div class="progress-segment passed" style="width: {suite_passed / suite_tests * 100}%;"></div>' if suite_passed > 0 else ''}
@@ -699,7 +800,7 @@ def create_junit_html_report(xml_path, html_output_path):
                         </div>
 """
         
-        # Añadir cada testcase
+        # Add each testcase as a dropdown
         for testcase in testsuite.findall('testcase'):
             case_name = testcase.get('name', 'Unnamed Test Case')
             case_class = testcase.get('classname', '')
@@ -738,7 +839,7 @@ def create_junit_html_report(xml_path, html_output_path):
                                 <div>Estado: <strong>{status_text}</strong></div>
 """
             
-            # Añadir detalles específicos según el estado
+            # Add failure, error, or skipped details if present
             if has_failure:
                 failure = testcase.find('failure')
                 failure_msg = failure.get('message', '')
@@ -770,14 +871,17 @@ def create_junit_html_report(xml_path, html_output_path):
                                 </div>
 """
             
-            # Añadir pasos si existen
-            steps = testcase.find('steps')
-            if steps is not None:
-                html += '<div class="step-list">'
-                for step in steps.findall('step'):
-                    step_name = step.get('name', 'Unnamed Step')
-                    html += f'<div class="step">{step_name}</div>'
-                html += '</div>'
+            # Add system-out content if it exists
+            system_out = testcase.find('system-out')
+            if system_out is not None:
+                system_out_text = system_out.text or ''
+                if system_out_text.strip():  # Only add if there's actual content
+                    html += f"""
+                                <div class="system-out">
+                                    <div class="system-out-title">Salida del sistema:</div>
+                                    <pre>{system_out_text}</pre>
+                                </div>
+"""
             
             html += """
                             </div>
@@ -992,7 +1096,6 @@ def create_junit_html_report(xml_path, html_output_path):
     print(f"Informe HTML avanzado de JUnit creado en: {html_output_path}")
     return html_output_path
 
-
 def publish_to_github_pages(report_title, processed_file_path):
     """
     Publica los informes procesados en GitHub Pages.
@@ -1148,7 +1251,7 @@ def create_index_page(base_dir, config):
     <title>LEVEL Booking Test Reports</title>
     <style>
         :root {
-            --primary-color: #2f5496;
+            --primary-color: #04acd9;
             --secondary-color: #f0f4f8;
             --accent-color: #f39200;
             --text-color: #333;
@@ -1310,42 +1413,43 @@ def create_index_page(base_dir, config):
 
 
 # Script principal
-input_path = './test-results/junit-report.xml'
-external_dir = './external-test-reports'
+if __name__ == "__main__":
+    input_path = './test-results/junit-report.xml'
+    external_dir = './external-test-reports'
 
-try:
-    # Paso 1: Actualizar el reporte JUnit
-    updated_path = update_junit_report(input_path, external_dir)
+    try:
+        # Paso 1: Actualizar el reporte JUnit
+        updated_path = update_junit_report(input_path, external_dir)
 
-    # Paso 2: Procesar el reporte actualizado
-    dynamic_name = input("Ingrese un nombre para el archivo de salida procesado (por defecto: marca de tiempo actual): ")
-    if not dynamic_name.strip():
-        dynamic_name = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        # Paso 2: Procesar el reporte actualizado
+        dynamic_name = input("Ingrese un nombre para el archivo de salida procesado (por defecto: marca de tiempo actual): ")
+        if not dynamic_name.strip():
+            dynamic_name = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-    processed_output_path = f"./test-results/processed-junit-report-{dynamic_name}.xml"
-    process_junit_report(updated_path, processed_output_path)
+        processed_output_path = f"./test-results/processed-junit-report-{dynamic_name}.xml"
+        process_junit_report(updated_path, processed_output_path)
 
-    # Paso 3: Preguntar si se desea publicar en GitHub Pages
-    upload_to_github = input("¿Desea publicar los resultados en GitHub Pages? (yes/no): ").strip().lower()
+        # Paso 3: Preguntar si se desea publicar en GitHub Pages
+        upload_to_github = input("¿Desea publicar los resultados en GitHub Pages? (yes/no): ").strip().lower()
 
-    if upload_to_github == 'yes':
-        # Usar el mismo nombre dinámico como título del informe
-        report_title = dynamic_name if dynamic_name.strip() else f"Informe de pruebas {datetime.now().strftime('%d/%m/%Y')}"
-        
-        success = publish_to_github_pages(report_title, processed_output_path)
-        if success:
-            print("Resultados publicados exitosamente en GitHub Pages.")
+        if upload_to_github == 'yes':
+            # Usar el mismo nombre dinámico como título del informe
+            report_title = dynamic_name if dynamic_name.strip() else f"Informe de pruebas {datetime.now().strftime('%d/%m/%Y')}"
+            
+            success = publish_to_github_pages(report_title, processed_output_path)
+            if success:
+                print("Resultados publicados exitosamente en GitHub Pages.")
+            else:
+                print("No se pudieron publicar los resultados en GitHub Pages.")
         else:
-            print("No se pudieron publicar los resultados en GitHub Pages.")
-    else:
-        print("Los resultados no fueron publicados en GitHub Pages.")
+            print("Los resultados no fueron publicados en GitHub Pages.")
 
-except FileNotFoundError as e:
-    print(str(e))
-    exit(1)
-except subprocess.CalledProcessError as e:
-    print(f"Error al ejecutar un comando: {e}")
-    exit(1)
-except Exception as e:
-    print(f"Error inesperado: {e}")
-    exit(1)
+    except FileNotFoundError as e:
+        print(str(e))
+        exit(1)
+    except subprocess.CalledProcessError as e:
+        print(f"Error al ejecutar un comando: {e}")
+        exit(1)
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        exit(1)
