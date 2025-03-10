@@ -4,6 +4,7 @@ Este es un framework de pruebas end-to-end para el proceso de reserva de vuelos 
 
 ## Tabla de Contenidos
 
+- [Web Informe](https://sofiaflylevel.github.io/QA-Level/#)
 - [Requisitos](#requisitos)
 - [Instalación](#instalación)
 - [Estructura del Proyecto](#estructura-del-proyecto)
