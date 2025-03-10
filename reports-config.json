@@ -1,6 +1,13 @@
 {
   "reports": [
     {
+      "title": "pruebatest3",
+      "date": "2025-03-10_09-01-45",
+      "htmlPath": "reports/report-2025-03-10_09-01-45/html/index.html",
+      "junitPath": "reports/report-2025-03-10_09-01-45/junit/processed-report.xml",
+      "junitHtmlPath": "reports/report-2025-03-10_09-01-45/junit/junit-report.html"
+    },
+    {
       "title": "pruebatest2",
       "date": "2025-03-10_08-53-11",
       "htmlPath": "reports/report-2025-03-10_08-53-11/html/index.html",
