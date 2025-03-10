@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEVEL Booking - Informe de Pruebas</title>
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #2f5496;
+            --secondary-color: #f0f4f8;
+            --accent-color: #f39200;
+            --text-color: #333;
+            --light-text: #666;
+            --border-color: #ddd;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
+            --skipped-color: #9e9e9e;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(135deg, transparent 33.33%, white 33.33%, white 66.66%, transparent 66.66%);
+            background-size: 20px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .stat-card.total {
+            background-color: #e9ecef;
+        }
+        
+        .stat-card.passed {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .stat-card.failed {
+            background-color: var(--error-color);
+            color: white;
+        }
+        
+        .stat-card.skipped {
+            background-color: var(--skipped-color);
+            color: white;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            background-color: #e9ecef;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+        
+        .filter-btn:hover {
+            background-color: #dee2e6;
+        }
+        
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .filter-btn.passed {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .filter-btn.failed {
+            background-color: var(--error-color);
+            color: white;
+        }
+        
+        .filter-btn.skipped {
+            background-color: var(--skipped-color);
+            color: white;
+        }
+        
+        .testsuite-list {
+            margin-top: 2rem;
+        }
+        
+        .testsuite {
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .testsuite-header {
+            background-color: #f8f9fa;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .testsuite-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .testsuite-name::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .testsuite-name.passed::before {
+            background-color: var(--success-color);
+        }
+        
+        .testsuite-name.has-failures::before {
+            background-color: var(--error-color);
+        }
+        
+        .testsuite-name.skipped::before {
+            background-color: var(--skipped-color);
+        }
+        
+        .testsuite-meta {
+            font-size: 0.875rem;
+            color: var(--light-text);
+        }
+        
+        .testsuite-content {
+            display: none;
+            padding: 0;
+        }
+        
+        .testcase {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s;
+        }
+        
+        .testcase:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .testcase:last-child {
+            border-bottom: none;
+        }
+        
+        .testcase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .testcase-name {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .status-icon.passed {
+            background-color: var(--success-color);
+        }
+        
+        .status-icon.failed {
+            background-color: var(--error-color);
+        }
+        
+        .status-icon.error {
+            background-color: var(--error-color);
+        }
+        
+        .status-icon.skipped {
+            background-color: var(--skipped-color);
+        }
+        
+        .testcase-duration {
+            font-size: 0.875rem;
+            color: var(--light-text);
+        }
+        
+        .testcase-details {
+            display: none;
+            padding: 1rem 0 0 2rem;
+            font-size: 0.875rem;
+        }
+        
+        .testcase-classname {
+            margin-bottom: 0.5rem;
+            color: var(--light-text);
+        }
+        
+        .testcase-failure, .testcase-error {
+            margin-top: 0.5rem;
+            padding: 1rem;
+            background-color: #fff5f5;
+            border-left: 4px solid var(--error-color);
+            border-radius: 4px;
+        }
+        
+        .testcase-skipped {
+            margin-top: 0.5rem;
+            padding: 1rem;
+            background-color: #f5f5f5;
+            border-left: 4px solid var(--skipped-color);
+            border-radius: 4px;
+        }
+        
+        .failure-message, .error-message, .skipped-message {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .system-out {
+            margin-top: 0.5rem;
+            padding: 1rem;
+            background-color: #f0f4f8;
+            border-left: 4px solid #6c757d;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .system-out-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+        
+        .step-list {
+            margin-top: 1rem;
+        }
+        
+        .step {
+            padding: 0.5rem;
+            border-left: 2px solid #e9ecef;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .expand-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            text-align: center;
+            line-height: 16px;
+            transition: transform 0.2s;
+        }
+        
+        .expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+            background-color: #e9ecef;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            display: flex;
+        }
+        
+        .progress-segment {
+            height: 100%;
+        }
+        
+        .progress-segment.passed {
+            background-color: var(--success-color);
+        }
+        
+        .progress-segment.failed {
+            background-color: var(--error-color);
+        }
+        
+        .progress-segment.error {
+            background-color: var(--error-color);
+        }
+        
+        .progress-segment.skipped {
+            background-color: var(--skipped-color);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            margin-top: 3rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .badge.passed {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .badge.failed {
+            background-color: var(--error-color);
+            color: white;
+        }
+        
+        .badge.skipped {
+            background-color: var(--skipped-color);
+            color: white;
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>LEVEL Booking - Informe de Pruebas</h1>
+        <p>Resumen de resultados de las pruebas automatizadas</p>
+    </div>
+    
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                Resumen General
+            </div>
+            <div class="card-body">
+                <div class="summary-stats">
+                    <div class="stat-card total">
+                        <div class="stat-number">${total_testcases}</div>
+                        <div class="stat-label">Total de Pruebas</div>
+                    </div>
+                    <div class="stat-card passed">
+                        <div class="stat-number">${total_passed}</div>
+                        <div class="stat-label">Pruebas Exitosas</div>
+                    </div>
+                    <div class="stat-card failed">
+                        <div class="stat-number">${total_failures + total_errors}</div>
+                        <div class="stat-label">Pruebas Fallidas</div>
+                    </div>
+                    <div class="stat-card skipped">
+                        <div class="stat-number">${total_skipped}</div>
+                        <div class="stat-label">Pruebas Omitidas</div>
+                    </div>
+                </div>
+                
+                <div class="charts-container">
+                    <div class="chart-container">
+                        <canvas id="overallResultsChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="testsuiteResultsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                Resultados Detallados
+            </div>
+            <div class="card-body">
+                <div class="filter-controls">
+                    <button class="filter-btn active" data-filter="all">Todos</button>
+                    <button class="filter-btn passed" data-filter="passed">Exitosos</button>
+                    <button class="filter-btn failed" data-filter="failed">Fallidos</button>
+                    <button class="filter-btn skipped" data-filter="skipped">Omitidos</button>
+                </div>
+<div class="testsuite-list">
+                <div class="testsuite" data-passed="3" data-failed="0" data-skipped="25">
+                    <div class="testsuite-header">
+                        <div class="testsuite-name passed">
+                            NoExtraNoSeat.spec.ts
+                            <span class="badge passed">3</span>
+                            
+                            <span class="badge skipped">25</span>
+                        </div>
+                        <div class="testsuite-meta">
+                            654.71s <span class="expand-icon">›</span>
+                        </div>
+                    </div>
+                    <div class="testsuite-content">
+                        <div class="progress-bar">
+                            <div class="progress-fill">
+                                <div class="progress-segment passed" style="width: 10.714285714285714%;"></div>
+                                
+                                <div class="progress-segment skipped" style="width: 89.28571428571429%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-passed" data-status="passed">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon passed"></span>
+                                    Pruebas de vuelos de solo ida (One-Way) › 1. Compra 1 adulto - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    91.616s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Exitoso</strong></div>
+
+                                <div class="system-out">
+                                    <div class="system-out-title">Salida del sistema:</div>
+                                    <pre>
+[INFO] Ejecutando prueba: ONE-WAY: 1. Compra 1 adulto - Economy Light - sin asistencia
+[INFO] Intento 1/5
+[INFO] Iniciando prueba: ONE-WAY: 1. Compra 1 adulto - Economy Light - sin asistencia
+[INFO] Inicializando test
+[INFO] Cookies aceptadas
+[INFO] Configurando idioma y moneda
+[INFO] Ejecutando setLanguageAndCurrency (intento 1/3)
+[INFO] Idioma configurado a EN, Moneda configurada a USD
+[INFO] Test inicializado correctamente
+[INFO] Seleccionando origen: SCL, destino: BCN
+[INFO] Origen y destino seleccionados correctamente
+[INFO] Tipo de viaje configurado a solo ida
+[INFO] Seleccionando fechas de vuelo
+[INFO] Ejecutando selectFlightDates (intento 1/3)
+Selected departure date: { year: [32m'2025'[39m, month: [32m'7'[39m, index: [33m5[39m, value: [33m9[39m }
+[INFO] Fechas de vuelo seleccionadas correctamente
+[INFO] Seleccionando pasajeros: 1 adultos, 0 niños, 0 infantes
+[INFO] Ejecutando selectPassengers (intento 1/3)
+Ajustando número de pasajeros
+[INFO] Pasajeros seleccionados correctamente
+[INFO] Seleccionando clases y tipos de vuelo
+[INFO] Ejecutando selectFlightClasses (intento 1/3)
+[INFO] Capturando información del vuelo de ida
+[INFO] Extrayendo información de vuelo OUTBOUND, tarjeta #0
+[INFO] Información del vuelo de ida capturada con éxito {
+  direction: [32m'OUTBOUND'[39m,
+  date: [32m'Wed, Jul 9'[39m,
+  origin: { code: [32m'SCL'[39m, name: [32m'Santiago'[39m },
+  destination: { code: [32m'BCN'[39m, name: [32m'Barcelona'[39m },
+  times: {
+    departure: [32m'10:25'[39m,
+    arrival: [32m'06:10'[39m,
+    duration: [32m'13h 45m'[39m,
+    nextDay: [33mtrue[39m
+  },
+  airline: [32m'IB'[39m,
+  flightNumber: [32m''[39m,
+  cabinOptions: {
+    economy: { name: [32m'ECONOMY'[39m, price: [32m'$601'[39m },
+    premium: { name: [32m'PREMIUM'[39m, price: [32m'$751'[39m }
+  },
+  cardSelector: [32m'.outbound-flight-container .card-flight:nth-child(1)'[39m,
+  selectedCabin: { class: [32m'Economy'[39m, type: [32m'Light'[39m, fullName: [32m'Economy Light'[39m }
+}
+[INFO] Seleccionando cabina para vuelo de ida: Economy
+[INFO] Successfully clicked the element: .outbound-flight-container .card-flight:nth-child(1) .btn-economy
+[INFO] Información de vuelo capturada y almacenada {
+  outbound: {
+    direction: [32m'OUTBOUND'[39m,
+    date: [32m'Wed, Jul 9'[39m,
+    origin: { code: [32m'SCL'[39m, name: [32m'Santiago'[39m },
+    destination: { code: [32m'BCN'[39m, name: [32m'Barcelona'[39m },
+    times: {
+      departure: [32m'10:25'[39m,
+      arrival: [32m'06:10'[39m,
+      duration: [32m'13h 45m'[39m,
+      nextDay: [33mtrue[39m
+    },
+    airline: [32m'IB'[39m,
+    flightNumber: [32m''[39m,
+    cabinOptions: { economy: [36m[Object][39m, premium: [36m[Object][39m },
+    cardSelector: [32m'.outbound-flight-container .card-flight:nth-child(1)'[39m,
+    selectedCabin: { class: [32m'Economy'[39m, type: [32m'Light'[39m, fullName: [32m'Economy Light'[39m }
+  },
+  return: {}
+}
+[INFO] Clases y tipos de vuelo seleccionados correctamente
+[INFO] Completando datos para 1 adultos, 0 niños, 0 infantes
+[INFO] Ejecutando fillPassengerAdult-1 (intento 1/5)
+[INFO] Completando datos para adulto 1 de 1: Juan Perez
+[INFO] Empezando a completar datos para Adult 1: Juan Perez
+[INFO] Formulario para Adult-0 encontrado y visible
+[INFO] Intentando completar nombre (1/3)
+[INFO] Campo nombre completado con: Juan
+[INFO] Intentando completar apellido (1/3)
+[INFO] Campo apellido completado con: Perez
+[INFO] Intentando completar fecha de nacimiento (1/3)
+[INFO] Campo fecha de nacimiento completado con: 03/06/2010
+[INFO] Intentando seleccionar país Afghanistan (1/4)
+[INFO] Combobox de nacionalidad abierto
+[INFO] Filtrado países con: Afg
+[INFO] País seleccionado: Afghanistan
+[INFO] Selección de país completada: Afghanistan
+[INFO] Intentando seleccionar género (1/3)
+[INFO] Género seleccionado: female
+[INFO] Completados todos los datos para Adult 1: Juan Perez
+[INFO] Datos de todos los pasajeros completados correctamente
+[INFO] Completando datos de contacto para purchase
+[INFO] Ejecutando fillContactDetails (intento 1/3)
+[INFO] Haciendo clic en "Complete your purchase"
+[INFO] ¿Botón "Complete your purchase" visible? true
+[INFO] Datos de contacto completados correctamente
+[INFO] Prueba no incluye selección de asientos
+[INFO] Procesando pago
+[INFO] Ejecutando processPayment (intento 1/3)
+Iframe encontrado.
+[INFO] Pago procesado correctamente
+[INFO] Verificando confirmación de reserva
+[INFO] Esperando a que la navegación a la página de confirmación se complete...
+[INFO] URL actual: https://lv-fndoor-ecommerce-sbx-ghdubdbgdtcsane6.a01.azurefd.net/nwe/confirmation/?forcedCulture=en
+[INFO] Ejecutando verifyBookingConfirmation (intento 1/5)
+[INFO] Iniciando validación de la página de confirmación
+[INFO] Esperando a que la navegación a la página de confirmación se complete (máximo 60000ms)...
+[INFO] URL actual: https://lv-fndoor-ecommerce-sbx-ghdubdbgdtcsane6.a01.azurefd.net/nwe/confirmation/?forcedCulture=en
+[INFO] URL de confirmación detectada después de 8ms
+[INFO] Navegación a la página de confirmación completada
+[INFO] Buscando sección "Flight Summary" en la página
+[INFO] Sección "Flight Summary" encontrada mediante estrategia: exact
+[INFO] Esperando a elementos adicionales de la página de confirmación
+[INFO] Elemento .flight-info__journey-type encontrado correctamente
+[INFO] Elemento .flight-info__routes encontrado correctamente
+[INFO] Elemento .flight-card__footer encontrado correctamente
+[INFO] Extrayendo código de reserva
+[INFO] Código de reserva extraído: NELQT
+[INFO] Detalles de vuelo extraídos de la página de confirmación: {}
+Successfully saved booking code NELQT and all details to Excel
+[INFO] Información guardada exitosamente en Excel
+[INFO] Reserva confirmada correctamente
+[INFO] Prueba completada exitosamente: ONE-WAY: 1. Compra 1 adulto - Economy Light - sin asistencia
+[INFO] Prueba "ONE-WAY: 1. Compra 1 adulto - Economy Light - sin asistencia" exitosa
+
+</pre>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-passed" data-status="passed">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon passed"></span>
+                                    Pruebas de vuelos de solo ida (One-Way) › 2. Compra 2 adultos (Diferentes) - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    99.728s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Exitoso</strong></div>
+
+                                <div class="system-out">
+                                    <div class="system-out-title">Salida del sistema:</div>
+                                    <pre>
+[INFO] Ejecutando prueba: ONE-WAY: 2. Compra 2 adultos (Diferentes) - Economy Light
+[INFO] Intento 1/5
+[INFO] Iniciando prueba: ONE-WAY: 2. Compra 2 adultos (Diferentes) - Economy Light
+[INFO] Inicializando test
+[INFO] Cookies aceptadas
+[INFO] Configurando idioma y moneda
+[INFO] Ejecutando setLanguageAndCurrency (intento 1/3)
+[INFO] Idioma configurado a EN, Moneda configurada a USD
+[INFO] Test inicializado correctamente
+[INFO] Seleccionando origen: SCL, destino: BCN
+[INFO] Origen y destino seleccionados correctamente
+[INFO] Tipo de viaje configurado a solo ida
+[INFO] Seleccionando fechas de vuelo
+[INFO] Ejecutando selectFlightDates (intento 1/3)
+Selected departure date: { year: [32m'2025'[39m, month: [32m'7'[39m, index: [33m12[39m, value: [33m22[39m }
+[INFO] Fechas de vuelo seleccionadas correctamente
+[INFO] Seleccionando pasajeros: 2 adultos, 0 niños, 0 infantes
+[INFO] Ejecutando selectPassengers (intento 1/3)
+Ajustando número de pasajeros
+[INFO] Pasajeros seleccionados correctamente
+[INFO] Seleccionando clases y tipos de vuelo
+[INFO] Ejecutando selectFlightClasses (intento 1/3)
+[INFO] Capturando información del vuelo de ida
+[INFO] Extrayendo información de vuelo OUTBOUND, tarjeta #0
+[INFO] Información del vuelo de ida capturada con éxito {
+  direction: [32m'OUTBOUND'[39m,
+  date: [32m'Tue, Jul 22'[39m,
+  origin: { code: [32m'SCL'[39m, name: [32m'Santiago'[39m },
+  destination: { code: [32m'BCN'[39m, name: [32m'Barcelona'[39m },
+  times: {
+    departure: [32m'10:25'[39m,
+    arrival: [32m'06:10'[39m,
+    duration: [32m'13h 45m'[39m,
+    nextDay: [33mtrue[39m
+  },
+  airline: [32m'IB'[39m,
+  flightNumber: [32m''[39m,
+  cabinOptions: {
+    economy: { name: [32m'ECONOMY'[39m, price: [32m'$565'[39m },
+    premium: { name: [32m'PREMIUM'[39m, price: [32m'$751'[39m }
+  },
+  cardSelector: [32m'.outbound-flight-container .card-flight:nth-child(1)'[39m,
+  selectedCabin: { class: [32m'Economy'[39m, type: [32m'Light'[39m, fullName: [32m'Economy Light'[39m }
+}
+[INFO] Seleccionando cabina para vuelo de ida: Economy
+[INFO] Successfully clicked the element: .outbound-flight-container .card-flight:nth-child(1) .btn-economy
+[INFO] Información de vuelo capturada y almacenada {
+  outbound: {
+    direction: [32m'OUTBOUND'[39m,
+    date: [32m'Tue, Jul 22'[39m,
+    origin: { code: [32m'SCL'[39m, name: [32m'Santiago'[39m },
+    destination: { code: [32m'BCN'[39m, name: [32m'Barcelona'[39m },
+    times: {
+      departure: [32m'10:25'[39m,
+      arrival: [32m'06:10'[39m,
+      duration: [32m'13h 45m'[39m,
+      nextDay: [33mtrue[39m
+    },
+    airline: [32m'IB'[39m,
+    flightNumber: [32m''[39m,
+    cabinOptions: { economy: [36m[Object][39m, premium: [36m[Object][39m },
+    cardSelector: [32m'.outbound-flight-container .card-flight:nth-child(1)'[39m,
+    selectedCabin: { class: [32m'Economy'[39m, type: [32m'Light'[39m, fullName: [32m'Economy Light'[39m }
+  },
+  return: {}
+}
+[INFO] Clases y tipos de vuelo seleccionados correctamente
+[INFO] Completando datos para 2 adultos, 0 niños, 0 infantes
+[INFO] Ejecutando fillPassengerAdult-1 (intento 1/5)
+[INFO] Completando datos para adulto 1 de 2: Prueba Hola
+[INFO] Empezando a completar datos para Adult 1: Prueba Hola
+[INFO] Formulario para Adult-0 encontrado y visible
+[INFO] Intentando completar nombre (1/3)
+[INFO] Campo nombre completado con: Prueba
+[INFO] Intentando completar apellido (1/3)
+[INFO] Campo apellido completado con: Hola
+[INFO] Intentando completar fecha de nacimiento (1/3)
+[INFO] Campo fecha de nacimiento completado con: 03/06/2000
+[INFO] Intentando seleccionar país Afghanistan (1/4)
+[INFO] Combobox de nacionalidad abierto
+[INFO] Filtrado países con: Afg
+[INFO] País seleccionado: Afghanistan
+[INFO] Selección de país completada: Afghanistan
+[INFO] Intentando seleccionar género (1/3)
+[INFO] Género seleccionado: female
+[INFO] Completados todos los datos para Adult 1: Prueba Hola
+[INFO] Ejecutando fillPassengerAdult-2 (intento 1/5)
+[INFO] Completando datos para adulto 2 de 2: Sofía Pérez
+[INFO] Empezando a completar datos para Adult 2: Sofía Pérez
+[INFO] Formulario para Adult-1 encontrado y visible
+[INFO] Intentando completar nombre (1/3)
+[INFO] Campo nombre completado con: Sofía
+[INFO] Intentando completar apellido (1/3)
+[INFO] Campo apellido completado con: Pérez
+[INFO] Intentando completar fecha de nacimiento (1/3)
+[INFO] Campo fecha de nacimiento completado con: 03/06/1991
+[INFO] Intentando seleccionar país Afghanistan (1/4)
+[INFO] Combobox de nacionalidad abierto
+[INFO] Filtrado países con: Afg
+[INFO] País seleccionado: Afghanistan
+[INFO] Selección de país completada: Afghanistan
+[INFO] Intentando seleccionar género (1/3)
+[INFO] Género seleccionado: female
+[INFO] Completados todos los datos para Adult 2: Sofía Pérez
+[INFO] Datos de todos los pasajeros completados correctamente
+[INFO] Completando datos de contacto para purchase
+[INFO] Ejecutando fillContactDetails (intento 1/3)
+[INFO] Haciendo clic en "Complete your purchase"
+[INFO] ¿Botón "Complete your purchase" visible? true
+[INFO] Datos de contacto completados correctamente
+[INFO] Prueba no incluye selección de asientos
+[INFO] Procesando pago
+[INFO] Ejecutando processPayment (intento 1/3)
+Iframe encontrado.
+[INFO] Pago procesado correctamente
+[INFO] Verificando confirmación de reserva
+[INFO] Esperando a que la navegación a la página de confirmación se complete...
+[INFO] URL actual: https://lv-fndoor-ecommerce-sbx-ghdubdbgdtcsane6.a01.azurefd.net/nwe/confirmation/?forcedCulture=en
+[INFO] Ejecutando verifyBookingConfirmation (intento 1/5)
+[INFO] Iniciando validación de la página de confirmación
+[INFO] Esperando a que la navegación a la página de confirmación se complete (máximo 60000ms)...
+[INFO] URL actual: https://lv-fndoor-ecommerce-sbx-ghdubdbgdtcsane6.a01.azurefd.net/nwe/confirmation/?forcedCulture=en
+[INFO] URL de confirmación detectada después de 9ms
+[INFO] Navegación a la página de confirmación completada
+[INFO] Buscando sección "Flight Summary" en la página
+[INFO] Sección "Flight Summary" encontrada mediante estrategia: exact
+[INFO] Esperando a elementos adicionales de la página de confirmación
+[INFO] Elemento .flight-info__journey-type encontrado correctamente
+[INFO] Elemento .flight-info__routes encontrado correctamente
+[INFO] Elemento .flight-card__footer encontrado correctamente
+[INFO] Extrayendo código de reserva
+[INFO] Código de reserva extraído: NELQW
+[INFO] Detalles de vuelo extraídos de la página de confirmación: {}
+Successfully saved booking code NELQW and all details to Excel
+[INFO] Información guardada exitosamente en Excel
+[INFO] Reserva confirmada correctamente
+[INFO] Prueba completada exitosamente: ONE-WAY: 2. Compra 2 adultos (Diferentes) - Economy Light
+[INFO] Prueba "ONE-WAY: 2. Compra 2 adultos (Diferentes) - Economy Light" exitosa
+
+</pre>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de solo ida (One-Way) › 3. Compra 2 adultos (Diferentes) - Economy Light - Con asistencia TODAS - sin asiento - sin extras (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    108.654s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-passed" data-status="passed">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon passed"></span>
+                                    Pruebas de vuelos de solo ida (One-Way) › 4. Compra 1 adulto - 1 niño - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    97.437s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Exitoso</strong></div>
+
+                                <div class="system-out">
+                                    <div class="system-out-title">Salida del sistema:</div>
+                                    <pre>
+[INFO] Ejecutando prueba: ONE-WAY: 4. Compra 1 adulto - 1 niño - Economy Light - sin asistencia
+[INFO] Intento 1/5
+[INFO] Iniciando prueba: ONE-WAY: 4. Compra 1 adulto - 1 niño - Economy Light - sin asistencia
+[INFO] Inicializando test
+[INFO] Cookies aceptadas
+[INFO] Configurando idioma y moneda
+[INFO] Ejecutando setLanguageAndCurrency (intento 1/3)
+[INFO] Idioma configurado a EN, Moneda configurada a USD
+[INFO] Test inicializado correctamente
+[INFO] Seleccionando origen: SCL, destino: BCN
+[INFO] Origen y destino seleccionados correctamente
+[INFO] Tipo de viaje configurado a solo ida
+[INFO] Seleccionando fechas de vuelo
+[INFO] Ejecutando selectFlightDates (intento 1/3)
+Selected departure date: { year: [32m'2025'[39m, month: [32m'8'[39m, index: [33m8[39m, value: [33m16[39m }
+[INFO] Fechas de vuelo seleccionadas correctamente
+[INFO] Seleccionando pasajeros: 1 adultos, 1 niños, 0 infantes
+[INFO] Ejecutando selectPassengers (intento 1/3)
+Ajustando número de pasajeros
+[INFO] Pasajeros seleccionados correctamente
+[INFO] Seleccionando clases y tipos de vuelo
+[INFO] Ejecutando selectFlightClasses (intento 1/3)
+[INFO] Capturando información del vuelo de ida
+[INFO] Extrayendo información de vuelo OUTBOUND, tarjeta #0
+[INFO] Información del vuelo de ida capturada con éxito {
+  direction: [32m'OUTBOUND'[39m,
+  date: [32m'Sat, Aug 16'[39m,
+  origin: { code: [32m'SCL'[39m, name: [32m'Santiago'[39m },
+  destination: { code: [32m'BCN'[39m, name: [32m'Barcelona'[39m },
+  times: {
+    departure: [32m'10:25'[39m,
+    arrival: [32m'06:10'[39m,
+    duration: [32m'13h 45m'[39m,
+    nextDay: [33mtrue[39m
+  },
+  airline: [32m'IB'[39m,
+  flightNumber: [32m''[39m,
+  cabinOptions: {
+    economy: { name: [32m'ECONOMY'[39m, price: [32m'$601'[39m },
+    premium: { name: [32m'PREMIUM'[39m, price: [32m'$751'[39m }
+  },
+  cardSelector: [32m'.outbound-flight-container .card-flight:nth-child(1)'[39m,
+  selectedCabin: { class: [32m'Economy'[39m, type: [32m'Light'[39m, fullName: [32m'Economy Light'[39m }
+}
+[INFO] Seleccionando cabina para vuelo de ida: Economy
+[INFO] Successfully clicked the element: .outbound-flight-container .card-flight:nth-child(1) .btn-economy
+[INFO] Información de vuelo capturada y almacenada {
+  outbound: {
+    direction: [32m'OUTBOUND'[39m,
+    date: [32m'Sat, Aug 16'[39m,
+    origin: { code: [32m'SCL'[39m, name: [32m'Santiago'[39m },
+    destination: { code: [32m'BCN'[39m, name: [32m'Barcelona'[39m },
+    times: {
+      departure: [32m'10:25'[39m,
+      arrival: [32m'06:10'[39m,
+      duration: [32m'13h 45m'[39m,
+      nextDay: [33mtrue[39m
+    },
+    airline: [32m'IB'[39m,
+    flightNumber: [32m''[39m,
+    cabinOptions: { economy: [36m[Object][39m, premium: [36m[Object][39m },
+    cardSelector: [32m'.outbound-flight-container .card-flight:nth-child(1)'[39m,
+    selectedCabin: { class: [32m'Economy'[39m, type: [32m'Light'[39m, fullName: [32m'Economy Light'[39m }
+  },
+  return: {}
+}
+[INFO] Clases y tipos de vuelo seleccionados correctamente
+[INFO] Completando datos para 1 adultos, 1 niños, 0 infantes
+[INFO] Ejecutando fillPassengerAdult-1 (intento 1/5)
+[INFO] Completando datos para adulto 1 de 1: Juan Perez
+[INFO] Empezando a completar datos para Adult 1: Juan Perez
+[INFO] Formulario para Adult-0 encontrado y visible
+[INFO] Intentando completar nombre (1/3)
+[INFO] Campo nombre completado con: Juan
+[INFO] Intentando completar apellido (1/3)
+[INFO] Campo apellido completado con: Perez
+[INFO] Intentando completar fecha de nacimiento (1/3)
+[INFO] Campo fecha de nacimiento completado con: 03/06/2010
+[INFO] Intentando seleccionar país Afghanistan (1/4)
+[INFO] Combobox de nacionalidad abierto
+[INFO] Filtrado países con: Afg
+[INFO] País seleccionado: Afghanistan
+[INFO] Selección de país completada: Afghanistan
+[INFO] Intentando seleccionar género (1/3)
+[INFO] Género seleccionado: female
+[INFO] Completados todos los datos para Adult 1: Juan Perez
+[INFO] Ejecutando fillPassengerChild-1 (intento 1/5)
+[INFO] Completando datos para niño 1 de 1: Valería M. García
+[INFO] Empezando a completar datos para Child 1: Valería M. García
+[INFO] Formulario para Child-0 encontrado y visible
+[INFO] Intentando completar nombre (1/3)
+[INFO] Campo nombre completado con: Valería M.
+[INFO] Intentando completar apellido (1/3)
+[INFO] Campo apellido completado con: García
+[INFO] Intentando completar fecha de nacimiento (1/3)
+[INFO] Campo fecha de nacimiento completado con: 03/06/2015
+[INFO] Intentando seleccionar país Mexico (1/4)
+[INFO] Combobox de nacionalidad abierto
+[INFO] Filtrado países con: Mex
+[INFO] País seleccionado: Mexico
+[INFO] Selección de país completada: Mexico
+[INFO] Completados todos los datos para Child 1: Valería M. García
+[INFO] Datos de todos los pasajeros completados correctamente
+[INFO] Completando datos de contacto para purchase
+[INFO] Ejecutando fillContactDetails (intento 1/3)
+[INFO] Haciendo clic en "Complete your purchase"
+[INFO] ¿Botón "Complete your purchase" visible? true
+[INFO] Datos de contacto completados correctamente
+[INFO] Prueba no incluye selección de asientos
+[INFO] Procesando pago
+[INFO] Ejecutando processPayment (intento 1/3)
+Iframe encontrado.
+[INFO] Pago procesado correctamente
+[INFO] Verificando confirmación de reserva
+[INFO] Esperando a que la navegación a la página de confirmación se complete...
+[INFO] URL actual: https://lv-fndoor-ecommerce-sbx-ghdubdbgdtcsane6.a01.azurefd.net/nwe/confirmation/?forcedCulture=en
+[INFO] Ejecutando verifyBookingConfirmation (intento 1/5)
+[INFO] Iniciando validación de la página de confirmación
+[INFO] Esperando a que la navegación a la página de confirmación se complete (máximo 60000ms)...
+[INFO] URL actual: https://lv-fndoor-ecommerce-sbx-ghdubdbgdtcsane6.a01.azurefd.net/nwe/confirmation/?forcedCulture=en
+[INFO] URL de confirmación detectada después de 9ms
+[INFO] Navegación a la página de confirmación completada
+[INFO] Buscando sección "Flight Summary" en la página
+[INFO] Sección "Flight Summary" encontrada mediante estrategia: exact
+[INFO] Esperando a elementos adicionales de la página de confirmación
+[INFO] Elemento .flight-info__journey-type encontrado correctamente
+[INFO] Elemento .flight-info__routes encontrado correctamente
+[INFO] Elemento .flight-card__footer encontrado correctamente
+[INFO] Extrayendo código de reserva
+[INFO] Código de reserva extraído: NELQV
+[INFO] Detalles de vuelo extraídos de la página de confirmación: {}
+Successfully saved booking code NELQV and all details to Excel
+[INFO] Información guardada exitosamente en Excel
+[INFO] Reserva confirmada correctamente
+[INFO] Prueba completada exitosamente: ONE-WAY: 4. Compra 1 adulto - 1 niño - Economy Light - sin asistencia
+[INFO] Prueba "ONE-WAY: 4. Compra 1 adulto - 1 niño - Economy Light - sin asistencia" exitosa
+
+</pre>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de solo ida (One-Way) › 5. Compra 1 adulto - 1 niño - Economy Light - con asistencia - sin asiento - sin extras (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    108.718s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de solo ida (One-Way) › 6. Compra 1 adulto - 3 niños - Economy Light - con asistencia - sin asiento - sin extras (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    108.959s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de solo ida (One-Way) › 7. Compra 1 adulto - 1 infante - Economy Light - sin asiento - sin extras (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    18.057s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de solo ida (One-Way) › Pruebas de cabinas Economy (One-Way) › 8. Compra 1 adulto - Economy Light - sin asistencia - sin asiento - sin extras (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    11.945s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de solo ida (One-Way) › Pruebas de cabinas Economy (One-Way) › 9. Compra 1 adulto - Economy Comfort - sin asistencia - sin asiento - sin extras (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    9.596s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de solo ida (One-Way) › Pruebas de cabinas Economy (One-Way) › 10. Compra 1 adulto - Economy Extra - sin asistencia - sin asiento - sin extras (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de solo ida (One-Way) › Pruebas de cabinas Premium (One-Way) › 11. Compra 1 adulto - Premium Light - sin asistencia - sin asiento - sin extras (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de solo ida (One-Way) › Pruebas de cabinas Premium (One-Way) › 12. Compra 1 adulto - Premium Light - Economy Comfort - sin asistencia - sin asiento - sin extras (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de solo ida (One-Way) › Pruebas de cabinas Premium (One-Way) › 13. Compra 1 adulto - Premium Comfort - Economy Extra - sin asistencia - sin asiento - sin extras (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de solo ida (One-Way) › Pruebas de cabinas Premium (One-Way) › 14. Compra 1 adulto - Premium Extra - sin asistencia - sin asiento - sin extras (One-Way)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip) › 1. Compra 1 adulto - Economy Light - sin asistencia - sin asiento - sin extras (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip) › 2. Compra 2 adultos (Diferentes) - Economy Light - sin asistencia - sin asiento - sin extras (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip) › 3. Compra 2 adultos (Diferentes) - Economy Light - Con asistencia TODAS - sin asiento - sin extras (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip) › 4. Compra 1 adulto - 1 niño - Economy Light - sin asistencia - sin asiento - sin extras (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip) › 5. Compra 1 adulto - 1 niño - Economy Light - con asistencia - sin asiento - sin extras (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip) › 6. Compra 1 adulto - 3 niños - Economy Light - con asistencia - sin asiento - sin extras (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip) › 7. Compra 1 adulto - 1 infante - Economy Light - sin asiento - sin extras (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip) › Pruebas de cabinas Economy (Round-Trip) › 8. Compra 1 adulto - Economy Light - sin asistencia - sin asiento - sin extras (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip) › Pruebas de cabinas Economy (Round-Trip) › 9. Compra 1 adulto - Economy Comfort - sin asistencia - sin asiento - sin extras (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip) › Pruebas de cabinas Economy (Round-Trip) › 10. Compra 1 adulto - Economy Extra - sin asistencia - sin asiento - sin extras (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip) › Pruebas de cabinas Premium (Round-Trip) › 11. Compra 1 adulto - Premium Light - sin asistencia - sin asiento - sin extras (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip) › Pruebas de cabinas Premium (Round-Trip) › 12. Compra 1 adulto - Premium Light - Economy Comfort - sin asistencia - sin asiento - sin extras (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip) › Pruebas de cabinas Premium (Round-Trip) › 13. Compra 1 adulto - Premium Comfort - Economy Extra - sin asistencia - sin asiento - sin extras (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="testcase testcase-skipped" data-status="skipped">
+                            <div class="testcase-header">
+                                <div class="testcase-name">
+                                    <span class="status-icon skipped"></span>
+                                    Pruebas de vuelos de ida y vuelta (Round-Trip) › Pruebas de cabinas Premium (Round-Trip) › 14. Compra 1 adulto - Premium Extra - sin asistencia - sin asiento - sin extras (Round-Trip)
+                                </div>
+                                <div class="testcase-duration">
+                                    0.000s <span class="expand-icon">›</span>
+                                </div>
+                            </div>
+                            <div class="testcase-details">
+                                <div class="testcase-classname">NoExtraNoSeat.spec.ts</div>
+                                <div>Estado: <strong>Omitido</strong></div>
+
+                                <div class="testcase-skipped">
+                                    <div class="skipped-message">Razón: </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <p>LEVEL Booking - Informe de Pruebas Automatizadas</p>
+        <p>Generado el 10/03/2025 08:50:12</p>
+    </footer>
+    
+    <script>
+        // Datos para gráficos
+        const overallData = {
+            labels: ['Exitosos', 'Fallidos', 'Omitidos'],
+            datasets: [{
+                data: [3, 0, 25],
+                backgroundColor: ['#4caf50', '#f44336', '#9e9e9e'],
+                hoverOffset: 4
+            }]
+        };
+        
+        const suitesData = {
+            labels: ['NoExtraNoSeat.spec.ts'],
+            datasets: [
+                {
+                    label: 'Exitosos',
+                    data: [3],
+                    backgroundColor: '#4caf50',
+                    barPercentage: 0.8
+                },
+                {
+                    label: 'Fallidos',
+                    data: [0],
+                    backgroundColor: '#f44336',
+                    barPercentage: 0.8
+                },
+                {
+                    label: 'Omitidos',
+                    data: [25],
+                    backgroundColor: '#9e9e9e',
+                    barPercentage: 0.8
+                }
+            ]
+        };
+        
+        // Configurar gráficos
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gráfico de resultados generales
+            const overallCtx = document.getElementById('overallResultsChart').getContext('2d');
+            const overallChart = new Chart(overallCtx, {
+                type: 'doughnut',
+                data: overallData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Resumen de Resultados',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico de resultados por testsuite
+            const suitesCtx = document.getElementById('testsuiteResultsChart').getContext('2d');
+            const suitesChart = new Chart(suitesCtx, {
+                type: 'bar',
+                data: suitesData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Resultados por Test Suite',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Toggle para expandir/colapsar testsuites
+            document.querySelectorAll('.testsuite-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const content = this.nextElementSibling;
+                    const isExpanded = content.style.display === 'block';
+                    
+                    if (isExpanded) {
+                        content.style.display = 'none';
+                        this.classList.remove('expanded');
+                    } else {
+                        content.style.display = 'block';
+                        this.classList.add('expanded');
+                    }
+                });
+            });
+            
+            // Toggle para expandir/colapsar testcases
+            document.querySelectorAll('.testcase-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const details = this.nextElementSibling;
+                    const isExpanded = details.style.display === 'block';
+                    
+                    if (isExpanded) {
+                        details.style.display = 'none';
+                        this.classList.remove('expanded');
+                    } else {
+                        details.style.display = 'block';
+                        this.classList.add('expanded');
+                        details.classList.add('fade-in');
+                    }
+                });
+            });
+            
+            // Filtrado de testcases
+            document.querySelectorAll('.filter-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Actualizar estado activo de los botones
+                    document.querySelectorAll('.filter-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Filtrar testcases
+                    document.querySelectorAll('.testcase').forEach(testcase => {
+                        const status = testcase.getAttribute('data-status');
+                        
+                        if (filter === 'all' || status === filter ||
+                            (filter === 'failed' && (status === 'failed' || status === 'error'))) {
+                            testcase.style.display = 'block';
+                        } else {
+                            testcase.style.display = 'none';
+                        }
+                    });
+                    
+                    // Mostrar/ocultar testsuites según si tienen testcases visibles
+                    document.querySelectorAll('.testsuite').forEach(testsuite => {
+                        const visibleTestcases = testsuite.querySelectorAll('.testcase[style="display: block"]').length;
+                        
+                        if (filter === 'all') {
+                            testsuite.style.display = 'block';
+                        } else if (filter === 'passed' && parseInt(testsuite.getAttribute('data-passed')) > 0) {
+                            testsuite.style.display = 'block';
+                        } else if (filter === 'failed' && parseInt(testsuite.getAttribute('data-failed')) > 0) {
+                            testsuite.style.display = 'block';
+                        } else if (filter === 'skipped' && parseInt(testsuite.getAttribute('data-skipped')) > 0) {
+                            testsuite.style.display = 'block';
+                        } else {
+                            testsuite.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Expandir automáticamente los test suites con fallos
+            if (0 > 0) {
+                document.querySelectorAll('.testsuite').forEach(testsuite => {
+                    if (parseInt(testsuite.getAttribute('data-failed')) > 0) {
+                        const header = testsuite.querySelector('.testsuite-header');
+                        const content = testsuite.querySelector('.testsuite-content');
+                        
+                        content.style.display = 'block';
+                        header.classList.add('expanded');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
