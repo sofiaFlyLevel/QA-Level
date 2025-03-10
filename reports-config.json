@@ -1,6 +1,13 @@
 {
   "reports": [
     {
+      "title": "vuelos en conexi\u00f3n ",
+      "date": "2025-03-10_12-12-48",
+      "htmlPath": "reports/report-2025-03-10_12-12-48/html/index.html",
+      "junitPath": "reports/report-2025-03-10_12-12-48/junit/processed-report.xml",
+      "junitHtmlPath": "reports/report-2025-03-10_12-12-48/junit/junit-report.html"
+    },
+    {
       "title": "pruebat3",
       "date": "2025-03-10_09-58-12",
       "htmlPath": "reports/report-2025-03-10_09-58-12/html/index.html",

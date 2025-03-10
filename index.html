@@ -6,13 +6,12 @@
     <title>LEVEL Booking Test Reports</title>
     <style>
         :root {
-            --primary-color: #2f5496;
+            --primary-color: #04acd9;
             --secondary-color: #f0f4f8;
             --accent-color: #f39200;
             --text-color: #333;
             --light-text: #666;
             --border-color: #ddd;
-            --danger-color: #dc3545;
         }
         
         * {
@@ -89,27 +88,10 @@
             border-radius: 4px;
             transition: background-color 0.3s;
             font-weight: 500;
-            margin-right: 8px;
         }
         
         a.btn:hover {
             background-color: #1c3867;
-        }
-        
-        button.btn-danger {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: var(--danger-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        
-        button.btn-danger:hover {
-            background-color: #bd2130;
         }
         
         footer {
@@ -126,77 +108,6 @@
             text-align: right;
             margin-top: 1rem;
         }
-        
-        /* Estilos para el modal de confirmación */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-        
-        .modal-content {
-            background-color: white;
-            margin: 15% auto;
-            padding: 2rem;
-            width: 50%;
-            max-width: 500px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        .modal-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--text-color);
-        }
-        
-        .modal-message {
-            margin-bottom: 1.5rem;
-            color: var(--light-text);
-        }
-        
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-        }
-        
-        .btn-cancel {
-            background-color: #6c757d;
-        }
-        
-        .btn-confirm {
-            background-color: var(--danger-color);
-        }
-        
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background-color: #28a745;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 4px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s ease-in-out;
-            z-index: 2000;
-        }
-        
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        
-        .toast.error {
-            background-color: var(--danger-color);
-        }
     </style>
 </head>
 <body>
@@ -206,7 +117,7 @@
     
     <div class="container">
         <div class="info-panel">
-            <p>Última actualización: 10/03/2025 09:58:12</p>
+            <p>Última actualización: 10/03/2025 12:12:48</p>
             <p>Repositorio: QA-Level</p>
         </div>
         
@@ -220,102 +131,99 @@
             </thead>
             <tbody>
 
-                <tr id="report-0">
+                <tr>
+                    <td>vuelos en conexión </td>
+                    <td>2025/03/10 12/12/48</td>
+                    <td>
+                        <a href="reports/report-2025-03-10_12-12-48/junit/junit-report.html" class="btn">Ver Informe</a>
+                    </td>
+                </tr>
+
+                <tr>
                     <td>pruebat3</td>
                     <td>2025/03/10 09/58/12</td>
                     <td>
                         <a href="reports/report-2025-03-10_09-58-12/junit/junit-report.html" class="btn">Ver Informe</a>
-                        <button class="btn-danger" onclick="confirmDelete('report-0', '2025-03-10_09-58-12', 'pruebat3')">Eliminar</button>
                     </td>
                 </tr>
 
-                <tr id="report-1">
+                <tr>
                     <td>pruebatest3</td>
                     <td>2025/03/10 09/01/45</td>
                     <td>
                         <a href="reports/report-2025-03-10_09-01-45/junit/junit-report.html" class="btn">Ver Informe</a>
-                        <button class="btn-danger" onclick="confirmDelete('report-1', '2025-03-10_09-01-45', 'pruebatest3')">Eliminar</button>
                     </td>
                 </tr>
 
-                <tr id="report-2">
+                <tr>
                     <td>pruebatest2</td>
                     <td>2025/03/10 08/53/11</td>
                     <td>
                         <a href="reports/report-2025-03-10_08-53-11/junit/junit-report.html" class="btn">Ver Informe</a>
-                        <button class="btn-danger" onclick="confirmDelete('report-2', '2025-03-10_08-53-11', 'pruebatest2')">Eliminar</button>
                     </td>
                 </tr>
 
-                <tr id="report-3">
+                <tr>
                     <td>pruebatest</td>
                     <td>2025/03/10 08/50/12</td>
                     <td>
                         <a href="reports/report-2025-03-10_08-50-12/junit/junit-report.html" class="btn">Ver Informe</a>
-                        <button class="btn-danger" onclick="confirmDelete('report-3', '2025-03-10_08-50-12', 'pruebatest')">Eliminar</button>
                     </td>
                 </tr>
 
-                <tr id="report-4">
+                <tr>
                     <td>prueba4</td>
                     <td>2025/03/07 15/05/24</td>
                     <td>
                         <a href="reports/report-2025-03-07_15-05-24/junit/junit-report.html" class="btn">Ver Informe</a>
-                        <button class="btn-danger" onclick="confirmDelete('report-4', '2025-03-07_15-05-24', 'prueba4')">Eliminar</button>
                     </td>
                 </tr>
 
-                <tr id="report-5">
+                <tr>
                     <td>prueba4</td>
                     <td>2025/03/07 14/52/51</td>
                     <td>
                         <a href="reports/report-2025-03-07_14-52-51/junit/junit-report.html" class="btn">Ver Informe</a>
-                        <button class="btn-danger" onclick="confirmDelete('report-5', '2025-03-07_14-52-51', 'prueba4')">Eliminar</button>
                     </td>
                 </tr>
 
-                <tr id="report-6">
+                <tr>
                     <td>sinExtras</td>
                     <td>2025/03/07 14/05/44</td>
                     <td>
                         <a href="reports/report-2025-03-07_14-05-44/junit/junit-report.html" class="btn">Ver Informe</a>
-                        <button class="btn-danger" onclick="confirmDelete('report-6', '2025-03-07_14-05-44', 'sinExtras')">Eliminar</button>
                     </td>
                 </tr>
 
-                <tr id="report-7">
+                <tr>
                     <td>prueba3</td>
                     <td>2025/03/07 13/22/21</td>
                     <td>
                         <a href="reports/report-2025-03-07_13-22-21/junit/junit-report.html" class="btn">Ver Informe</a>
-                        <button class="btn-danger" onclick="confirmDelete('report-7', '2025-03-07_13-22-21', 'prueba3')">Eliminar</button>
                     </td>
                 </tr>
 
-                <tr id="report-8">
+                <tr>
                     <td>prueba2</td>
                     <td>2025/03/07 11/42/35</td>
                     <td>
                         <a href="reports/report-2025-03-07_11-42-35/junit/junit-report.html" class="btn">Ver Informe</a>
-                        <button class="btn-danger" onclick="confirmDelete('report-8', '2025-03-07_11-42-35', 'prueba2')">Eliminar</button>
                     </td>
                 </tr>
 
-                <tr id="report-9">
+                <tr>
                     <td>prueba</td>
                     <td>2025/03/07 11/25/55</td>
                     <td>
                         <a href="reports/report-2025-03-07_11-25-55/junit/junit-report.html" class="btn">Ver Informe</a>
-                        <button class="btn-danger" onclick="confirmDelete('report-9', '2025-03-07_11-25-55', 'prueba')">Eliminar</button>
                     </td>
                 </tr>
 
-                <tr id="report-10">
+                <tr>
                     <td>jo</td>
                     <td>2025/03/07 11/07/25</td>
                     <td>
                         <a href="#" class="btn">Ver Informe</a>
-                        <button class="btn-danger" onclick="confirmDelete('report-10', '2025-03-07_11-07-25', 'jo')">Eliminar</button>
                     </td>
                 </tr>
 
@@ -323,111 +231,12 @@
         </table>
         
         <div class="last-updated">
-            Generado automáticamente - 10/03/2025 09:58:12
+            Generado automáticamente - 10/03/2025 12:12:48
         </div>
     </div>
-    
-    <!-- Modal de confirmación para eliminar informe -->
-    <div id="deleteModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">Confirmar Eliminación</div>
-            <div class="modal-message" id="deleteMessage">¿Estás seguro de que deseas eliminar este informe?</div>
-            <div class="modal-actions">
-                <button class="btn btn-cancel" onclick="closeModal()">Cancelar</button>
-                <button class="btn-danger btn-confirm" id="confirmDeleteBtn">Eliminar</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Toast para notificaciones -->
-    <div id="toast" class="toast">Operación completada con éxito</div>
     
     <footer>
         <p>&copy; 2025 LEVEL Booking Test Automation</p>
     </footer>
-    
-    <script>
-        // Variable para almacenar el informe a eliminar
-        let reportToDelete = null;
-        
-        // Función para mostrar el modal de confirmación
-        function confirmDelete(reportId, reportDate, reportTitle) {
-            const modal = document.getElementById('deleteModal');
-            const deleteMessage = document.getElementById('deleteMessage');
-            deleteMessage.textContent = `¿Estás seguro de que deseas eliminar el informe "${reportTitle}" del ${reportDate.replace('_', ' ')}?`;
-            
-            reportToDelete = {
-                id: reportId,
-                date: reportDate
-            };
-            
-            modal.style.display = 'block';
-            
-            // Configurar el botón de confirmación
-            document.getElementById('confirmDeleteBtn').onclick = function() {
-                deleteReport();
-            };
-        }
-        
-        // Función para cerrar el modal
-        function closeModal() {
-            document.getElementById('deleteModal').style.display = 'none';
-            reportToDelete = null;
-        }
-        
-        // Función para eliminar el informe
-        function deleteReport() {
-            if (!reportToDelete) return;
-            
-            // Simular una eliminación (En un entorno real, esto sería una llamada a un endpoint)
-            // En este caso, solo eliminamos visualmente el elemento y mostramos un mensaje
-            
-            // En una implementación real, aquí iría una llamada AJAX para eliminar el informe
-            // fetch('/delete-report.php?date=' + reportToDelete.date, { method: 'POST' })
-            //    .then(response => response.json())
-            //    .then(data => { ... });
-            
-            // Eliminar la fila de la tabla
-            const reportRow = document.getElementById(reportToDelete.id);
-            if (reportRow) {
-                reportRow.style.transition = 'opacity 0.5s ease-in-out';
-                reportRow.style.opacity = '0';
-                
-                setTimeout(() => {
-                    reportRow.remove();
-                    showToast('Informe eliminado correctamente');
-                }, 500);
-            }
-            
-            // Cerrar el modal
-            closeModal();
-        }
-        
-        // Función para mostrar notificaciones
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            
-            if (isError) {
-                toast.classList.add('error');
-            } else {
-                toast.classList.remove('error');
-            }
-            
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-        
-        // Cerrar el modal si se hace clic fuera de él
-        window.onclick = function(event) {
-            const modal = document.getElementById('deleteModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        }
-    </script>
 </body>
 </html>
